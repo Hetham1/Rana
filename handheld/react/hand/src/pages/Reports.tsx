@@ -42,20 +42,27 @@ export default function Gozaresh() {
 
   const handleSubmit = async () => {
     try {
-      const token = localStorage.getItem('token')
-      const queries = 'wpId=${parameter1}&date=${parameter2}&sector=${parameter3}&material=${parameter4}&color=${parameter5}&type=${parameter6}'
+      const token = localStorage.getItem('token');
+      const queries = `wpId=${parameter1}&date=${parameter2}&sector=${parameter3}&material=${parameter4}&color=${parameter5}&type=${parameter6}`;
       const response = await axios.get(`${BASE_URL}/report/query?${queries}`, {
         headers: {
-          'Authorization': `${token}`
-        }
+          'Authorization': `${token}`,
+        },
       });
-      
+  
       const data: TableDataItem[] = response.data;
       setTableData(data);
       setSidebarOpen(false);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      
+    } catch (error: any) {
+      // Check if the error has a response
+      if (error.response && error.response.data && error.response.data.error) {
+        const errorMessage = error.response.data.error;
+        // Display the error message (you can use alert or set a state)
+        alert(errorMessage);
+      } else {
+        // Fallback for unexpected errors
+        alert('An unexpected error occurred');
+      }
     }
   };
 
