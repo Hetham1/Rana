@@ -208,8 +208,8 @@ export default function Relocate() {
       </div>
 
       <div className="w-full text-center p-4 bg-blue-200">
-        <h2 className="text-lg font-semibold">Scan Result:</h2>
-        <p>{scanResult || 'No QR code detected'}</p>
+        <h2 className="text-lg font-semibold">نتیجه اسکن:</h2>
+        <p>{scanResult || 'بارکدی یافت نشد'}</p>
       </div>
 
       <div className="flex flex-col space-x-4">
@@ -221,13 +221,13 @@ export default function Relocate() {
         <Popover>
           <PopoverTrigger asChild>
             <Button variant="outline" className="w-[200px]">
-              {comboBoxValue || 'Select letter...'}
+              {comboBoxValue || 'انتخاب سکتور'}
               <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-[200px] p-0">
             <Command>
-              <CommandInput placeholder="Search letter..." className="h-9" />
+              <CommandInput placeholder="جستجو" className="h-9" />
               <CommandList>
                 <CommandEmpty>No letter found.</CommandEmpty>
                 <CommandGroup>
