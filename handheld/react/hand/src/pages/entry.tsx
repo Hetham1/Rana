@@ -109,19 +109,54 @@ export default function Entry() {
 
       <div className="p-4 flex flex-row gap-6 rounded-md bg-whitebox">
         <div className="flex flex-col justify-center items-right gap-2 bg-whitebox p-4 rounded-md">
-          <label>
-            <input type="radio" name="option" value="1" className="mr-2" onChange={handleRadioChange} />
-            ورود
-          </label>
-          <label>
-            <input type="radio" name="option" value="2" className="mr-2" onChange={handleRadioChange} />
-            خروج
-          </label>
-          <label>
-            <input type="radio" name="option" value="3" className="mr-2" onChange={handleRadioChange} />
-            ریجکت
-          </label>
-        </div>
+        <label
+        className={`px-4 py-2 rounded-lg cursor-pointer text-white font-semibold transition ${
+          radioOption === '1' ? 'bg-blue-500' : 'bg-gray-300'
+        }`}
+      >
+        <input
+          type="radio"
+          name="option"
+          value="1"
+          className="hidden"
+          onChange={handleRadioChange}
+          checked={radioOption === '1'}
+        />
+        ورود رسانا
+      </label>
+
+      <label
+        className={`px-4 py-2 rounded-lg cursor-pointer text-white font-semibold transition ${
+          radioOption === '2' ? 'bg-blue-500' : 'bg-gray-300'
+        }`}
+      >
+        <input
+          type="radio"
+          name="option"
+          value="2"
+          className="hidden"
+          onChange={handleRadioChange}
+          checked={radioOption === '2'}
+        />
+        ورود مواد شیمیایی
+      </label>
+
+      <label
+        className={`px-4 py-2 rounded-lg cursor-pointer text-white font-semibold transition ${
+          radioOption === '3' ? 'bg-blue-500' : 'bg-gray-300'
+        }`}
+      >
+        <input
+          type="radio"
+          name="option"
+          value="3"
+          className="hidden"
+          onChange={handleRadioChange}
+          checked={radioOption === '3'}
+        />
+        ورود متفرقه
+      </label>
+      </div>
 
         <div className="flex justify-center items-center bg-whitebox p-4 rounded-md">
           <Popover open={open} onOpenChange={setOpen}>
