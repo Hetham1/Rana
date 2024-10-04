@@ -88,7 +88,7 @@ export default function GatherPage() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Orders</h1>
+      <h1 className="text-2xl font-bold mb-4">سفارشات</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {orders.map((order) => (
           <Card key={order.ordId} className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => handleCardClick(order)}>
@@ -96,9 +96,9 @@ export default function GatherPage() {
               <CardTitle>{order.custName}</CardTitle>
             </CardHeader>
             <CardContent>
-              <p><strong>Order ID:</strong> {order.ordId}</p>
-              <p><strong>Situation:</strong> {order.orderSituation}</p>
-              <p><strong>Date:</strong> {new Date(order.orderDate).toLocaleDateString()}</p>
+              <p><strong>شناسه سفارش:</strong> {order.ordId}</p>
+              <p><strong>وضعیت:</strong> {order.orderSituation}</p>
+              <p><strong>تاریخ:</strong> {new Date(order.orderDate).toLocaleDateString()}</p>
             </CardContent>
           </Card>
         ))}
@@ -111,26 +111,27 @@ export default function GatherPage() {
           </AlertDialogHeader>
           {orderDetails && (
             <div className="grid grid-cols-2 gap-4">
-              <p><strong>WSP ID:</strong> {orderDetails.wspId}</p>
-              <p><strong>Direction:</strong> {orderDetails.wspDirection}</p>
-              <p><strong>Material:</strong> {orderDetails.wspMaterial}</p>
-              <p><strong>Type:</strong> {orderDetails.wspType}</p>
+              <p><strong>شناسه:</strong> {orderDetails.wspId}</p>
+              <p><strong>جهت:</strong> {orderDetails.wspDirection}</p>
+              <p><strong>مواد:</strong> {orderDetails.wspMaterial}</p>
+              <p><strong>نوع:</strong> {orderDetails.wspType}</p>
               <p><strong>PP:</strong> {orderDetails.wspPp}</p>
-              <p><strong>State:</strong> {orderDetails.wspState}</p>
-              <p><strong>Date:</strong> {orderDetails.wspDate}</p>
-              <p><strong>In:</strong> {orderDetails.wspIn}</p>
-              <p><strong>Out:</strong> {orderDetails.wspOut}</p>
-              <p><strong>Length:</strong> {orderDetails.wspLength}</p>
-              <p><strong>Empty Weight:</strong> {orderDetails.wspWempty}</p>
-              <p><strong>Full Weight:</strong> {orderDetails.wspWfull}</p>
-              <p><strong>Pure Weight:</strong> {orderDetails.wspWpure}</p>
-              <p><strong>QC:</strong> {orderDetails.wspQC}</p>
-              <p><strong>WP ID:</strong> {orderDetails.wpId}</p>
+              <p><strong>وضعیت:</strong> {orderDetails.wspState}</p>
+              <p><strong>تاریخ:</strong> {orderDetails.wspDate}</p>
+              <p><strong>ورود:</strong> {orderDetails.wspIn}</p>
+              <p><strong>خروج:</strong> {orderDetails.wspOut}</p>
+              <p><strong>طول:</strong> {orderDetails.wspLength}</p>
+              <p><strong>وزن خالی:</strong> {orderDetails.wspWempty}</p>
+              <p><strong>وزن کامل:</strong> {orderDetails.wspWfull}</p>
+              <p><strong>وزن خالص:</strong> {orderDetails.wspWpure}</p>
+              <p><strong>کنترل کیفیت:</strong> {orderDetails.wspQC}</p>
+              <p><strong>شناسه WP:</strong> {orderDetails.wpId}</p>
               <p><strong>LL:</strong> {orderDetails.wspLL}</p>
-              <p><strong>Sector:</strong> {orderDetails.wspSector}</p>
+              <p><strong>بخش:</strong> {orderDetails.wspSector}</p>
+
             </div>
           )}
-          <Button onClick={() => setIsDialogOpen(false)} className="mt-4">Close</Button>
+          <Button onClick={() => setIsDialogOpen(false)} className="mt-4">بستن</Button>
         </AlertDialogContent>
       </AlertDialog>
     </div>
