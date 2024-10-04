@@ -60,7 +60,7 @@ export default function Requests() {
   }, []);
 
   if (isLoading) {
-    return <div className="flex justify-center items-center h-full">Loading...</div>;
+    return <div className="flex justify-center items-center h-full">در حال بارگذاری</div>;
   }
 
   return (
@@ -69,7 +69,7 @@ export default function Requests() {
       <div className="flex-grow overflow-auto pb-16">
         <div className="space-y-4">
           {requests.length === 0 ? (
-            <div className="text-center text-gray-500">No requests found</div>
+            <div className="text-center text-gray-500">درخواستی موجود نیست</div>
           ) : (
             requests.map((request) => (
               <AlertDialog key={request.reqId}>
