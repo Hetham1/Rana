@@ -49,7 +49,6 @@ export default function Relocate() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
-
   useEffect(() => {
     const workPlace = localStorage.getItem('workPlace'); 
 
@@ -72,6 +71,7 @@ export default function Relocate() {
     }
 
     startVideoStream();
+    startScanning();
 
     return () => {
       if (videoRef.current && videoRef.current.srcObject) {
@@ -175,19 +175,16 @@ export default function Relocate() {
 
   const letters = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i));
 
-
   const fetchUidDetails = async (uid: string) => {
     setLoading(true);
     setError(null);
     try {
-      const token = localStorage.getItem('token')
-      console.log(token)
-      console.log(uid)
+      const token = localStorage.getItem('token');
       const response = await axios.get(`${BASE_URL}/uidDetails/${uid}`, {
         headers: {
           'Authorization': `${token}`
         }
-      }) // Update to your API endpoint
+      });
       if (response.data.success) {
         setUidDetails(response.data.data); 
       } else {
@@ -200,7 +197,6 @@ export default function Relocate() {
       setLoading(false);
     }
   };
-
 
   return (
     <div className="flex flex-col items-center justify-center h-full p-4 space-y-4">
@@ -216,9 +212,9 @@ export default function Relocate() {
         <p>{scanResult || 'No QR code detected'}</p>
       </div>
 
-      <div className="flex space-x-4">
-        <p>✅ OK: {okCount}</p>
-        <p>❌ False: {falseCount}</p>
+      <div className="flex flex-col space-x-4">
+        <p>✅: {okCount}</p>
+        <p>❌: {falseCount}</p>
       </div>
 
       <div className="w-full flex justify-center">
@@ -256,15 +252,6 @@ export default function Relocate() {
         </Popover>
       </div>
 
-      <div className="flex space-x-4">
-        <Button onClick={startScanning} disabled={isScanning} variant="outline">
-          Start Scanning
-        </Button>
-        <Button onClick={stopScanning} disabled={!isScanning} variant="outline">
-          Stop Scanning
-        </Button>
-      </div>
-
       <AlertDialog>
         <AlertDialogTrigger asChild>
           <Button variant="outline" onClick={() => scanResult && fetchUidDetails(scanResult)} disabled={!scanResult}>مشخصات سبد</Button>
@@ -272,35 +259,12 @@ export default function Relocate() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>UID Details</AlertDialogTitle>
+            <AlertDialogDescription>
+              {loading ? 'Loading...' : (error ? error : JSON.stringify(uidDetails))}
+            </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogDescription>
-            {loading && <p>Loading UID details...</p>}
-            {error && <p className="text-red-500">{error}</p>}
-            {uidDetails && uidDetails.length > 0 && (
-              <div className="grid grid-cols-2 gap-4">
-                <p><strong>Cart ID:</strong> {uidDetails[0].fpId}</p>
-                <p><strong>fp Type:</strong> {uidDetails[0].fpType}</p>
-                <p><strong>fp Device:</strong> {uidDetails[0].fpCart}</p>
-                <p><strong>fp In:</strong> {uidDetails[0].uesrId}</p>
-                <p><strong>fp Out:</strong> {uidDetails[0].fpEndUserCode}</p>
-                <p><strong>Shift:</strong> {uidDetails[0].fpLoc}</p>
-                <p><strong>Length:</strong> {uidDetails[0].fpWrapped}</p>
-                <p><strong>Product Name:</strong> {uidDetails[0].fpSituation}</p>
-                <p><strong>PP ID:</strong> {uidDetails[0].wpId}</p>
-                <p><strong>Manufacturing Date:</strong> {new Date(uidDetails[0].fpMFG).toLocaleDateString()}</p>
-                <p><strong>User ID:</strong> {uidDetails[0].fpLL}</p>
-                <p><strong>fp Color:</strong> {uidDetails[0].fpSector}</p>
-                <p><strong>Insulation ID:</strong> {uidDetails[0].insulId}</p>
-                <p><strong>Wire Spool ID:</strong> {uidDetails[0].wireSpId}</p>
-                <p><strong>Workplace ID:</strong> {uidDetails[0].wpId}</p>
-                <p><strong>fp LL:</strong> {uidDetails[0].fpLL}</p>
-                <p><strong>Quality Control:</strong> {uidDetails[0].fpQC}</p>
-              </div>
-            )}
-          </AlertDialogDescription>
-
           <AlertDialogFooter>
-            <AlertDialogAction onClick={() => setUidDetails(null)}>Close</AlertDialogAction>
+            <AlertDialogAction >Close</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
