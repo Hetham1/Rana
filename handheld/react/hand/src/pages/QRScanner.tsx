@@ -43,8 +43,10 @@ export default function QRScanner() {
         console.error('Error accessing camera:', error);
       }
     };
+  
     startVideoStream();
-
+  
+    // Cleanup function to stop scanning and camera
     return () => {
       if (videoRef.current && videoRef.current.srcObject) {
         const tracks = (videoRef.current.srcObject as MediaStream).getTracks();
@@ -160,72 +162,64 @@ export default function QRScanner() {
       setLoading(false);
     }
   };
-  
   return (
     <div className="flex flex-col items-center justify-center h-full p-4 space-y-4">
-      <div className="bg-gray-200 w-full max-w-md h-64 relative">
-        <video ref={videoRef} className="absolute top-0 left-0 w-full h-full object-cover" />
-        <canvas ref={canvasRef} className="hidden" />
-      </div>
+  <div className="bg-gray-200 w-full max-w-md h-64 relative">
+    <video ref={videoRef} className="absolute top-0 left-0 w-full h-full object-cover" />
+    <canvas ref={canvasRef} className="hidden" />
+  </div>
 
-      <div className="w-full text-center p-4 bg-blue-200">
-        <h2 className="text-lg font-semibold">Scan Result:</h2>
-        <p>{scanResult || 'No QR code detected'}</p>
-      </div>
+  <div className="w-full text-center p-4 bg-blue-200">
+    <h2 className="text-lg font-semibold">نتیجه اسکن:</h2>
+    <p>{scanResult || 'بارکدی یافت نشد'}</p>
+  </div>
 
-      <div className="flex space-x-4">
-        <p>✅ OK: {okCount}</p>
-        <p>❌ False: {falseCount}</p>
-      </div>
+  <div className="flex flex-col space-x-4">
+    <p>✅ : {okCount}</p>
+    <p>❌ : {falseCount}</p>
+  </div>
 
-      <div className="flex space-x-4">
-        <Button onClick={startScanning} disabled={isScanning} variant="outline">
-          Start Scanning
-        </Button>
-        <Button onClick={stopScanning} disabled={!isScanning} variant="outline">
-          Stop Scanning
-        </Button>
-      </div>
+  <AlertDialog>
+    <AlertDialogTrigger asChild>
+      <Button variant="outline" onClick={() => scanResult && fetchUidDetails(scanResult)} disabled={!scanResult}>
+        مشخصات سبد
+      </Button>
+    </AlertDialogTrigger>
+    <AlertDialogContent>
+      <AlertDialogHeader>
+        <AlertDialogTitle>UID Details</AlertDialogTitle>
+      </AlertDialogHeader>
+      <AlertDialogDescription>
+        {loading && <p>Loading UID details...</p>}
+        {error && <p className="text-red-500">{error}</p>}
+        {uidDetails && uidDetails.length > 0 && (
+          <div className="grid grid-cols-2 gap-4">
+            <p><strong>شناسه سبد:</strong> {uidDetails[0].cartId}</p>
+            <p><strong>نوع سبد:</strong> {uidDetails[0].cartType}</p>
+            <p><strong>دستگاه سبد:</strong> {uidDetails[0].cartDevice}</p>
+            <p><strong>ورود سبد:</strong> {uidDetails[0].cartIn}</p>
+            <p><strong>خروج سبد:</strong> {uidDetails[0].cartOut}</p>
+            <p><strong>شیفت:</strong> {uidDetails[0].cartShift}</p>
+            <p><strong>طول:</strong> {uidDetails[0].cartLenght}</p>
+            <p><strong>نام محصول:</strong> {uidDetails[0].prodName}</p>
+            <p><strong>شناسه PP:</strong> {uidDetails[0].ppId}</p>
+            <p><strong>تاریخ تولید:</strong> {new Date(uidDetails[0].cartMFG).toLocaleDateString()}</p>
+            <p><strong>شناسه کاربر:</strong> {uidDetails[0].userId}</p>
+            <p><strong>رنگ سبد:</strong> {uidDetails[0].cartColor}</p>
+            <p><strong>شناسه عایق:</strong> {uidDetails[0].insulId}</p>
+            <p><strong>شناسه قرقره سیم:</strong> {uidDetails[0].wireSpId}</p>
+            <p><strong>شناسه محل کار:</strong> {uidDetails[0].wpId}</p>
+            <p><strong>LL سبد:</strong> {uidDetails[0].cartLL}</p>
+            <p><strong>کنترل کیفیت:</strong> {uidDetails[0].cartQC}</p>
+          </div>
+        )}
+      </AlertDialogDescription>
 
-      <AlertDialog>
-        <AlertDialogTrigger asChild>
-          <Button variant="outline" onClick={() => scanResult && fetchUidDetails(scanResult)} disabled={!scanResult}>مشخصات سبد</Button>
-        </AlertDialogTrigger>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>UID Details</AlertDialogTitle>
-          </AlertDialogHeader>
-          <AlertDialogDescription>
-            {loading && <p>Loading UID details...</p>}
-            {error && <p className="text-red-500">{error}</p>}
-            {uidDetails && uidDetails.length > 0 && (
-              <div className="grid grid-cols-2 gap-4">
-                <p><strong>Cart ID:</strong> {uidDetails[0].cartId}</p>
-                <p><strong>Cart Type:</strong> {uidDetails[0].cartType}</p>
-                <p><strong>Cart Device:</strong> {uidDetails[0].cartDevice}</p>
-                <p><strong>Cart In:</strong> {uidDetails[0].cartIn}</p>
-                <p><strong>Cart Out:</strong> {uidDetails[0].cartOut}</p>
-                <p><strong>Shift:</strong> {uidDetails[0].cartShift}</p>
-                <p><strong>Length:</strong> {uidDetails[0].cartLenght}</p>
-                <p><strong>Product Name:</strong> {uidDetails[0].prodName}</p>
-                <p><strong>PP ID:</strong> {uidDetails[0].ppId}</p>
-                <p><strong>Manufacturing Date:</strong> {new Date(uidDetails[0].cartMFG).toLocaleDateString()}</p>
-                <p><strong>User ID:</strong> {uidDetails[0].userId}</p>
-                <p><strong>Cart Color:</strong> {uidDetails[0].cartColor}</p>
-                <p><strong>Insulation ID:</strong> {uidDetails[0].insulId}</p>
-                <p><strong>Wire Spool ID:</strong> {uidDetails[0].wireSpId}</p>
-                <p><strong>Workplace ID:</strong> {uidDetails[0].wpId}</p>
-                <p><strong>Cart LL:</strong> {uidDetails[0].cartLL}</p>
-                <p><strong>Quality Control:</strong> {uidDetails[0].cartQC}</p>
-              </div>
-            )}
-          </AlertDialogDescription>
-
-          <AlertDialogFooter>
-            <AlertDialogAction onClick={() => setUidDetails(null)}>Close</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </div>
+      <AlertDialogFooter>
+        <AlertDialogAction onClick={() => setUidDetails(null)}>Close</AlertDialogAction>
+      </AlertDialogFooter>
+    </AlertDialogContent>
+  </AlertDialog>
+</div>
   );
 }
