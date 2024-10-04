@@ -264,7 +264,7 @@ export default function Relocate() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogAction >Close</AlertDialogAction>
+            <AlertDialogAction >بستن</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
