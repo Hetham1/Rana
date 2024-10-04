@@ -29,11 +29,11 @@ export default function Requests() {
   const fetchRequests = async (userId: string) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`${BASE_URL}/request`, {
+      const response = await axios.get(`${BASE_URL}/request?userId=${userId}`, {
         headers: {
           Authorization: `${token}`,
         },
-        params: { userId },
+        
       });
 
       if (response.data && response.data.success) {
