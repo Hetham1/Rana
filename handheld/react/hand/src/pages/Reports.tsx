@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { MenuIcon } from 'lucide-react';
 import axios from 'axios';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'; // Import for modal
 import {
   Command,
   CommandEmpty,
@@ -19,24 +20,27 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
-
 import { BASE_URL } from '../hooks/apiconfig';
 
-// Define a flexible structure for table data
+
 interface TableDataItem {
-  [key: string]: any;
+  column1: string;
+  column2: string;
+  column3: string;
 }
 
 export default function Gozaresh() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [comboBoxValue, setComboBoxValue] = useState<string>('');
   const [parameter1, setParameter1] = useState('');
   const [parameter2, setParameter2] = useState('');
   const [parameter3, setParameter3] = useState('');
   const [parameter4, setParameter4] = useState('');
   const [parameter5, setParameter5] = useState('');
   const [parameter6, setParameter6] = useState('');
-  const [tableData, setTableData] = useState<TableDataItem[][]>([]); // Nested array to hold all the types of data
+  const [tableData, setTableData] = useState<any[]>([]); // Stores the entire API data
+  const [filteredData, setFilteredData] = useState<any[]>([]); // Stores the filtered data
+  const [selectedItem, setSelectedItem] = useState<any>(null); // Stores the selected item for the popup
+  const [isDialogOpen, setDialogOpen] = useState(false); // Controls the visibility of the dialog
 
   const handleSubmit = async () => {
     try {
@@ -61,8 +65,27 @@ export default function Gozaresh() {
     }
   };
 
-  const letters = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i));
+  const handleFilter = (section: 'wsp' | 'insul' | 'fp') => {
+    switch (section) {
+      case 'wsp':
+        setFilteredData(tableData[0]);
+        break;
+      case 'insul':
+        setFilteredData(tableData[1]);
+        break;
+      case 'fp':
+        setFilteredData(tableData[2]);
+        break;
+      default:
+        setFilteredData([]);
+    }
+  };
 
+  const openDialog = (item: any) => {
+    setSelectedItem(item); // Set the selected item for the popup
+    setDialogOpen(true); // Open the dialog
+  };
+  const letters = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i));
   return (
     <div className="p-4">
       <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
@@ -146,29 +169,107 @@ export default function Gozaresh() {
       </Sheet>
 
       <div className="mt-8">
-        {tableData.map((dataGroup, groupIndex) => (
-          <div key={groupIndex} className="mb-8">
-            <h3 className="text-lg font-semibold mb-4">uid {groupIndex + 1}</h3>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  {Object.keys(dataGroup[0] || {}).map((column, index) => (
-                    <TableHead key={index}>{column}</TableHead>
-                  ))}
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {dataGroup.map((row, rowIndex) => (
-                  <TableRow key={rowIndex}>
-                    {Object.values(row).map((value, cellIndex) => (
-                      <TableCell key={cellIndex}>{value}</TableCell>
-                    ))}
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        ))}
+        {tableData.length > 0 && (
+          <div className='flex flex-row gap-2 justify-center'>
+          <Button onClick={() => handleFilter('wsp')}>
+            قرقره ({tableData[0]?.length || 0})
+          </Button>
+    
+          <Button onClick={() => handleFilter('insul')}>
+            عایق ({tableData[1]?.length || 0})
+          </Button>
+    
+          <Button onClick={() => handleFilter('fp')}>
+            محصول نهایی ({tableData[2]?.length || 0})
+          </Button>
+        </div>
+        )}
+
+        <Table className='mt-8'>
+          <TableHeader>
+            <TableRow>
+              <TableHead className='text-center'>شناسه</TableHead>
+              <TableHead className='text-center'>سکتور</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody className='text-center'>
+            {filteredData.map((row: any, index: number) => (
+              <TableRow key={index} onClick={() => openDialog(row)}>
+                <TableCell>{row.wspId || row.insId || row.fpId}</TableCell>
+                <TableCell>{row.wspSector || row.insSector || row.fpSector}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+
+        {/* Dialog for full details */}
+        {selectedItem && (
+          <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>جزییات</DialogTitle>
+              </DialogHeader>
+              <div>
+  {selectedItem.wspId && (
+    <div className="grid grid-cols-2 gap-4">
+    <div>
+      <p><strong>شناسه:</strong> {selectedItem.wspId}</p>
+      <p><strong>جهت:</strong> {selectedItem.wspDirection}</p>
+      <p><strong>مواد:</strong> {selectedItem.wspMaterial}</p>
+      <p><strong>نوع:</strong> {selectedItem.wspType}</p>
+      <p><strong>پ پ:</strong> {selectedItem.wspPp}</p>
+      <p><strong>وضعیت:</strong> {selectedItem.wspState}</p>
+      <p><strong>تاریخ:</strong> {selectedItem.wspDate}</p>
+    </div>
+    <div>
+      <p><strong>ورودی:</strong> {selectedItem.wspIn}</p>
+      <p><strong>خروجی:</strong> {selectedItem.wspOut}</p>
+      <p><strong>طول:</strong> {selectedItem.wspLength}</p>
+      <p><strong>وزن خالی:</strong> {selectedItem.wspWempty}</p>
+      <p><strong>وزن پر:</strong> {selectedItem.wspWfull}</p>
+      <p><strong>وزن خالص:</strong> {selectedItem.wspWpure}</p>
+      <p><strong>کنترل کیفیت:</strong> {selectedItem.wspQC}</p>
+      <p><strong>بخش:</strong> {selectedItem.wspSector}</p>
+    </div>
+  </div>
+  )}
+
+  {selectedItem.insId && (
+    <div className="grid grid-cols-2 gap-4">
+    <p><strong>شناسه:</strong> {selectedItem.insId}</p>
+    <p><strong>نوع:</strong> {selectedItem.insType}</p>
+    <p><strong>کد:</strong> {selectedItem.insCode}</p>
+    <p><strong>شناسه سازنده:</strong> {selectedItem.manfId}</p>
+    <p><strong>تاریخ ورود:</strong> {selectedItem.insEntryDate}</p>
+    <p><strong>شماره رسید:</strong> {selectedItem.insRecNum}</p>
+    <p><strong>وضعیت:</strong> {selectedItem.insState}</p>
+    <p><strong>انقضا:</strong> {selectedItem.insEXP}</p>
+    <p><strong>مکان:</strong> {selectedItem.insLoc}</p>
+    <p><strong>رنگ:</strong> {selectedItem.insColor}</p>
+    <p><strong>تعداد:</strong> {selectedItem.insCount}</p>
+    <p><strong>کنترل کیفیت:</strong> {selectedItem.insQC}</p>
+    <p><strong>بخش:</strong> {selectedItem.insSector}</p>
+  </div>
+  )}
+
+  {selectedItem.fpId && (
+    <div className="grid grid-cols-2 gap-4">
+    <p><strong>شناسه:</strong> {selectedItem.fpId}</p>
+    <p><strong>نوع:</strong> {selectedItem.fpType}</p>
+    <p><strong>کارت:</strong> {selectedItem.fpCart}</p>
+    <p><strong>شناسه کاربر:</strong> {selectedItem.uesrId}</p>
+    <p><strong>کد کاربر نهایی:</strong> {selectedItem.fpEndUserCode}</p>
+    <p><strong>مکان:</strong> {selectedItem.fpLoc}</p>
+    <p><strong>بسته بندی:</strong> {selectedItem.fpWrapped}</p>
+    <p><strong>وضعیت:</strong> {selectedItem.fpSituation}</p>
+    <p><strong>بخش:</strong> {selectedItem.fpSector}</p>
+  </div>
+  )}
+</div>
+
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
     </div>
   );

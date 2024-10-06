@@ -14,7 +14,7 @@ export default function home() {
               <Button variant="default" className="bg-whitebox border-0 text-text hover:text-white w-full h-full aspect-square">درخواست</Button>
             </NavLink>
             <NavLink to="/rep" className="w-full">
-              <Button variant="default" className="bg-whitebox border-0 text-text hover:text-white w-full h-full aspect-square">گذارش</Button>
+              <Button variant="default" className="bg-whitebox border-0 text-text hover:text-white w-full h-full aspect-square">گزارش</Button>
             </NavLink>
             <NavLink to="/rel" className="w-full">
               <Button variant="default" className="bg-whitebox border-0 text-text hover:text-white w-full h-full aspect-square">جانمایی</Button>
