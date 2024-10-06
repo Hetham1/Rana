@@ -90,12 +90,12 @@ export default function Gozaresh() {
     <div className="p-4">
       <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
         <SheetTrigger asChild>
-          <Button variant="default" size="icon">
+          <Button variant="default" size="icon" className='bg-suppink'>
             <MenuIcon className="h-4 w-4" />
           </Button>
         </SheetTrigger>
         <SheetContent side="left">
-          <h2 className="text-lg text-left font-semibold mb-4">Parameters</h2>
+          <h2 className="text-lg text-left font-semibold mb-4">پارامتر ها</h2>
           <div className="space-y-4">
             <Input
               className='text-center'
@@ -122,7 +122,7 @@ export default function Gozaresh() {
                     <Command>
                       <CommandInput placeholder="جستجو" className="h-9" />
                       <CommandList>
-                        <CommandEmpty>No letter found.</CommandEmpty>
+                        <CommandEmpty>سکتور یافت نشد</CommandEmpty>
                         <CommandGroup>
                           {letters.map((letter) => (
                             <CommandItem
@@ -163,7 +163,7 @@ export default function Gozaresh() {
               value={parameter6}
               onChange={(e) => setParameter6(e.target.value)}
             />
-            <Button className="w-full" onClick={handleSubmit}>Submit</Button>
+            <Button className="w-full bg-sec" onClick={handleSubmit}>جستجو</Button>
           </div>
         </SheetContent>
       </Sheet>
@@ -171,15 +171,15 @@ export default function Gozaresh() {
       <div className="mt-8">
         {tableData.length > 0 && (
           <div className='flex flex-row gap-2 justify-center'>
-          <Button onClick={() => handleFilter('wsp')}>
+          <Button onClick={() => handleFilter('wsp')} className='bg-sec'>
             قرقره ({tableData[0]?.length || 0})
           </Button>
     
-          <Button onClick={() => handleFilter('insul')}>
+          <Button onClick={() => handleFilter('insul')} className='bg-sec'>
             عایق ({tableData[1]?.length || 0})
           </Button>
     
-          <Button onClick={() => handleFilter('fp')}>
+          <Button onClick={() => handleFilter('fp')} className='bg-sec'>
             محصول نهایی ({tableData[2]?.length || 0})
           </Button>
         </div>
