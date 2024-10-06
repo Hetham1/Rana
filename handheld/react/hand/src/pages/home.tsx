@@ -22,6 +22,9 @@ export default function home() {
             <NavLink to="/taj" className="w-full">
               <Button variant="default" className="bg-whitebox border-0 text-text hover:text-white w-full h-full aspect-square">تجمیع</Button>
             </NavLink>
+            <NavLink to="/tol" className="w-full">
+              <Button variant="default" className="bg-whitebox border-0 text-text hover:text-white w-full h-full aspect-square">تولید</Button>
+            </NavLink>
             
         </div>
     </div>
