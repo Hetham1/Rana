@@ -785,7 +785,11 @@ app.put('/api/v1/pp/assign/:ppId',authenticateToken, (req, res) => {
 app.get('/api/v1/report/query',authenticateToken, (req, res) => {
 
   let { wpId,date,sector,material,color,type } = req.query;
-
+  if (!wpId){
+    wpId='%';
+}else{
+    wpId+='%'
+}
   if (!date){
     date='%';
 }else{
@@ -812,7 +816,7 @@ if (!type){
   type+='%'
 }
 
-  pool.query(`select * from xicorana.wireSpool where wpId=? and wspDate Like ? and WspSector like ? and wspLL='ورود' and wspMaterial like ?;`,[wpId,date,sector,material],(err,result,fields)=>{
+  pool.query(`select * from xicorana.wireSpool where wpId like ? and wspDate Like ? and WspSector like ? and wspLL='ورود' and wspMaterial like ?;`,[wpId,date,sector,material],(err,result,fields)=>{
       
       try{
 
@@ -828,7 +832,7 @@ if (!type){
       
           let length = result.length;
 
-              pool.query(`select * from xicorana.insul where wpId=? and insEntryDate Like ? and insSector like ? and insLL='ورود' and insColor like ?;`,[wpId,date,sector,color],(err,result,fields)=>{
+              pool.query(`select * from xicorana.insul where wpId like ? and insEntryDate Like ? and insSector like ? and insLL='ورود' and insColor like ?;`,[wpId,date,sector,color],(err,result,fields)=>{
       
                 try{
           
@@ -842,7 +846,7 @@ if (!type){
                     
                     finalresult[1]=result;
                     length += result.length;
-                    pool.query(`select * from xicorana.finalproduct where wpId=? and fpSector like ? and fpLL='ورود' and fpType like ?;`,[wpId,sector,type],(err,result,fields)=>{
+                    pool.query(`select * from xicorana.finalproduct where wpId like ? and fpSector like ? and fpLL='ورود' and fpType like ?;`,[wpId,sector,type],(err,result,fields)=>{
       
                       try{
                 
@@ -1201,6 +1205,255 @@ app.get('/api/v1/users',authenticateToken, (req, res) => {
 
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////MODIRIAT
+
+
+app.get('/api/v1/adminrequest/sent',authenticateToken, (req, res) => {
+
+
+  console.log('hit sent admin req')
+  const { userId } = req.query
+
+  pool.query(`
+  SELECT * FROM xicorana.request where reqSender=?;
+  `,[userId],(err,result,fields)=>{
+
+      if(err){
+          
+          const data = String(err);
+          res.status(500).json({ success: false, error: `${data}` });
+          return console.log(err);
+          
+      }
+      if(result.length === 0 ){
+
+          res.status(404).json({ success: false, error: `درخواست ارسالی ای یافت نشد` });
+          return ;
+      }
+
+      res.status(200).json({ success: true, data: result });
+      return console.log(result);
+  });
+
+  
+  
+  // res.status(200).json({ success: true, data: people })
+});
+
+
+app.get('/api/v1/adminrequest/received',authenticateToken, (req, res) => {
+
+
+  console.log('hit received admin req')
+  const { userId } = req.query
+
+  pool.query(`
+  SELECT * FROM xicorana.request where reqReciever=? AND reqOk='pending';
+  `,[userId],(err,result,fields)=>{
+
+      if(err){
+          
+          const data = String(err);
+          res.status(500).json({ success: false, error: `${data}` });
+          return console.log(err);
+          
+      }
+      if(result.length === 0 ){
+
+          res.status(404).json({ success: false, error: `درخواست دریافتی ای یافت نشد` });
+          return ;
+      }
+
+      res.status(200).json({ success: true, data: result });
+      return console.log(result);
+  });
+
+  
+  
+  // res.status(200).json({ success: true, data: people })
+});
+
+
+app.delete('/api/v1/adminrequest/sent/delete/:reqId',authenticateToken, (req, res) => {
+
+
+  console.log('hit delete admin req')
+  const reqId = req.params.reqId;
+
+  pool.query(`
+  delete from xicorana.request where reqId=?;
+  `,[reqId],(err,result,fields)=>{
+
+      if(err){
+          
+          const data = String(err);
+          res.status(500).json({ success: false, error: `${data}` });
+          return console.log(err);
+          
+      }
+      if(result.affectedRows === 0 ){
+
+          res.status(404).json({ success: false, error: `درخواست ارسالی از پیش حذف شده و یا وجود ندارد` });
+          return ;
+      }
+
+      res.status(200).json({ success: true, data: 'درخواست ارسالی حذف شد' });
+      return console.log(result);
+  });
+
+  
+  
+  // res.status(200).json({ success: true, data: people })
+});
+
+
+app.put('/api/v1/adminrequest/received/approve/:reqId',authenticateToken, (req, res) => {
+
+
+  console.log('hit received admin req approve')
+  const reqId = req.params.reqId;
+
+  pool.query(`
+  Update xicorana.request Set reqOk='1' where reqId=?;
+  `,[reqId],(err,result,fields)=>{
+
+      if(err){
+          
+          const data = String(err);
+          res.status(500).json({ success: false, error: `${data}` });
+          return console.log(err);
+          
+      }
+      if(result.affectedRows === 0 ){
+
+          res.status(404).json({ success: false, error: `درخواست از پیش تایید شده و یا از طرف ارسال کننده حذف شده است` });
+          return ;
+      }
+
+      res.status(200).json({ success: true, data: 'درخواست با موفقیت تایید شد' });
+      return console.log(result);
+  });
+
+  
+  
+  // res.status(200).json({ success: true, data: people })
+});
+
+
+app.put('/api/v1/adminrequest/received/deny/:reqId',authenticateToken, (req, res) => {
+
+
+  console.log('hit received admin req deny')
+  const reqId = req.params.reqId;
+
+  pool.query(`
+  Update xicorana.request Set reqOk='0' where reqId='@reqId';
+  `,[reqId],(err,result,fields)=>{
+
+      if(err){
+          
+          const data = String(err);
+          res.status(500).json({ success: false, error: `${data}` });
+          return console.log(err);
+          
+      }
+      if(result.affectedRows === 0 ){
+
+          res.status(404).json({ success: false, error: `درخواست از پیش رد شده و یا از طرف ارسال کننده حذف شده است` });
+          return ;
+      }
+
+      res.status(200).json({ success: true, data: 'درخواست با موفقیت رد شد' });
+      return console.log(result);
+  });
+
+  
+  
+  // res.status(200).json({ success: true, data: people })
+});
+
+
+app.get('/api/v1/adminreport',authenticateToken, (req, res) => {
+
+  console.log('hit admin report');
+  const { searchType,wpId } = req.query
+  
+
+  let queryToRun='';
+
+  const queries = {
+      'wsp': `
+      SELECT *
+      FROM xicorana.wirespool 
+      WHERE wpId= ?;
+
+      `,
+      'ins': `
+      SELECT *
+      FROM xicorana.insul 
+      WHERE wpId= ?;
+      `,
+      'car': `
+      SELECT *
+      FROM xicorana.cart 
+      WHERE wpId= ?;
+
+      `,
+      'fip': `
+      SELECT *
+      FROM xicorana.finalproduct 
+      WHERE wpId= ?;
+      `
+    };
+    
+    switch (searchType) {
+      case 'wsp':
+        queryToRun = queries['wsp'];
+        break;
+      case 'ins':
+        queryToRun = queries['ins'];
+        break;
+      case 'car':
+        queryToRun = queries['car'];
+        break;
+      case 'fip':
+        queryToRun = queries['fip'];
+        break;
+      default:
+        res.status(400).json({ success: false, error: 'Invalid searchType' });
+        return;
+    }
+
+  console.log('Executing query:', queryToRun);
+  pool.query(queryToRun,[wpId],(err,result,fields)=>{
+      
+      try{
+
+          if(err){
+          
+              const data = String(err);
+              res.status(500).json({ success: false, error: `${data}` });
+              return console.log(err);
+          
+          }
+          
+          if (result.affectedRows === 0) {
+              res.status(404).json({ success: false, error: `مقداری یافت نشد از درست بودن مکان کار اطمینان حاصل نمایید` });
+              return;
+          }else{
+              console.log(result);
+              res.status(200).json({ success: true, data: result });
+          }
+
+
+      
+      }catch(err){
+          res.status(500).json({ success: false, error: `${err}` });
+      }
+  });
+
+  // res.status(200).json({ success: true, data: people })
+});
 
 
 
