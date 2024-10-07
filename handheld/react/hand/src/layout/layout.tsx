@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import Particles from "react-tsparticles";
 import { loadSlim } from "tsparticles-slim";

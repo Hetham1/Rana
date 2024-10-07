@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import jsQR from 'jsqr';
 import axios from 'axios';
 import { Button } from "@/components/ui/button";
-import { useNavigate } from 'react-router-dom';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,7 +26,7 @@ export default function QRScanner() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const scanIntervalRef = useRef<number | null>(null);
-  const navigate = useNavigate();
+  
 
   useEffect(() => {
     const startVideoStream = async () => {
@@ -45,7 +44,7 @@ export default function QRScanner() {
     };
   
     startVideoStream();
-  
+    startScanning();
     // Cleanup function to stop scanning and camera
     return () => {
       if (videoRef.current && videoRef.current.srcObject) {

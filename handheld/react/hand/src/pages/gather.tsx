@@ -62,7 +62,7 @@ export default function GatherPage() {
   const fetchOrderDetails = async (ordId: string) => {
     try {
       const token = localStorage.getItem('token')
-      const response = await axios.get(`${BASE_URL}/uidDetails/wsp1`, {
+      const response = await axios.get(`${BASE_URL}/uidDetails/${ordId}`, {
         headers: {
           'Authorization': `${token}`
         }
@@ -73,8 +73,7 @@ export default function GatherPage() {
       console.error('Error fetching order details:', error)
       if (axios.isAxiosError(error) && error.response?.status === 401) {
         alert("Your session has expired. Please log in again.")
-        // Redirect to login page or refresh token
-        // Example: window.location.href = '/login'
+       
       } else {
         alert("Failed to fetch order details. Please try again later.")
       }
@@ -84,6 +83,7 @@ export default function GatherPage() {
   const handleCardClick = (order: Order) => {
     setSelectedOrder(order)
     fetchOrderDetails(order.ordId)
+    console.log(selectedOrder)
   }
 
   return (

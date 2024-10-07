@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import jsQR from 'jsqr';
 import axios from 'axios';
 import { Button } from "@/components/ui/button";
@@ -30,10 +30,10 @@ import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
 import { BASE_URL } from '../hooks/apiconfig';
 
 // Define the type for the comboBox data
-interface LetterOption {
-  value: string;
-  label: string;
-}
+// interface LetterOption {
+//   value: string;
+//   label: string;
+// }
 
 export default function Relocate() {
   const videoRef = useRef<HTMLVideoElement>(null);
