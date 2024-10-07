@@ -102,8 +102,8 @@ export default function GatherPage() {
       );
 
       if (response.data.success) {
-        alert('Order permitted successfully');
-        setIsDialogOpen(false); // Close the pop-up after success
+        alert('سفارش تایید شد');
+        setIsDialogOpen(false); 
       } else {
         alert('Failed to permit the order');
       }

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import jsQR from 'jsqr';
 import axios from 'axios';
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input"; // Import Shadcn Input component
 import { useNavigate } from 'react-router-dom';
 import {
   Popover,
@@ -19,6 +20,7 @@ export default function QRScanner() {
   const [flag, setFlag] = useState<string | null>(null); // To store the flag state
   const [comboBoxItems, setComboBoxItems] = useState<any[]>([]);
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
+  const [driverName, setDriverName] = useState<string>(''); // State for driver name input
   const [isScanning, setIsScanning] = useState(false);
   const scanIntervalRef = useRef<number | null>(null);
   const navigate = useNavigate();
@@ -115,7 +117,6 @@ export default function QRScanner() {
       setFlag(flagState.toString());
 
       if (flagState === false) {
-        // Show red XCircle for 4 seconds
         setTimeout(() => setFlag(null), 4000);
       }
     } catch (error) {
@@ -124,7 +125,7 @@ export default function QRScanner() {
   };
 
   const clearFields = async () => {
-    if (!selectedItem || !scanResult) {
+    if (!driverName || !scanResult) {
       console.error('Both driver name and scan result must be present.');
       return;
     }
@@ -133,7 +134,7 @@ export default function QRScanner() {
       const token = localStorage.getItem('token');
 
       const postData = {
-        tpDriverName: selectedItem,  // Combo box value (driver's name)
+        tpDriverName: driverName,  // Value from text input (driver's name)
         ordId: scanResult            // Scanned QR code result (order ID)
       };
 
@@ -148,7 +149,7 @@ export default function QRScanner() {
         console.log('POST request successful:', response.data);
         setScanResult(null);
         setFlag(null);
-        setSelectedItem(null);  // Clear the combo box selection
+        setDriverName('');  // Clear the text input
       } else {
         console.error('POST request failed:', response.data);
       }
@@ -182,39 +183,18 @@ export default function QRScanner() {
         )}
       </div>
 
-      {/* Shadcn Combo Box */}
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button variant="outline">{selectedItem ? selectedItem : 'انتخاب راننده'}</Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-80 p-2">
-          <Command>
-            <CommandInput placeholder="جستجو" />
-            <CommandList>
-              <CommandEmpty>No results found.</CommandEmpty>
-              <CommandGroup>
-                {comboBoxItems.map((item) => (
-                  <CommandItem key={item.id} onSelect={() => setSelectedItem(item.name)}>
-                    {item.name}
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            </CommandList>
-          </Command>
-        </PopoverContent>
-      </Popover>
-
-      {/* <div className="flex space-x-4">
-        <Button onClick={startScanning} disabled={isScanning} variant="outline">
-          Start Scanning
-        </Button>
-        <Button onClick={stopScanning} disabled={!isScanning} variant="outline">
-          Stop Scanning
-        </Button>
-      </div> */}
+      {/* Shadcn Text Input for Driver Name */}
+      <div className="w-full max-w-md">
+        <Input 
+        className='text-center'
+          placeholder="نام راننده" 
+          value={driverName} 
+          onChange={(e) => setDriverName(e.target.value)} // Update state on input change
+        />
+      </div>
 
       {/* Conditionally render the تایید button */}
-      {selectedItem && flag === 'true' && (
+      {driverName && flag === 'true' && (
         <Button onClick={clearFields} variant="default">
           تایید
         </Button>
