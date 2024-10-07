@@ -39,6 +39,7 @@ export default function QRScanner() {
     };
     startVideoStream();
     fetchComboBoxItems();
+    startScanning();
 
     return () => {
       if (videoRef.current && videoRef.current.srcObject) {
@@ -167,7 +168,7 @@ export default function QRScanner() {
       </div>
 
       <div className="w-full text-center p-4 bg-blue-200">
-        <h2 className="text-lg font-semibold">Scan Result:</h2>
+        <h2 className="text-lg font-semibold">نتیجه اسکن:</h2>
         {/* Display Scan Result Here */}
         {scanResult && (
           <>
@@ -184,11 +185,11 @@ export default function QRScanner() {
       {/* Shadcn Combo Box */}
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant="outline">{selectedItem ? selectedItem : 'Select Item'}</Button>
+          <Button variant="outline">{selectedItem ? selectedItem : 'انتخاب راننده'}</Button>
         </PopoverTrigger>
         <PopoverContent className="w-80 p-2">
           <Command>
-            <CommandInput placeholder="Search item..." />
+            <CommandInput placeholder="جستجو" />
             <CommandList>
               <CommandEmpty>No results found.</CommandEmpty>
               <CommandGroup>
@@ -203,14 +204,14 @@ export default function QRScanner() {
         </PopoverContent>
       </Popover>
 
-      <div className="flex space-x-4">
+      {/* <div className="flex space-x-4">
         <Button onClick={startScanning} disabled={isScanning} variant="outline">
           Start Scanning
         </Button>
         <Button onClick={stopScanning} disabled={!isScanning} variant="outline">
           Stop Scanning
         </Button>
-      </div>
+      </div> */}
 
       {/* Conditionally render the تایید button */}
       {selectedItem && flag === 'true' && (

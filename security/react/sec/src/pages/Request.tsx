@@ -160,13 +160,13 @@ export default function Requests() {
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>{request.reqType} Details</AlertDialogTitle>
-                    <AlertDialogDescription>
+                    <AlertDialogTitle className='text-right'>{request.reqType} </AlertDialogTitle>
+                    <AlertDialogDescription className='text-right'>
                       {request.reqDetail}
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Close</AlertDialogCancel>
+                    <AlertDialogCancel>بستن</AlertDialogCancel>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
