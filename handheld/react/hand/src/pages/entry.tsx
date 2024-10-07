@@ -105,7 +105,7 @@ export default function Entry() {
 
   return (
     <div className="w-full flex flex-col items-center justify-center p-4 space-y-6 ">
-      <p className="text-xl font-semibold">{workPlaceName || 'Loading workplace name...'}</p>
+      <p className="text-xl font-semibold">{workPlaceName || 'درحال بارگذاری...'}</p>
 
       <div className="p-4 flex flex-row gap-6 rounded-md bg-whitebox">
         <div className="flex flex-col justify-center items-right gap-2 bg-whitebox p-4 rounded-md">
@@ -118,11 +118,11 @@ export default function Entry() {
           type="radio"
           name="option"
           value="1"
-          className="hidden"
+          className="hidden text-center"
           onChange={handleRadioChange}
           checked={radioOption === '1'}
         />
-        ورود رسانا
+        ورود
       </label>
 
       <label
@@ -134,11 +134,11 @@ export default function Entry() {
           type="radio"
           name="option"
           value="2"
-          className="hidden"
+          className="hidden text-center"
           onChange={handleRadioChange}
           checked={radioOption === '2'}
         />
-        ورود مواد شیمیایی
+        خروج
       </label>
 
       <label
@@ -153,8 +153,9 @@ export default function Entry() {
           className="hidden"
           onChange={handleRadioChange}
           checked={radioOption === '3'}
+          disabled={true}
         />
-        ورود متفرقه
+        ریجکت
       </label>
       </div>
 
@@ -199,7 +200,7 @@ export default function Entry() {
                         </CommandItem>
                       ))
                     ) : (
-                      <div>No data available</div> // Display a fallback if there's no data
+                      <div>مکانی یافت نشد</div> // Display a fallback if there's no data
                     )}
                   </CommandGroup>
                 </CommandList>
@@ -211,7 +212,7 @@ export default function Entry() {
 
       <div>
         <Button variant="outline" onClick={handleSubmit} disabled={isSubmitDisabled}>
-          Submit
+          ثبت
         </Button>
       </div>
     </div>

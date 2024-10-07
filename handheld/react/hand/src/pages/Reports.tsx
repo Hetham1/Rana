@@ -3,7 +3,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { MenuIcon } from 'lucide-react';
+import { AlignJustify, } from 'lucide-react';
 import axios from 'axios';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'; // Import for modal
 import {
@@ -46,6 +46,7 @@ export default function Gozaresh() {
     try {
       const token = localStorage.getItem('token');
       const queries = `wpId=${parameter1}&date=${parameter2}&sector=${parameter3}&material=${parameter4}&color=${parameter5}&type=${parameter6}`;
+      console.log(parameter4)
       const response = await axios.get(`${BASE_URL}/report/query?${queries}`, {
         headers: {
           'Authorization': `${token}`,
@@ -90,16 +91,16 @@ export default function Gozaresh() {
     <div className="p-4">
       <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
         <SheetTrigger asChild>
-          <Button variant="default" size="icon" className='bg-suppink'>
-            <MenuIcon className="h-4 w-4" />
+          <Button variant="default" size='icon' className='bg-suppink w-12 p-0'>
+            <AlignJustify/>
           </Button>
         </SheetTrigger>
-        <SheetContent side="left">
-          <h2 className="text-lg text-left font-semibold mb-4">پارامتر ها</h2>
+        <SheetContent side="bottom">
+          <h2 className="text-lg text-center font-semibold mb-4">پارامتر ها</h2>
           <div className="space-y-4">
             <Input
               className='text-center'
-              placeholder="wpid"
+              placeholder="شناسه مکان"
               value={parameter1}
               onChange={(e) => setParameter1(e.target.value)}
             />
@@ -113,8 +114,8 @@ export default function Gozaresh() {
               <div className="w-full flex justify-center">
                 <Popover>
                   <PopoverTrigger asChild>
-                    <Button variant="outline" className="w-full">
-                      {parameter3 || 'سکتور را انتخاب کنید'}
+                    <Button variant="outline" className="w-full font-extralight">
+                      {parameter3 || 'سکتور '}
                       <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                   </PopoverTrigger>
@@ -147,19 +148,19 @@ export default function Gozaresh() {
             </div>
             <Input
               className='text-center'
-              placeholder="material"
+              placeholder="جنس قرقره"
               value={parameter4}
               onChange={(e) => setParameter4(e.target.value)}
             />
             <Input
               className='text-center'
-              placeholder="color"
+              placeholder="رنگ عایق"
               value={parameter5}
               onChange={(e) => setParameter5(e.target.value)}
             />
             <Input
               className='text-center'
-              placeholder="type"
+              placeholder="نوع محصول"
               value={parameter6}
               onChange={(e) => setParameter6(e.target.value)}
             />
