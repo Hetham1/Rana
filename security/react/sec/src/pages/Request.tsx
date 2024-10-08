@@ -133,7 +133,7 @@ export default function Requests() {
   const isFormValid = formData.reqType && comboValue;
 
   if (isLoading) {
-    return <div className="flex justify-center items-center h-full">Loading...</div>;
+    return <div className="flex justify-center items-center h-full">در حال بارگذاری...</div>;
   }
 
   return (
