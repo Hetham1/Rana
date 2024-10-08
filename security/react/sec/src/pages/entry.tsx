@@ -47,7 +47,7 @@ export default function Entry() {
     const workPlace = localStorage.getItem('workPlace'); 
 
     if (workPlace) {
-      // Fetch workplace-specific data
+      
       axios.get(`${BASE_URL}/workplace?workPlace=${workPlace}`)
         .then((response) => {
           const { data } = response.data; // Extract data from response

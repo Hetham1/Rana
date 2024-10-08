@@ -3,13 +3,13 @@ import jsQR from 'jsqr';
 import axios from 'axios';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input"; // Import Shadcn Input component
-import { useNavigate } from 'react-router-dom';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger
-} from "@/components/ui/popover";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+// import { useNavigate } from 'react-router-dom';
+// import {
+//   Popover,
+//   PopoverContent,
+//   PopoverTrigger
+// } from "@/components/ui/popover";
+// import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { BASE_URL } from '../hooks/apiconfig';
 import { XCircle } from 'lucide-react';
 
@@ -18,12 +18,12 @@ export default function QRScanner() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [scanResult, setScanResult] = useState<string | null>(null);
   const [flag, setFlag] = useState<string | null>(null); // To store the flag state
-  const [comboBoxItems, setComboBoxItems] = useState<any[]>([]);
-  const [selectedItem, setSelectedItem] = useState<string | null>(null);
+  // const [comboBoxItems, setComboBoxItems] = useState<any[]>([]);
+  // const [selectedItem, setSelectedItem] = useState<string | null>(null);
   const [driverName, setDriverName] = useState<string>(''); // State for driver name input
   const [isScanning, setIsScanning] = useState(false);
   const scanIntervalRef = useRef<number | null>(null);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   useEffect(() => {
     const startVideoStream = async () => {
@@ -40,7 +40,7 @@ export default function QRScanner() {
       }
     };
     startVideoStream();
-    fetchComboBoxItems();
+    // fetchComboBoxItems();
     startScanning();
 
     return () => {
@@ -52,18 +52,18 @@ export default function QRScanner() {
     };
   }, []);
 
-  const fetchComboBoxItems = () => {
-    try {
-      const comboBoxItems = [
-        { id: 1, name: 'بوگاتی' },
-        { id: 2, name: 'بوگاتی قرمز' },
-        { id: 3, name: 'بوگاتی سبزم خراب شد😭' }
-      ];
-      setComboBoxItems(comboBoxItems);
-    } catch (error) {
-      console.error('Error setting combo box items:', error);
-    }
-  };
+  // const fetchComboBoxItems = () => {
+  //   try {
+  //     const comboBoxItems = [
+  //       { id: 1, name: 'بوگاتی' },
+  //       { id: 2, name: 'بوگاتی قرمز' },
+  //       { id: 3, name: 'بوگاتی سبزم خراب شد😭' }
+  //     ];
+  //     setComboBoxItems(comboBoxItems);
+  //   } catch (error) {
+  //     console.error('Error setting combo box items:', error);
+  //   }
+  // };
 
   const startScanning = () => {
     if (!isScanning) {

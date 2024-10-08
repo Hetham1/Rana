@@ -9,6 +9,7 @@ import Reports from './pages/Reports';
 import Login from './pages/login';
 import Relocate from './pages/Relocate';
 import Gather from './pages/gather';
+import Produce from './pages/Produce';
 import ProtectedRoute from './layout/protect';
 
 function App() {
@@ -52,6 +53,7 @@ function App() {
           <Route path="/rep" element={<Reports />} />
           <Route path="/rel" element={<Relocate />} />
           <Route path="/taj" element={<Gather />} />
+          <Route path="/tol" element={<Produce/>} />
         </Route>
 
         {/* Fallback route for undefined paths */}

@@ -62,7 +62,7 @@ export default function GatherPage() {
   const fetchOrderDetails = async (ordId: string) => {
     try {
       const token = localStorage.getItem('token')
-      const response = await axios.get(`${BASE_URL}/uidDetails/${ordId}`, {
+      const response = await axios.get(`${BASE_URL}/orderDetails/${ordId}`, {
         headers: {
           'Authorization': `${token}`
         }

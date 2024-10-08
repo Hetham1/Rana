@@ -496,6 +496,44 @@ app.get('/api/v1/order',authenticateToken, (req, res) => {
 });
 
 
+app.get('/api/v1/orderDetails/:orderId',authenticateToken, (req, res) => {
+
+
+  const { orderId } = req.params.orderId;
+  
+
+  console.log('hit get orderDetails')
+
+  pool.query(`
+ SELECT c.prodId, p.prodName, c.contCount
+FROM xicorana.contain c
+JOIN xicorana.product p ON c.prodId = p.prodId
+WHERE c.ordId = ?;
+  `,[orderId],(err,result,fields)=>{
+
+      if(err){
+          
+          const data = String(err);
+          res.status(500).json({ success: false, error: `${data}` });
+          return console.log(err);
+          
+      }
+      if(result.length === 0 ){
+
+          res.status(404).json({ success: false, error: `سفارشی یافت نشد` });
+          return ;
+      }
+
+      res.status(200).json({ success: true, data: result });
+      return console.log(result);
+  });
+
+  
+  
+  // res.status(200).json({ success: true, data: people })
+});
+
+
 
 
 app.get('/api/v1/uidDetails/:uid',authenticateToken, (req, res) => {
@@ -696,7 +734,7 @@ app.put('/api/v1/pp/assign/:ppId',authenticateToken, (req, res) => {
   const uid_dash=uid+'-';
   console.log(ppId,uid);
 
-  let queryToRun='';
+  let queryToRun=[];
 
   const queries = {
       'wsp': `
@@ -721,10 +759,12 @@ app.put('/api/v1/pp/assign/:ppId',authenticateToken, (req, res) => {
     
     switch (uid.substring(0, 3)) {
       case 'wsp':
-        queryToRun = queries['wsp','wsp2'];
+        queryToRun[0] = queries['wsp'];
+        queryToRun[1] = queries['wsp2'];
         break;
       case 'ins':
-        queryToRun = queries['ins','ins2'];
+        queryToRun[0] = queries['ins'];
+        queryToRun[1] = queries['ins2'];
         break;
       default:
         res.status(400).json({ success: false, error: 'Invalid uid prefix' });
@@ -785,6 +825,9 @@ app.put('/api/v1/pp/assign/:ppId',authenticateToken, (req, res) => {
 app.get('/api/v1/report/query',authenticateToken, (req, res) => {
 
   let { wpId,date,sector,material,color,type } = req.query;
+  let materialFlag=0;
+  let colorFlag=0;
+  let typeFlag=0;
   if (!wpId){
     wpId='%';
 }else{
@@ -804,16 +847,19 @@ if (!material){
     material='%';
 }else{
     material+='%'
+    materialFlag=1
 }
 if (!color){
     color='%';
 }else{
     color+='%'
+    colorFlag=1
 }
 if (!type){
   type='%';
 }else{
   type+='%'
+  typeFlag=0
 }
 
   pool.query(`select * from xicorana.wireSpool where wpId like ? and wspDate Like ? and WspSector like ? and wspLL='ورود' and wspMaterial like ?;`,[wpId,date,sector,material],(err,result,fields)=>{
@@ -828,7 +874,10 @@ if (!type){
           
           }
           let finalresult=[]
-          finalresult[0]=result
+          if (colorFlag===0 && typeFlag===0){
+            finalresult[0]=result
+          }
+          // finalresult[0]=result
       
           let length = result.length;
 
@@ -844,7 +893,10 @@ if (!type){
                     
                     }
                     
-                    finalresult[1]=result;
+                    if (materialFlag===0 && typeFlag===0){
+                        finalresult[1]=result
+                    }
+                    // finalresult[1]=result;
                     length += result.length;
                     pool.query(`select * from xicorana.finalproduct where wpId like ? and fpSector like ? and fpLL='ورود' and fpType like ?;`,[wpId,sector,type],(err,result,fields)=>{
       
@@ -858,7 +910,11 @@ if (!type){
                           
                           }
                           
-                          finalresult[2]=result;
+
+                          if (materialFlag===0 && colorFlag===0){
+                            finalresult[2]=result
+                        }
+                          // finalresult[2]=result;
                           length += result.length;
                           if(err){
           
@@ -1464,10 +1520,10 @@ app.get('/api/v1/adminreport',authenticateToken, (req, res) => {
 
 //start the https server
 const PORT = 5000;
-// httpsServer.listen(PORT, 'localhost', () => {
-//     console.log(`HTTPS Server running on https://0.0.0.0:${PORT}`);
-// });
-app.listen(PORT,()=>{
+httpsServer.listen(PORT, '0.0.0.0', () => {
+    console.log(`HTTPS Server running on https://0.0.0.0:${PORT}`);
+});
+// app.listen(PORT,()=>{
 
-    console.log('server running on port ' + PORT )
-})
+//     console.log('server running on port ' + PORT )
+// })
