@@ -2,12 +2,9 @@ import { useState, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './layout/layout';
 import Home from './pages/home';
-import Entry from './pages/entry';
 import QRScanner from './pages/QRScanner';
 import Request from './pages/Request';
-import Reports from './pages/Reports';
 import Login from './pages/login';
-import Relocate from './pages/Relocate';
 import Gather from './pages/gather';
 import ProtectedRoute from './layout/protect';
 
@@ -46,11 +43,8 @@ function App() {
           }
         >
           <Route path="/" element={<Home />} />
-          <Route path="/entry" element={<Entry />} />
           <Route path="/qr" element={<QRScanner />} />
           <Route path="/req" element={<Request />} />
-          <Route path="/rep" element={<Reports />} />
-          <Route path="/rel" element={<Relocate />} />
           <Route path="/taj" element={<Gather />} />
         </Route>
 

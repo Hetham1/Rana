@@ -12,32 +12,18 @@ interface Order {
   custName: string;
 }
 
-interface OrderDetails {
-  wspId: string;
-  wspDirection: string;
-  wspMaterial: string;
-  wspType: number;
-  wspPp: string;
-  wspState: string;
-  wspDate: string;
-  wspIn: string;
-  wspOut: string;
-  wspLength: number;
-  wspWempty: number;
-  wspWfull: number;
-  wspWpure: number;
-  wspQC: number;
-  wpId: string;
-  wspLL: string;
-  wspSector: string;
+interface Product {
+  prodId: string;
+  prodName: string;
+  contCount: number;
 }
 
 export default function GatherPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
-  const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
+  const [products, setProducts] = useState<Product[]>([]); // Updated state for products
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isPermitting, setIsPermitting] = useState(false); // Track permit button state
+  const [isPermitting, setIsPermitting] = useState(false);
 
   useEffect(() => {
     fetchOrders();
@@ -45,7 +31,6 @@ export default function GatherPage() {
 
   const fetchOrders = async () => {
     try {
-      
       const token = localStorage.getItem('token');
       const response = await axios.get(`${BASE_URL}/gatheredexit`, {
         headers: {
@@ -61,19 +46,17 @@ export default function GatherPage() {
   const fetchOrderDetails = async (ordId: string) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`${BASE_URL}/uidDetails/wsp1`, {
+      const response = await axios.get(`${BASE_URL}/orderDetails/${ordId}`, {
         headers: {
           Authorization: `${token}`,
         },
       });
-      setOrderDetails(response.data.data[0]);
+      setProducts(response.data.data); // Set product details from the response
       setIsDialogOpen(true);
     } catch (error) {
       console.error('Error fetching order details:', error);
       if (axios.isAxiosError(error) && error.response?.status === 401) {
         alert('Your session has expired. Please log in again.');
-        // Redirect to login page or refresh token
-        // Example: window.location.href = '/login'
       } else {
         alert('Failed to fetch order details. Please try again later.');
       }
@@ -86,24 +69,25 @@ export default function GatherPage() {
   };
 
   const handlePermit = async () => {
-    if (!selectedOrder) return; // Ensure there is a selected order
-
+    if (!selectedOrder) return;
+  
     try {
-      setIsPermitting(true); // Disable button while submitting
+      setIsPermitting(true);
       const token = localStorage.getItem('token');
       const response = await axios.put(
-        `${BASE_URL}/ordersc/${selectedOrder.ordId}`, // Use selectedOrder.ordId
-        {}, // Empty data object for PUT request
+        `${BASE_URL}/ordersc/${selectedOrder.ordId}`,
+        {},
         {
           headers: {
             Authorization: `${token}`,
           },
         }
       );
-
+  
       if (response.data.success) {
         alert('سفارش تایید شد');
         setIsDialogOpen(false); 
+        fetchOrders(); // Refresh the order list after successful permit
       } else {
         alert('Failed to permit the order');
       }
@@ -111,7 +95,7 @@ export default function GatherPage() {
       console.error('Error permitting order:', error);
       alert(error);
     } finally {
-      setIsPermitting(false); // Re-enable button
+      setIsPermitting(false);
     }
   };
 
@@ -130,13 +114,13 @@ export default function GatherPage() {
             </CardHeader>
             <CardContent>
               <p>
-                <strong>Order ID:</strong> {order.ordId}
+                <strong>شناسه سفارش:</strong> {order.ordId}
               </p>
               <p>
-                <strong>Situation:</strong> {order.orderSituation}
+                <strong>وضعیت سفارش:</strong> {order.orderSituation}
               </p>
               <p>
-                <strong>Date:</strong> {new Date(order.orderDate).toLocaleDateString()}
+                <strong>تاریخ:</strong> {new Date(order.orderDate).toLocaleDateString()}
               </p>
             </CardContent>
           </Card>
@@ -146,67 +130,21 @@ export default function GatherPage() {
       <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <AlertDialogContent className="max-w-3xl">
           <AlertDialogHeader>
-            <AlertDialogTitle>Order Details</AlertDialogTitle>
+            <AlertDialogTitle>جزییات سفارش</AlertDialogTitle>
           </AlertDialogHeader>
-          {orderDetails && (
-            <div className="grid grid-cols-2 gap-4">
-              <p>
-                <strong>WSP ID:</strong> {orderDetails.wspId}
-              </p>
-              <p>
-                <strong>Direction:</strong> {orderDetails.wspDirection}
-              </p>
-              <p>
-                <strong>Material:</strong> {orderDetails.wspMaterial}
-              </p>
-              <p>
-                <strong>Type:</strong> {orderDetails.wspType}
-              </p>
-              <p>
-                <strong>PP:</strong> {orderDetails.wspPp}
-              </p>
-              <p>
-                <strong>State:</strong> {orderDetails.wspState}
-              </p>
-              <p>
-                <strong>Date:</strong> {orderDetails.wspDate}
-              </p>
-              <p>
-                <strong>In:</strong> {orderDetails.wspIn}
-              </p>
-              <p>
-                <strong>Out:</strong> {orderDetails.wspOut}
-              </p>
-              <p>
-                <strong>Length:</strong> {orderDetails.wspLength}
-              </p>
-              <p>
-                <strong>Empty Weight:</strong> {orderDetails.wspWempty}
-              </p>
-              <p>
-                <strong>Full Weight:</strong> {orderDetails.wspWfull}
-              </p>
-              <p>
-                <strong>Pure Weight:</strong> {orderDetails.wspWpure}
-              </p>
-              <p>
-                <strong>QC:</strong> {orderDetails.wspQC}
-              </p>
-              <p>
-                <strong>WP ID:</strong> {orderDetails.wpId}
-              </p>
-              <p>
-                <strong>LL:</strong> {orderDetails.wspLL}
-              </p>
-              <p>
-                <strong>Sector:</strong> {orderDetails.wspSector}
-              </p>
-            </div>
-          )}
+          <div className="grid grid-cols-1 gap-4">
+            {products.map((product) => (
+              <div key={product.prodId} className="border-b pb-2">
+                <p><strong>شناسه محصول:</strong> {product.prodId}</p>
+                <p><strong>نام محصول:</strong> {product.prodName}</p>
+                <p><strong>تعداد در کانتینر:</strong> {product.contCount}</p>
+              </div>
+            ))}
+          </div>
           <div className="mt-4 flex justify-end gap-4">
             <Button onClick={() => setIsDialogOpen(false)}>بستن</Button>
             <Button
-              onClick={handlePermit} // Fix function call here
+              onClick={handlePermit}
               disabled={isPermitting}
               className={isPermitting ? "opacity-50 cursor-not-allowed" : ""}
             >
