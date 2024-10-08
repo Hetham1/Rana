@@ -21,7 +21,7 @@ interface Product {
 
 export default function GatherPage() {
   const [orders, setOrders] = useState<Order[]>([]);
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null); // This is correct
   const [orderDetails, setOrderDetails] = useState<Product[] | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -46,6 +46,7 @@ export default function GatherPage() {
 
   const fetchOrderDetails = async (ordId: string) => {
     try {
+      console.log(selectedOrder)
       const token = localStorage.getItem('token');
       const response = await axios.get(`${BASE_URL}/orderDetails/${ordId}`, {
         headers: {
@@ -65,7 +66,7 @@ export default function GatherPage() {
   };
 
   const handleCardClick = (order: Order) => {
-    setSelectedOrder(order);
+    setSelectedOrder(order); // Set the selected order
     fetchOrderDetails(order.ordId);
   };
 
