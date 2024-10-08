@@ -499,7 +499,7 @@ app.get('/api/v1/order',authenticateToken, (req, res) => {
 app.get('/api/v1/orderDetails/:orderId',authenticateToken, (req, res) => {
 
 
-  const { orderId } = req.params.orderId;
+  const { orderId } = req.params;
   
 
   console.log('hit get orderDetails')
