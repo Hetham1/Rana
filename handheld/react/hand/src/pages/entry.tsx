@@ -18,7 +18,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-import { BASE_URL } from '../hooks/apiconfig';
+
 
 // Define the type for the workplace data
 interface Workplace {
@@ -48,8 +48,8 @@ export default function Entry() {
     const token = localStorage.getItem('token')
 
     if (workPlace) {
-      // Fetch workplace-specific data
-      axios.get(`${BASE_URL}/workplace?workPlace=${workPlace}`, {
+      const apiUrl = import.meta.env.VITE_API_URL || 'https://defaulturl.com';
+      axios.get(`${apiUrl}/workplace?workPlace=${workPlace}`, {
         headers: {
           'Authorization': `${token}`
         }
@@ -65,7 +65,7 @@ export default function Entry() {
         });
 
       // Fetch all workplace data for the combo box
-      axios.get(`${BASE_URL}/workplace`, {
+      axios.get(`${apiUrl}/workplace`, {
         headers: {
           'Authorization': `${token}`
         }

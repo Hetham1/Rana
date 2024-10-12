@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-import { BASE_URL } from '../hooks/apiconfig';
+// import { BASE_URL } from '../hooks/apiconfig';
+
+
 
 const Login = ({ onLogin }: { onLogin: () => void }) => {
   const [username, setUsername] = useState('');
@@ -14,7 +16,8 @@ const Login = ({ onLogin }: { onLogin: () => void }) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post(`${BASE_URL}/login`, {
+      const apiUrl = import.meta.env.VITE_API_URL || 'https://defaulturl.com';
+      const response = await axios.post(`${apiUrl}/login`, {
         username,
         password,
       });
