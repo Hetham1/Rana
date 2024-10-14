@@ -13,16 +13,13 @@ import Produce from './pages/Produce';
 import ProtectedRoute from './layout/protect';
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    // Check for token in localStorage at initialization
-    return !!localStorage.getItem('token');
-  });
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);  // Loading state
 
   const handleLogin = () => {
     setIsAuthenticated(true);
   };
 
-  // Optionally recheck authentication when the component mounts
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -30,15 +27,21 @@ function App() {
     } else {
       setIsAuthenticated(false);
     }
+    setIsLoading(false);  
   }, []);
+
+  if (isLoading) {
+    
+    return <div>درحال بارگذاری</div>;
+  }
 
   return (
     <div className="w-screen h-screen overflow-hidden">
       <Routes>
-        {/* Public route for login */}
+        
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
 
-        {/* Private routes wrapped in ProtectedRoute */}
+       
         <Route
           element={
             <ProtectedRoute isAuthenticated={isAuthenticated}>
@@ -53,10 +56,10 @@ function App() {
           <Route path="/rep" element={<Reports />} />
           <Route path="/rel" element={<Relocate />} />
           <Route path="/taj" element={<Gather />} />
-          <Route path="/tol" element={<Produce/>} />
+          <Route path="/tol" element={<Produce />} />
         </Route>
 
-        {/* Fallback route for undefined paths */}
+       
         <Route path="*" element={<Navigate to={isAuthenticated ? "/" : "/login"} />} />
       </Routes>
     </div>

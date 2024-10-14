@@ -49,3 +49,9 @@
         /chizayee ke beyne safhe ha moshtarake (masalan hesader hand/sec) tuye "src > layout > layout.tsx" ast
         /page haye motefavet ke avaz mishan tuye "src > pages > ..." hastan
         /route haye app tuye "src > App.tsx" ke default appaye react e hastan
+
+
+
+//COMMENTS
+ 
+        /hame chiz comment dare va hameye commenta ba codium generate shode (bad az nahayee shodan code) chun man koonam goshade

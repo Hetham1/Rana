@@ -9,16 +9,13 @@ import Gather from './pages/gather';
 import ProtectedRoute from './layout/protect';
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    // Check for token in localStorage at initialization
-    return !!localStorage.getItem('token');
-  });
+  const [isAuthenticated, setIsAuthenticated] = useState(false); 
+  const [isLoading, setIsLoading] = useState(true); 
 
   const handleLogin = () => {
     setIsAuthenticated(true);
   };
 
-  // Optionally recheck authentication when the component mounts
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -26,7 +23,13 @@ function App() {
     } else {
       setIsAuthenticated(false);
     }
+    setIsLoading(false); // Authentication check completed
   }, []);
+
+  if (isLoading) {
+    // Show a loading screen while authentication is being checked
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="w-screen h-screen overflow-hidden">

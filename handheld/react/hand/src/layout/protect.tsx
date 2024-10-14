@@ -9,6 +9,7 @@ const ProtectedRoute = ({ isAuthenticated, children }: { isAuthenticated: boolea
     const token = localStorage.getItem('token');
     
     if (!token) {
+      // Navigate to login if no token is found in localStorage
       navigate('/login');
     }
 
@@ -31,7 +32,13 @@ const ProtectedRoute = ({ isAuthenticated, children }: { isAuthenticated: boolea
     };
   }, [navigate]);
 
-  return isAuthenticated ? children : <Navigate to="/login" replace />;
+  // If not authenticated, redirect to login immediately
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  // Otherwise, render protected content
+  return children;
 };
 
 export default ProtectedRoute;
