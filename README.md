@@ -16,10 +16,10 @@
 
                 //ADMIN_DASHBOARD
 
-                    /dota folder dakheleshe yeki "admin" va unyeki "dashboard"
+                        /dota folder dakheleshe yeki "admin" va unyeki "dashboard"
 
-                     **version nahayee (ke ba shadcn zadam az aval) tuye foldere "admin" qarar gerefte**
-                    -version qadimi (ke be api vasl nist va static va zeshte) tuye foldere "dashboard" qarar gerefte
+                        **version nahayee (ke ba shadcn zadam az aval) tuye foldere "admin" qarar gerefte**
+                        -version qadimi (ke be api vasl nist va static va zeshte) tuye foldere "dashboard" qarar gerefte
 
                 //OTHER_DIRECTORIES
 
