@@ -44,7 +44,7 @@ export default function Component() {
 
   useEffect(() => {
     const apiUrl = import.meta.env.VITE_API_URL;
-    const userId = localStorage.getItem("userId");
+    const userId = 'user1';
     axios
       .get(`${apiUrl}/adminrequest/sent?userId=${userId}`, {
         headers: {
@@ -90,8 +90,8 @@ export default function Component() {
   return (
     <Card dir="rtl">
       <CardHeader>
-        <CardTitle>درخواست‌ها</CardTitle>
-        <CardDescription>مدیریت درخواست‌ها و مشاهده وضعیت آن‌ها.</CardDescription>
+        <CardTitle>درخواست‌های ارسالی</CardTitle>
+        <CardDescription>مدیریت درخواست‌های ارسالی و مشاهده وضعیت آن‌ها.</CardDescription>
       </CardHeader>
       <CardContent>
         <Table>

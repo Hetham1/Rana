@@ -2,7 +2,6 @@ import { useState } from "react";
 import axios from "axios";
 import {
   Drawer,
-//   DrawerClose,
   DrawerContent,
   DrawerFooter,
   DrawerHeader,
@@ -21,11 +20,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-// Define the data structure
 interface ReportData {
-  id: string; // Adjust according to your actual data structure
-  name: string; // Adjust according to your actual data structure
-  value: string; // Adjust according to your actual data structure
+  [key: string]: string | number | null; // Data can have different types, adjust as necessary
 }
 
 export default function Report() {
@@ -42,7 +38,7 @@ export default function Report() {
     axios
       .get(`${apiUrl}/adminreport?${queris}`, {
         headers: {
-          Authorization: localStorage.getItem("token"), // Adjust according to your token logic
+          Authorization: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImpvaG5fZG9lIiwiaWF0IjoxNzI4Mzc5NTY0fQ.H0OZY653a-Of1Jmfq30T3dsh-TVeaH40HJyLJdTdimY', // Adjust this based on your token logic
         },
       })
       .then((response) => {
@@ -53,6 +49,22 @@ export default function Report() {
         console.error("Error fetching report data:", error);
         setLoading(false);
       });
+  };
+
+  // Extract table headers dynamically from the first data item
+  const getTableHeaders = () => {
+    if (data.length === 0) return [];
+    return Object.keys(data[0]);
+  };
+
+  const renderTableRows = () => {
+    return data.map((item, index) => (
+      <TableRow key={index}>
+        {Object.values(item).map((value, idx) => (
+          <TableCell key={idx}>{value ?? "N/A"}</TableCell>
+        ))}
+      </TableRow>
+    ));
   };
 
   return (
@@ -70,7 +82,7 @@ export default function Report() {
           {/* Filter inputs */}
           <div className="space-y-4 p-4">
             <Input
-            className="text-center"
+              className="text-center"
               placeholder="شناسه محل کار را وارد کنید"
               value={wpId}
               onChange={(e) => setWpId(e.target.value)}
@@ -80,8 +92,8 @@ export default function Report() {
                 <SelectValue placeholder="نوع را انتخاب کنید" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="wsp">قرقره </SelectItem>
-                <SelectItem value="ins">عایق‌</SelectItem>
+                <SelectItem value="wsp">قرقره</SelectItem>
+                <SelectItem value="ins">عایق</SelectItem>
                 <SelectItem value="car">کارت</SelectItem>
                 <SelectItem value="fip">محصول نهایی</SelectItem>
               </SelectContent>
@@ -90,9 +102,6 @@ export default function Report() {
 
           <DrawerFooter>
             <Button onClick={handleSubmit}>تایید</Button>
-            {/* <DrawerClose>
-              <Button variant="default">لغو</Button>
-            </DrawerClose> */}
           </DrawerFooter>
         </DrawerContent>
       </Drawer>
@@ -104,20 +113,12 @@ export default function Report() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>شناسه</TableHead>
-              <TableHead>نام</TableHead>
-              <TableHead>مقدار</TableHead>
+              {getTableHeaders().map((header, index) => (
+                <TableHead key={index}>{header}</TableHead>
+              ))}
             </TableRow>
           </TableHeader>
-          <TableBody>
-            {data.map((item) => (
-              <TableRow key={item.id}>
-                <TableCell>{item.id}</TableCell>
-                <TableCell>{item.name}</TableCell>
-                <TableCell>{item.value}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
+          <TableBody>{renderTableRows()}</TableBody>
         </Table>
       )}
     </div>

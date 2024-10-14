@@ -43,11 +43,11 @@ export default function Component() {
 
   const fetchRequests = () => {
     const apiUrl = import.meta.env.VITE_API_URL;
-    const userId = localStorage.getItem("userId");
+    const userId = "user1";
     axios
-      .get(`${apiUrl}/adminrequest/sent?userId=${userId}`, {
+      .get(`${apiUrl}/adminrequest/received?userId=${userId}`, {
         headers: {
-          Authorization: "your-token-here",
+          Authorization: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImpvaG5fZG9lIiwiaWF0IjoxNzI4Mzc5NTY0fQ.H0OZY653a-Of1Jmfq30T3dsh-TVeaH40HJyLJdTdimY",
         },
       })
       .then((response) => {
@@ -69,7 +69,7 @@ export default function Component() {
     axios
       .put(`${apiUrl}/adminrequest/received/approve/${reqId}`, {}, {
         headers: {
-          Authorization: "your-token-here",
+          Authorization: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImpvaG5fZG9lIiwiaWF0IjoxNzI4Mzc5NTY0fQ.H0OZY653a-Of1Jmfq30T3dsh-TVeaH40HJyLJdTdimY",
         },
       })
       .then((response) => {
@@ -86,7 +86,7 @@ export default function Component() {
     axios
       .put(`${apiUrl}/adminrequest/received/deny/${reqId}`, {}, {
         headers: {
-          Authorization: "your-token-here",
+          Authorization: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImpvaG5fZG9lIiwiaWF0IjoxNzI4Mzc5NTY0fQ.H0OZY653a-Of1Jmfq30T3dsh-TVeaH40HJyLJdTdimY",
         },
       })
       .then((response) => {
@@ -105,9 +105,9 @@ export default function Component() {
   return (
     <Card dir="rtl">
       <CardHeader>
-        <CardTitle>درخواست‌ها</CardTitle>
+        <CardTitle>درخواست‌های دریافتی</CardTitle>
         <CardDescription>
-          مدیریت درخواست‌ها و مشاهده وضعیت آن‌ها.
+          مدیریت درخواست‌های دریافتی و مشاهده وضعیت آن‌ها.
         </CardDescription>
       </CardHeader>
       <CardContent>
