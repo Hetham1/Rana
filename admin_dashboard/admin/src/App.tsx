@@ -8,7 +8,7 @@ import Report from "./pages/Report";
 import Login from "./pages/login";
 import ProtectedRoute from './layout/protect';
 
-function HeaderWrapper() {
+function HeaderWrapper({ onLogout }: { onLogout: () => void }) {
   const location = useLocation();
   const isLoginPage = location.pathname === '/login';
 
@@ -16,7 +16,7 @@ function HeaderWrapper() {
     return null;
   }
 
-  return <Header />;
+  return <Header onLogout={onLogout} />;
 }
 
 export default function App() {
@@ -40,7 +40,7 @@ export default function App() {
 
   return (
     <Router>
-      <HeaderWrapper />
+      <HeaderWrapper onLogout={handleLogout} />
       <Routes>
         <Route path="/login" element={
           isAuthenticated ? <Navigate to="/" replace /> : <Login onLogin={handleLogin} />

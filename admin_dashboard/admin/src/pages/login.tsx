@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Rana from '../assets/rana top left.png';
+
+
 
 interface LoginProps {
   onLogin: () => void;
@@ -39,13 +42,15 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-6 text-center">ورود</h2>
+    <div className="min-h-screen flex flex-col gap-8 items-center justify-center bg-whiteback">
+      <img className="w-48" src={Rana}/>
+      
+      <div className="bg-whitebox p-8 rounded-2xl shadow-md w-full max-w-md">
+      
         {error && <p className="text-red-500 text-center">{error}</p>}
         <form onSubmit={handleLogin}>
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2" htmlFor="username">نام کاربری</label>
+            <label className="block text-gray-700 text-center mb-2" htmlFor="username">نام کاربری</label>
             <input
               type="text"
               id="username"
@@ -56,7 +61,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2" htmlFor="password">رمز عبور</label>
+            <label className="block text-gray-700 text-center mb-2" htmlFor="password">رمز عبور</label>
             <input
               type="password"
               id="password"

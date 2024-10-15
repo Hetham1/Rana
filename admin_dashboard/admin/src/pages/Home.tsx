@@ -32,62 +32,62 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-import { Bars, Waves, Noodle, Radial } from "@/components/ui/charts"
+import { Bars, Waves, Noodle, Radial, DotChart, VertBar } from "@/components/ui/charts"
 
 export function Home() {
   return (
     <div className="flex flex-col w-full">
-      <main className="flex-1 overflow-y-auto bg-slate-300">
+      <main className="flex-1 overflow-y-auto bg-whiteback">
         <div className="container mx-auto p-4 md:p-8 space-y-8">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <Card>
+            <Card className="bg-prim text-white">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
                   تراکنش های جاری
                 </CardTitle>
-                <DollarSign className="h-4 w-4 text-muted-foreground" />
+                <DollarSign className="h-4 w-4 text-white" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">$45,231.89</div>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-white">
                   +20.1% از ماه پیش
                 </p>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="bg-sec text-white">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
                   سفارشات
                 </CardTitle>
-                <Users className="h-4 w-4 text-muted-foreground" />
+                <Users className="h-4 w-4 text-white" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">+2350</div>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-white">
                   +180.1% از ماه پیش
                 </p>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="bg-suppink text-white">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">خروج ها</CardTitle>
-                <CreditCard className="h-4 w-4 text-muted-foreground" />
+                <CreditCard className="h-4 w-4 text-white" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">+12,234</div>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-white">
                   +19% از ماه پیش
                 </p>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="bg-supblue text-white">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">ظرفیت انبار</CardTitle>
-                <Activity className="h-4 w-4 text-muted-foreground" />
+                <Activity className="h-4 w-4 text-white" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">573</div>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-white">
                   از 1000
                 </p>
               </CardContent>
@@ -103,7 +103,7 @@ export function Home() {
               تراکنش‌های اخیر فروشگاه شما.
             </CardDescription>
           </div>
-          <Button asChild size="sm">
+          <Button asChild size="sm" className="bg-prim hover:bg-sec">
             <a href="#" className="flex items-center gap-1">
               مشاهده همه
               <ArrowUpRight className="h-4 w-4" />
@@ -265,12 +265,22 @@ export function Home() {
     </Card>
   </div>
   <Bars/>
-  <div className="flex flex-row gap-4 justify-end">
-    <Waves/>
-    <Radial/>
-  </div>
-  <Noodle/>
-  </div>
+
+         <div className="flex flex-row justify-between">
+
+                  
+
+                    <Waves/>
+                    <Radial/>
+                    <VertBar/>
+                    <DotChart/>
+                    
+                  
+ 
+          </div>
+    
+    <Noodle/>
+    </div>
    
   </main>
 </div>

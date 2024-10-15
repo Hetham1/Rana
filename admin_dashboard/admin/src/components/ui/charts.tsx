@@ -1,7 +1,7 @@
 
 
 import * as React from "react"
-import { Bar, BarChart, CartesianGrid, XAxis, Line, LineChart, Area, AreaChart, } from "recharts"
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Line, LineChart, Area, AreaChart, Dot } from "recharts"
 import { TrendingUp } from "lucide-react"
 
 import {
@@ -34,7 +34,7 @@ import {
 
 
 
-export const description = "An interactive bar chart"
+
 
 export function Bars() {
 
@@ -137,12 +137,12 @@ export function Bars() {
           label: "Page Views",
         },
         desktop: {
-          label: "Desktop",
-          color: "hsl(var(--chart-1))",
+          label: "ورود",
+          color: "#4b49ac",
         },
         mobile: {
-          label: "Mobile",
-          color: "hsl(var(--chart-2))",
+          label: "خروج",
+          color: "#98bdff",
         },
       } satisfies ChartConfig
       
@@ -161,9 +161,9 @@ export function Bars() {
     <Card>
       <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6">
-          <CardTitle>Bar Chart - Interactive</CardTitle>
+          <CardTitle>چارت میله ایی</CardTitle>
           <CardDescription>
-            Showing total visitors for the last 3 months
+            اطلاعات مورد نظر شما در این چارت قرار میگیرد
           </CardDescription>
         </div>
         <div className="flex">
@@ -173,7 +173,7 @@ export function Bars() {
               <button
                 key={chart}
                 data-active={activeChart === chart}
-                className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-t px-6 py-4 text-left even:border-l data-[active=true]:bg-muted/50 sm:border-l sm:border-t-0 sm:px-8 sm:py-6"
+                className="relative z-30 bg-white text-text flex flex-1 flex-col justify-center gap-1 border-t px-6 py-4 text-center even:border-l data-[active=true]:bg-prim data-[active=true]:text-white sm:border-l sm:border-t-0 sm:px-8 sm:py-6"
                 onClick={() => setActiveChart(chart)}
               >
                 <span className="text-xs text-muted-foreground">
@@ -297,22 +297,22 @@ const chartData = [
   
   const chartConfig = {
     desktop: {
-      label: "Desktop",
-      color: "hsl(var(--chart-1))",
+      label: "محصول نهایی",
+      color: "#98bdff",
     },
     mobile: {
-      label: "Mobile",
-      color: "hsl(var(--chart-2))",
+      label: "قرقره",
+      color: "#f3797e",
     },
   } satisfies ChartConfig
 
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Area Chart - Gradient</CardTitle>
+    <Card >
+      <CardHeader >
+        <CardTitle>چارت محیطی</CardTitle>
         <CardDescription>
-          Showing total visitors for the last 6 months
+          اطلاعات مورد نظر شما در این چارت قرار میگیرد
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -443,18 +443,18 @@ const chartData = [
         },
         safari: {
           label: "Safari",
-          color: "hsl(var(--chart-2))",
+          color: "#f3797e",
         },
       } satisfies ChartConfig
 
 
     return (
-      <Card className="flex flex-col">
+      <Card className="flex flex-col justify-between">
         <CardHeader className="items-center pb-0">
-          <CardTitle>Radial Chart - Text</CardTitle>
+          <CardTitle>چارت دایره ایی</CardTitle>
           <CardDescription>January - June 2024</CardDescription>
         </CardHeader>
-        <CardContent className="flex-1 pb-0">
+        <CardContent className="flex-2 pb-0">
           <ChartContainer
             config={chartConfig}
             className="mx-auto aspect-square max-h-[250px]"
@@ -497,7 +497,7 @@ const chartData = [
                             y={(viewBox.cy || 0) + 24}
                             className="fill-muted-foreground"
                           >
-                            Visitors
+                            عایق
                           </tspan>
                         </text>
                       )
@@ -510,10 +510,10 @@ const chartData = [
         </CardContent>
         <CardFooter className="flex-col gap-2 text-sm">
           <div className="flex items-center gap-2 font-medium leading-none">
-            Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+            میزان مواد خام در ماه جاری<TrendingUp className="h-4 w-4" />
           </div>
           <div className="leading-none text-muted-foreground">
-            Showing total visitors for the last 6 months
+            
           </div>
         </CardFooter>
       </Card>
@@ -653,15 +653,15 @@ const chartData = [
   ]
   const chartConfig = {
     views: {
-      label: "Page Views",
+      label: "سفارشات",
     },
     desktop: {
-      label: "Desktop",
-      color: "hsl(var(--chart-1))",
+      label: "داخلی",
+      color: "#f3797e",
     },
     mobile: {
-      label: "Mobile",
-      color: "hsl(var(--chart-2))",
+      label: "خارجی",
+      color: "#7da0fa",
     },
   } satisfies ChartConfig
 
@@ -679,19 +679,19 @@ const chartData = [
       <Card>
         <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
           <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6">
-            <CardTitle>Line Chart - Interactive</CardTitle>
+            <CardTitle>گراف خطی</CardTitle>
             <CardDescription>
-              Showing total visitors for the last 3 months
+            اطلاعات مورد نظر شما در این چارت قرار میگیرد
             </CardDescription>
           </div>
-          <div className="flex">
+          <div className="flex ">
             {["desktop", "mobile"].map((key) => {
               const chart = key as keyof typeof chartConfig
               return (
                 <button
                   key={chart}
                   data-active={activeChart === chart}
-                  className="flex flex-1 flex-col justify-center gap-1 border-t px-6 py-4 text-left even:border-l data-[active=true]:bg-muted/50 sm:border-l sm:border-t-0 sm:px-8 sm:py-6"
+                  className="flex flex-1 text-center bg-white flex-col justify-center gap-1 border-t px-6 py-4  even:border-l data-[active=true]:bg-suppink sm:border-l sm:border-t-0 sm:px-8 sm:py-6"
                   onClick={() => setActiveChart(chart)}
                 >
                   <span className="text-xs text-muted-foreground">
@@ -761,3 +761,249 @@ const chartData = [
       </Card>
     )
   }
+
+
+
+
+
+
+
+
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+export function DotChart() {
+
+  const chartData = [
+    { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
+    { browser: "safari", visitors: 200, fill: "var(--color-safari)" },
+    { browser: "firefox", visitors: 187, fill: "var(--color-firefox)" },
+    { browser: "edge", visitors: 173, fill: "var(--color-edge)" },
+    { browser: "other", visitors: 90, fill: "var(--color-other)" },
+  ]
+  const chartConfig = {
+    visitors: {
+      label: "Visitors",
+      color: "hsl(var(--chart-2))",
+    },
+    chrome: {
+      label: "Chrome",
+      color: "hsl(var(--chart-1))",
+    },
+    safari: {
+      label: "Safari",
+      color: "hsl(var(--chart-2))",
+    },
+    firefox: {
+      label: "Firefox",
+      color: "hsl(var(--chart-3))",
+    },
+    edge: {
+      label: "Edge",
+      color: "hsl(var(--chart-4))",
+    },
+    other: {
+      label: "Other",
+      color: "hsl(var(--chart-5))",
+    },
+  } satisfies ChartConfig
+
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Line Chart - Dots Colors</CardTitle>
+        <CardDescription>January - June 2024</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <ChartContainer config={chartConfig}>
+          <LineChart
+            accessibilityLayer
+            data={chartData}
+            margin={{
+              top: 24,
+              left: 24,
+              right: 24,
+            }}
+          >
+            <CartesianGrid vertical={false} />
+            <ChartTooltip
+              cursor={false}
+              content={
+                <ChartTooltipContent
+                  indicator="line"
+                  nameKey="visitors"
+                  hideLabel
+                />
+              }
+            />
+            <Line
+              dataKey="visitors"
+              type="natural"
+              stroke="var(--color-visitors)"
+              strokeWidth={2}
+              dot={({ payload, ...props }) => {
+                return (
+                  <Dot
+                    key={payload.browser}
+                    r={5}
+                    cx={props.cx}
+                    cy={props.cy}
+                    fill={payload.fill}
+                    stroke={payload.fill}
+                  />
+                )
+              }}
+            />
+          </LineChart>
+        </ChartContainer>
+      </CardContent>
+      <CardFooter className="flex-col items-start gap-2 text-sm">
+        <div className="flex gap-2 font-medium leading-none">
+          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+        </div>
+        <div className="leading-none text-muted-foreground">
+          Showing total visitors for the last 6 months
+        </div>
+      </CardFooter>
+    </Card>
+  )
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+export function VertBar() {
+
+  
+const chartData = [
+  { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
+  { browser: "safari", visitors: 200, fill: "var(--color-safari)" },
+  { browser: "firefox", visitors: 187, fill: "var(--color-firefox)" },
+  { browser: "edge", visitors: 173, fill: "var(--color-edge)" },
+  { browser: "other", visitors: 90, fill: "var(--color-other)" },
+]
+const chartConfig = {
+  visitors: {
+    label: "Visitors",
+  },
+  chrome: {
+    label: "",
+    color: "#4b49ac",
+  },
+  safari: {
+    label: "",
+    color: "#98bdff",
+  },
+  firefox: {
+    label: "",
+    color: "#7da0fa",
+  },
+  edge: {
+    label: "",
+    color: "#f3797e",
+  },
+  other: {
+    label: "",
+    color: "#7978e9",
+  },
+} satisfies ChartConfig
+
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Bar Chart - Mixed</CardTitle>
+        <CardDescription>January - June 2024</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <ChartContainer config={chartConfig}>
+          <BarChart
+            accessibilityLayer
+            data={chartData}
+            layout="vertical"
+            margin={{
+              left: 0,
+            }}
+          >
+            <YAxis
+              dataKey="browser"
+              type="category"
+              tickLine={false}
+              tickMargin={10}
+              axisLine={false}
+              tickFormatter={(value) =>
+                chartConfig[value as keyof typeof chartConfig]?.label
+              }
+            />
+            <XAxis dataKey="visitors" type="number" hide />
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent hideLabel />}
+            />
+            <Bar dataKey="visitors" layout="vertical" radius={5} />
+          </BarChart>
+        </ChartContainer>
+      </CardContent>
+      <CardFooter className="flex-col items-start gap-2 text-sm">
+        <div className="flex gap-2 font-medium leading-none">
+          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+        </div>
+        <div className="leading-none text-muted-foreground">
+          Showing total visitors for the last 6 months
+        </div>
+      </CardFooter>
+    </Card>
+  )
+}

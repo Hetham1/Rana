@@ -34,11 +34,11 @@ export default function Report() {
     setLoading(true);
     const apiUrl = import.meta.env.VITE_API_URL;
     const queris = `searchType=${searchType}&wpId=${wpId}`;
-
+    const token = localStorage.getItem('token')
     axios
       .get(`${apiUrl}/adminreport?${queris}`, {
         headers: {
-          Authorization: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImpvaG5fZG9lIiwiaWF0IjoxNzI4Mzc5NTY0fQ.H0OZY653a-Of1Jmfq30T3dsh-TVeaH40HJyLJdTdimY', // Adjust this based on your token logic
+          Authorization: `${token}` // Adjust this based on your token logic
         },
       })
       .then((response) => {

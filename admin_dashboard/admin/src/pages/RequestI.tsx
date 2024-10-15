@@ -43,11 +43,12 @@ export default function Component() {
 
   const fetchRequests = () => {
     const apiUrl = import.meta.env.VITE_API_URL;
-    const userId = "user1";
+    const token = localStorage.getItem('token')
+    const userId = localStorage.getItem('userId')
     axios
       .get(`${apiUrl}/adminrequest/received?userId=${userId}`, {
         headers: {
-          Authorization: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImpvaG5fZG9lIiwiaWF0IjoxNzI4Mzc5NTY0fQ.H0OZY653a-Of1Jmfq30T3dsh-TVeaH40HJyLJdTdimY",
+          Authorization: `${token}`,
         },
       })
       .then((response) => {
@@ -66,10 +67,11 @@ export default function Component() {
 
   const handleApprove = (reqId: string) => {
     const apiUrl = import.meta.env.VITE_API_URL;
+    const token = localStorage.getItem('token')
     axios
       .put(`${apiUrl}/adminrequest/received/approve/${reqId}`, {}, {
         headers: {
-          Authorization: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImpvaG5fZG9lIiwiaWF0IjoxNzI4Mzc5NTY0fQ.H0OZY653a-Of1Jmfq30T3dsh-TVeaH40HJyLJdTdimY",
+          Authorization: `${token}`
         },
       })
       .then((response) => {
@@ -83,10 +85,11 @@ export default function Component() {
 
   const handleDeny = (reqId: string) => {
     const apiUrl = import.meta.env.VITE_API_URL;
+    const token = localStorage.getItem('token')
     axios
       .put(`${apiUrl}/adminrequest/received/deny/${reqId}`, {}, {
         headers: {
-          Authorization: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImpvaG5fZG9lIiwiaWF0IjoxNzI4Mzc5NTY0fQ.H0OZY653a-Of1Jmfq30T3dsh-TVeaH40HJyLJdTdimY",
+          Authorization: `${token}`
         },
       })
       .then((response) => {
@@ -99,7 +102,7 @@ export default function Component() {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className="text-center">درحال بارگذاری...</div>;
   }
 
   return (
@@ -141,17 +144,18 @@ export default function Component() {
                 <TableCell>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button aria-haspopup="true" size="icon" variant="ghost">
+                      <Button aria-haspopup="true" size="icon" variant="ghost" className="bg-supblue hover:bg-suppink text-white">
                         <MoreHorizontal className="h-4 w-4" />
+                        =
                         <span className="sr-only">تنظیمات منو</span>
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="start">
-                      <DropdownMenuLabel>عملیات</DropdownMenuLabel>
-                      <DropdownMenuItem onClick={() => handleApprove(request.reqId)}>
+                      <DropdownMenuLabel className="text-right">عملیات</DropdownMenuLabel>
+                      <DropdownMenuItem className=" bg-green-200 hover:bg-green-400 text-text hover:text-white" onClick={() => handleApprove(request.reqId)}>
                         تایید
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleDeny(request.reqId)}>
+                      <DropdownMenuItem className=" bg-red-200 hover:bg-red-500 text-text hover:text-white" onClick={() => handleDeny(request.reqId)}>
                         رد
                       </DropdownMenuItem>
                     </DropdownMenuContent>

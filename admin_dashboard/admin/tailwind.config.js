@@ -52,7 +52,17 @@ export default {
   				'3': 'hsl(var(--chart-3))',
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
-  			}
+  			},
+
+			  whiteback: '#f7f8fd',
+			  whitebox: '#fefefe',
+			  prim: '#4b49ac',
+			  sec: '#98bdff',
+			  supblue: '#7da0fa',
+			  suppurple: '#7978e9',
+			  suppink: '#f3797e',
+			  text: '#262626',
+			lightstrk: '#E8ECF2',
   		}
   	}
   },
