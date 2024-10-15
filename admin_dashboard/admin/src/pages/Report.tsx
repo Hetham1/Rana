@@ -1,5 +1,7 @@
-import { useState } from "react";
-import axios from "axios";
+"use client"
+
+import { useState, useEffect } from "react"
+import axios from "axios"
 import {
   Drawer,
   DrawerContent,
@@ -7,8 +9,8 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from "@/components/ui/drawer";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/drawer"
+import { Button } from "@/components/ui/button"
 import {
   Table,
   TableBody,
@@ -16,46 +18,98 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+} from "@/components/ui/table"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 interface ReportData {
-  [key: string]: string | number | null; // Data can have different types, adjust as necessary
+  [key: string]: string | number | null
 }
 
-export default function Report() {
-  const [wpId, setWpId] = useState<string>("");
-  const [searchType, setSearchType] = useState<string>("wsp");
-  const [data, setData] = useState<ReportData[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+interface Workplace {
+  wpId: string
+  wpName: string
+}
+
+export default function Component() {
+  const [wpId, setWpId] = useState<string>("")
+  const [searchType, setSearchType] = useState<string>("wsp")
+  const [data, setData] = useState<ReportData[]>([])
+  const [loading, setLoading] = useState<boolean>(false)
+  const [workPlaceName, setWorkPlaceName] = useState<string>("")
+  const [comboBoxData, setComboBoxData] = useState<{ value: string; label: string }[]>([])
+
+  useEffect(() => {
+    const workPlace = localStorage.getItem('workPlace')
+    const token = localStorage.getItem('token')
+    const apiUrl = import.meta.env.VITE_API_URL || 'https://defaulturl.com'
+
+    if (workPlace && token) {
+      console.log(workPlaceName)
+      // Fetch specific workplace data
+      axios.get(`${apiUrl}/workplace?workPlace=${workPlace}`, {
+        headers: {
+          'Authorization': `${token}`
+        }
+      })
+        .then((response) => {
+          const { data } = response.data
+          if (data.length > 0) {
+            setWorkPlaceName(data[0].wpName)
+          }
+        })
+        .catch((error) => {
+          console.error('Error fetching workPlace data:', error)
+        })
+
+      // Fetch all workplace data for the combo box
+      axios.get(`${apiUrl}/workplace`, {
+        headers: {
+          'Authorization': `${token}`
+        }
+      })
+        .then((response) => {
+          const { data } = response.data
+          if (Array.isArray(data)) {
+            const frameworks = data.map((item: Workplace) => ({
+              value: item.wpId,
+              label: item.wpName
+            }))
+            setComboBoxData(frameworks)
+          } else {
+            console.error('Unexpected response data:', data)
+          }
+        })
+        .catch((error) => {
+          console.error('Error fetching combo box data:', error)
+        })
+    }
+  }, [])
 
   const handleSubmit = () => {
-    setLoading(true);
-    const apiUrl = import.meta.env.VITE_API_URL;
-    const queris = `searchType=${searchType}&wpId=${wpId}`;
+    setLoading(true)
+    const apiUrl = import.meta.env.VITE_API_URL || 'https://defaulturl.com'
+    const queris = `searchType=${searchType}&wpId=${wpId}`
     const token = localStorage.getItem('token')
     axios
       .get(`${apiUrl}/adminreport?${queris}`, {
         headers: {
-          Authorization: `${token}` // Adjust this based on your token logic
+          Authorization: `${token}`
         },
       })
       .then((response) => {
-        setData(response.data.data);
-        setLoading(false);
+        setData(response.data.data)
+        setLoading(false)
       })
       .catch((error) => {
-        console.error("Error fetching report data:", error);
-        setLoading(false);
-      });
-  };
+        console.error("Error fetching report data:", error)
+        setLoading(false)
+      })
+  }
 
-  // Extract table headers dynamically from the first data item
   const getTableHeaders = () => {
-    if (data.length === 0) return [];
-    return Object.keys(data[0]);
-  };
+    if (data.length === 0) return []
+    return Object.keys(data[0])
+  }
 
   const renderTableRows = () => {
     return data.map((item, index) => (
@@ -64,12 +118,11 @@ export default function Report() {
           <TableCell key={idx}>{value ?? "N/A"}</TableCell>
         ))}
       </TableRow>
-    ));
-  };
+    ))
+  }
 
   return (
     <div>
-      {/* Drawer for filter options */}
       <Drawer>
         <DrawerTrigger asChild>
           <Button variant="outline">باز کردن فیلترها</Button>
@@ -79,19 +132,23 @@ export default function Report() {
             <DrawerTitle className="text-center">فیلترهای گذارش</DrawerTitle>
           </DrawerHeader>
 
-          {/* Filter inputs */}
           <div className="space-y-4 p-4">
-            <Input
-              className="text-center"
-              placeholder="شناسه محل کار را وارد کنید"
-              value={wpId}
-              onChange={(e) => setWpId(e.target.value)}
-            />
+            <Select onValueChange={(value) => setWpId(value)} value={wpId}>
+              <SelectTrigger className="text-center">
+                <SelectValue placeholder="شناسه محل کار را انتخاب کنید" />
+              </SelectTrigger>
+              <SelectContent className="text-center">
+                {comboBoxData.map((item) => (
+                  <SelectItem key={item.value} value={item.value}>{item.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
             <Select onValueChange={(value) => setSearchType(value)} defaultValue="wsp">
-              <SelectTrigger>
+              <SelectTrigger className="text-center">
                 <SelectValue placeholder="نوع را انتخاب کنید" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="text-center">
                 <SelectItem value="wsp">قرقره</SelectItem>
                 <SelectItem value="ins">عایق</SelectItem>
                 <SelectItem value="car">کارت</SelectItem>
@@ -106,7 +163,6 @@ export default function Report() {
         </DrawerContent>
       </Drawer>
 
-      {/* Table to display data */}
       {loading ? (
         <div>در حال بارگذاری...</div>
       ) : (
@@ -122,5 +178,5 @@ export default function Report() {
         </Table>
       )}
     </div>
-  );
+  )
 }

@@ -134,7 +134,7 @@ export function Bars() {
       
       const chartConfig = {
         views: {
-          label: "Page Views",
+          label: "سفارشات",
         },
         desktop: {
           label: "ورود",
@@ -173,7 +173,7 @@ export function Bars() {
               <button
                 key={chart}
                 data-active={activeChart === chart}
-                className="relative z-30 bg-white text-text flex flex-1 flex-col justify-center gap-1 border-t px-6 py-4 text-center even:border-l data-[active=true]:bg-prim data-[active=true]:text-white sm:border-l sm:border-t-0 sm:px-8 sm:py-6"
+                className="relative z-30 bg-white text-text flex flex-1 hover:border-white flex-col justify-center gap-1 px-6 py-4 text-center  data-[active=true]:bg-sec data-[active=true]:text-white sm:border-l sm:border-t-0 sm:px-8 sm:py-6"
                 onClick={() => setActiveChart(chart)}
               >
                 <span className="text-xs text-muted-foreground">
@@ -308,7 +308,7 @@ const chartData = [
 
 
   return (
-    <Card >
+    <Card className="w-full">
       <CardHeader >
         <CardTitle>چارت محیطی</CardTitle>
         <CardDescription>
@@ -382,12 +382,12 @@ const chartData = [
       <CardFooter>
         <div className="flex w-full items-start gap-2 text-sm">
           <div className="grid gap-2">
-            <div className="flex items-center gap-2 font-medium leading-none">
-              Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-            </div>
-            <div className="flex items-center gap-2 leading-none text-muted-foreground">
-              January - June 2024
-            </div>
+          <div className="flex items-center gap-2 font-medium leading-none">
+            افزایش ۵.۲٪ این ماه <TrendingUp className="h-4 w-4" />
+          </div>
+          <div className="flex items-center gap-2 leading-none text-muted-foreground">
+            ژانویه - ژوئن ۲۰۲۴
+          </div>
           </div>
         </div>
       </CardFooter>
@@ -449,10 +449,10 @@ const chartData = [
 
 
     return (
-      <Card className="flex flex-col justify-between">
+      <Card className="flex flex-col justify-between w-full">
         <CardHeader className="items-center pb-0">
           <CardTitle>چارت دایره ایی</CardTitle>
-          <CardDescription>January - June 2024</CardDescription>
+          <CardDescription> ژانویه - ژوئن ۲۰۲۴</CardDescription>
         </CardHeader>
         <CardContent className="flex-2 pb-0">
           <ChartContainer
@@ -691,7 +691,7 @@ const chartData = [
                 <button
                   key={chart}
                   data-active={activeChart === chart}
-                  className="flex flex-1 text-center bg-white flex-col justify-center gap-1 border-t px-6 py-4  even:border-l data-[active=true]:bg-suppink sm:border-l sm:border-t-0 sm:px-8 sm:py-6"
+                  className="flex flex-1 text-center bg-white flex-col justify-center gap-1  px-6 py-4  hover:border-white data-[active=true]:bg-suppink data-[active=true]:text-white sm:border-l sm:border-t-0 sm:px-8 sm:py-6"
                   onClick={() => setActiveChart(chart)}
                 >
                   <span className="text-xs text-muted-foreground">
@@ -803,7 +803,7 @@ export function DotChart() {
   ]
   const chartConfig = {
     visitors: {
-      label: "Visitors",
+      label: "محصولات",
       color: "hsl(var(--chart-2))",
     },
     chrome: {
@@ -830,10 +830,10 @@ export function DotChart() {
 
 
   return (
-    <Card>
+    <Card className="w-full">
       <CardHeader>
-        <CardTitle>Line Chart - Dots Colors</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardTitle>چارت خطی</CardTitle>
+        <CardDescription> ژانویه - ژوئن ۲۰۲۴</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
@@ -879,12 +879,12 @@ export function DotChart() {
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
-        <div className="flex gap-2 font-medium leading-none">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-        </div>
-        <div className="leading-none text-muted-foreground">
-          Showing total visitors for the last 6 months
-        </div>
+      <div className="flex items-center gap-2 font-medium leading-none">
+            افزایش ۵.۲٪ این ماه <TrendingUp className="h-4 w-4" />
+          </div>
+          <div className="flex items-center gap-2 leading-none text-muted-foreground">
+            ژانویه - ژوئن ۲۰۲۴
+          </div>
       </CardFooter>
     </Card>
   )
@@ -936,7 +936,7 @@ const chartData = [
 ]
 const chartConfig = {
   visitors: {
-    label: "Visitors",
+    label: "سفارشات",
   },
   chrome: {
     label: "",
@@ -962,10 +962,10 @@ const chartConfig = {
 
 
   return (
-    <Card>
+    <Card className="w-full">
       <CardHeader>
-        <CardTitle>Bar Chart - Mixed</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardTitle>بار چارت</CardTitle>
+        <CardDescription> ژانویه - ژوئن ۲۰۲۴</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
@@ -997,12 +997,12 @@ const chartConfig = {
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
-        <div className="flex gap-2 font-medium leading-none">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-        </div>
-        <div className="leading-none text-muted-foreground">
-          Showing total visitors for the last 6 months
-        </div>
+        <div className="flex items-center gap-2 font-medium leading-none">
+            افزایش ۵.۲٪ این ماه <TrendingUp className="h-4 w-4" />
+          </div>
+          <div className="flex items-center gap-2 leading-none text-muted-foreground">
+            ژانویه - ژوئن ۲۰۲۴
+          </div>
       </CardFooter>
     </Card>
   )

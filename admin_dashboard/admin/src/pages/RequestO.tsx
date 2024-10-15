@@ -251,11 +251,11 @@ export default function Component() {
       <div className="fixed bottom-0 right-0 m-4">
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button>درخواست جدید</Button>
+            <Button className="bg-supblue hover:bg-suppink border-none">درخواست جدید</Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>درخواست جدید</AlertDialogTitle>
+              <AlertDialogTitle className="text-right">درخواست جدید</AlertDialogTitle>
             </AlertDialogHeader>
             <div className="space-y-4">
               <Input
@@ -291,11 +291,12 @@ export default function Component() {
                 </SelectContent>
               </Select>
             </div>
-            <AlertDialogFooter>
+            <AlertDialogFooter className="flex gap-2">
               <AlertDialogCancel>انصراف</AlertDialogCancel>
               <AlertDialogAction
                 onClick={handleSubmitNewRequest}
                 disabled={isSubmitting}
+                className="bg-supblue hover:bg-suppink border-none"
               >
                 {isSubmitting ? "در حال ارسال..." : "ارسال"}
               </AlertDialogAction>

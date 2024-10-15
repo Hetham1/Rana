@@ -266,7 +266,7 @@ export function Home() {
   </div>
   <Bars/>
 
-         <div className="flex flex-row justify-between">
+         <div className="flex flex-row gap-4 justify-between content-stretch">
 
                   
 
