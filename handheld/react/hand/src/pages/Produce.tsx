@@ -18,7 +18,7 @@ import {
 import jsQR from 'jsqr';
 import axios from 'axios';
 
-import { BASE_URL } from '../hooks/apiconfig';
+const apiUrl = import.meta.env.VITE_API_URL;
 
 interface ComboBoxItem {
   value: string;
@@ -32,8 +32,10 @@ interface APIResponse {
 }
 
 const QRScannerComponent: React.FC = () => {
-  const [open, setOpen] = useState(false);
+  const [comboBoxOpen, setComboBoxOpen] = useState(false);
+  const [staticComboBoxOpen, setStaticComboBoxOpen] = useState(false);
   const [value, setValue] = useState("");
+  const [staticValue, setStaticValue] = useState("");
   const [comboBoxItems, setComboBoxItems] = useState<ComboBoxItem[]>([]);
   const [scanResult, setScanResult] = useState<string>('');
   const [isScanning, setIsScanning] = useState<boolean>(false);
@@ -55,10 +57,10 @@ const QRScannerComponent: React.FC = () => {
         console.error('Error accessing camera:', error);
       }
     };
+  
     startVideoStream();
-    fetchComboBoxItems();
-    startScanning();
-
+    startScanning();  // Start scanning automatically
+  
     return () => {
       if (videoRef.current && videoRef.current.srcObject) {
         const tracks = (videoRef.current.srcObject as MediaStream).getTracks();
@@ -68,13 +70,19 @@ const QRScannerComponent: React.FC = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (comboBoxOpen) {
+      fetchComboBoxItems();
+    }
+  }, [comboBoxOpen]);
+
   const fetchComboBoxItems = async () => {
     try {
       const token = localStorage.getItem('token');  
-      const response = await axios.get<APIResponse>(`${BASE_URL}/pp`, {
+      const response = await axios.get<APIResponse>(`${apiUrl}/pp`, {
         headers: {
-            Authorization: `${token}`,
-          },
+          Authorization: `${token}`,
+        },
       });
       if (response.data.success) {
         const items: ComboBoxItem[] = response.data.data.map(item => ({
@@ -130,28 +138,26 @@ const QRScannerComponent: React.FC = () => {
   };
 
   const handleSubmit = async () => {
-    if (!value || !scanResult) {
-      console.error('Production plan ID or scan result is missing');
+    if (!value || !scanResult || !staticValue) {
+      console.error('Production plan ID, scan result, or static value is missing');
       return;
     }
 
     try {
       const token = localStorage.getItem('token'); 
-      const response = await axios.put(`${BASE_URL}/pp/assign/${value}`, {
-        uid: scanResult
-        
+      const response = await axios.put(`${apiUrl}/pp/assign/${value}`, {
+        uid: scanResult,
+        staticValue: staticValue 
       },{
         headers: {
-            Authorization: `${token}`,
-          },
+          Authorization: `${token}`,
+        },
       });
       
       console.log('API response:', response.data);
       if (response.data.success) {
         alert("شناسه به برنامه تولید تخصیص داده شد"); 
       }
-      
-      
     } catch (error) {
       console.error('Error submitting data:', error);
       alert("خطا در تخصیص شناسه به برنامه تولید");
@@ -161,12 +167,12 @@ const QRScannerComponent: React.FC = () => {
   return (
     <div className="flex flex-col items-center min-h-screen p-4 space-y-4">
       <div className="w-full max-w-md">
-        <Popover open={open} onOpenChange={setOpen}>
+        <Popover open={comboBoxOpen} onOpenChange={setComboBoxOpen}>
           <PopoverTrigger asChild>
             <Button
               variant="outline"
               role="combobox"
-              aria-expanded={open}
+              aria-expanded={comboBoxOpen}
               className="w-full justify-between"
             >
               {value
@@ -187,7 +193,7 @@ const QRScannerComponent: React.FC = () => {
                       value={item.value}
                       onSelect={(currentValue) => {
                         setValue(currentValue === value ? "" : currentValue);
-                        setOpen(false);
+                        setComboBoxOpen(false);
                       }}
                     >
                       <Check
@@ -197,6 +203,49 @@ const QRScannerComponent: React.FC = () => {
                         )}
                       />
                       {item.label}
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </CommandList>
+            </Command>
+          </PopoverContent>
+        </Popover>
+      </div>
+
+      <div className="w-full max-w-md">
+        <Popover open={staticComboBoxOpen} onOpenChange={setStaticComboBoxOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              role="combobox"
+              aria-expanded={staticComboBoxOpen}
+              className="w-full justify-between"
+            >
+              {staticValue ? staticValue : " لاین تولید را انتخاب کنید"}
+              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-full p-0">
+            <Command>
+              <CommandInput placeholder="جستجو" />
+              <CommandList>
+                <CommandGroup>
+                  {["1", "2", "3"].map((item) => (
+                    <CommandItem
+                      key={item}
+                      value={item}
+                      onSelect={(currentValue) => {
+                        setStaticValue(currentValue);
+                        setStaticComboBoxOpen(false);
+                      }}
+                    >
+                      <Check
+                        className={cn(
+                          "mr-2 h-4 w-4",
+                          staticValue === item ? "opacity-100" : "opacity-0"
+                        )}
+                      />
+                      {item}
                     </CommandItem>
                   ))}
                 </CommandGroup>

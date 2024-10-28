@@ -17,7 +17,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-
+const apiUrl = import.meta.env.VITE_API_URL
 
 
 // Define the type for the workplace data
@@ -48,7 +48,7 @@ export default function Entry() {
     const token = localStorage.getItem('token')
 
     if (workPlace) {
-      const apiUrl = import.meta.env.VITE_API_URL || 'https://defaulturl.com';
+      
       axios.get(`${apiUrl}/workplace?workPlace=${workPlace}`, {
         headers: {
           'Authorization': `${token}`

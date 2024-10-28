@@ -13,7 +13,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-import { BASE_URL } from '../hooks/apiconfig';
+const apiUrl = import.meta.env.VITE_API_URL
 
 export default function QRScanner() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -113,7 +113,7 @@ export default function QRScanner() {
         ? 'exit' 
         : 'reject';
 
-      axios.put(`${BASE_URL}/${endpoint}/${uid}`, {
+      axios.put(`${apiUrl}/${endpoint}/${uid}`, {
         wpId: comboBoxValue,
       }, {
         headers: {
@@ -144,7 +144,7 @@ export default function QRScanner() {
       const token = localStorage.getItem('token')
       console.log(token)
       console.log(uid)
-      const response = await axios.get(`${BASE_URL}/uidDetails/${uid}`, {
+      const response = await axios.get(`${apiUrl}/uidDetails/${uid}`, {
         headers: {
           'Authorization': `${token}`
         }

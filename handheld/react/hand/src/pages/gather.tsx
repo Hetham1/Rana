@@ -4,7 +4,7 @@ import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle } 
 import { Button } from "@/components/ui/button";
 import axios from 'axios';
 
-import { BASE_URL } from '../hooks/apiconfig';
+const apiUrl = import.meta.env.VITE_API_URL
 
 interface Order {
   ordId: string;
@@ -33,7 +33,7 @@ export default function GatherPage() {
     try {
       const userId = localStorage.getItem('userId');
       const token = localStorage.getItem('token');
-      const response = await axios.get(`${BASE_URL}/order?userId=${userId}`, {
+      const response = await axios.get(`${apiUrl}/order?userId=${userId}`, {
         headers: {
           'Authorization': `${token}`,
         },
@@ -48,7 +48,7 @@ export default function GatherPage() {
     try {
       console.log(selectedOrder)
       const token = localStorage.getItem('token');
-      const response = await axios.get(`${BASE_URL}/orderDetails/${ordId}`, {
+      const response = await axios.get(`${apiUrl}/orderDetails/${ordId}`, {
         headers: {
           Authorization: `${token}`,
         },

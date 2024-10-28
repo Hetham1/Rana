@@ -1520,10 +1520,10 @@ app.get('/api/v1/adminreport',authenticateToken, (req, res) => {
 
 //start the https server
 const PORT = 5000;
-httpsServer.listen(PORT, '0.0.0.0', () => {
-    console.log(`HTTPS Server running on https://0.0.0.0:${PORT}`);
-});
-// app.listen(PORT,()=>{
+// httpsServer.listen(PORT, '0.0.0.0', () => {
+//     console.log(`HTTPS Server running on https://0.0.0.0:${PORT}`);
+// });
+app.listen(PORT,()=>{
 
-//     console.log('server running on port ' + PORT )
-// })
+    console.log('server running on port ' + PORT )
+})

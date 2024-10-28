@@ -13,7 +13,7 @@ import {
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
 
-import { BASE_URL } from '../hooks/apiconfig';
+
 interface RequestData {
   reqId: string;
   reqDate: string;
@@ -28,8 +28,9 @@ export default function Requests() {
 
   const fetchRequests = async (userId: string) => {
     try {
+      const apiUrl = import.meta.env.VITE_API_URL
       const token = localStorage.getItem('token');
-      const response = await axios.get(`${BASE_URL}/request?userId=${userId}`, {
+      const response = await axios.get(`${apiUrl}/request?userId=${userId}`, {
         headers: {
           Authorization: `${token}`,
         },

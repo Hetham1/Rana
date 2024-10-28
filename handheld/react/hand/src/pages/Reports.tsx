@@ -20,8 +20,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
-import { BASE_URL } from '../hooks/apiconfig';
 
+const apiUrl = import.meta.env.VITE_API_URL
 
 interface TableDataItem {
   column1: string;
@@ -44,10 +44,11 @@ export default function Gozaresh() {
 
   const handleSubmit = async () => {
     try {
+      
       const token = localStorage.getItem('token');
       const queries = `wpId=${parameter1}&date=${parameter2}&sector=${parameter3}&material=${parameter4}&color=${parameter5}&type=${parameter6}`;
       console.log(parameter4)
-      const response = await axios.get(`${BASE_URL}/report/query?${queries}`, {
+      const response = await axios.get(`${apiUrl}/report/query?${queries}`, {
         headers: {
           'Authorization': `${token}`,
         },

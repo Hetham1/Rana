@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/command";
 import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
 
-import { BASE_URL } from '../hooks/apiconfig';
+const apiUrl = import.meta.env.VITE_API_URL
 
 // Define the type for the comboBox data
 // interface LetterOption {
@@ -53,8 +53,9 @@ export default function Relocate() {
     const workPlace = localStorage.getItem('workPlace'); 
 
     if (workPlace) {
+      
       const token = localStorage.getItem('token');
-      axios.get(`${BASE_URL}/workplace?workPlace=${workPlace}`, {
+      axios.get(`${apiUrl}/workplace?workPlace=${workPlace}`, {
         headers: {
           'Authorization': `${token}`
         }
@@ -147,7 +148,7 @@ export default function Relocate() {
     console.log('Workplace ID:', wpId);
 
     if (uid && comboBoxValue && token && wpId) {
-      axios.put(`${BASE_URL}/placement/${uid}`, {
+      axios.put(`${apiUrl}/placement/${uid}`, {
         sectorNew: comboBoxValue,
         wpId: wpId, 
       }, {
@@ -180,7 +181,7 @@ export default function Relocate() {
     setError(null);
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`${BASE_URL}/uidDetails/${uid}`, {
+      const response = await axios.get(`${apiUrl}/uidDetails/${uid}`, {
         headers: {
           'Authorization': `${token}`
         }
