@@ -20,10 +20,12 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
 
     try {
       const apiUrl = import.meta.env.VITE_API_URL || 'https://defaulturl.com';
-      const response = await axios.post(`${apiUrl}/login`, {
+      const response = await axios.post(`${apiUrl}/login`, 
+        {
         username,
         password,
-      });
+      }
+    );
 
       if (response.data.token) {
         localStorage.setItem('token', response.data.token);
