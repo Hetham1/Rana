@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import axios from 'axios';
-import { BASE_URL } from '../hooks/apiconfig';
+const apiUrl = import.meta.env.VITE_API_URL
 
 interface Order {
   ordId: string;
@@ -32,7 +32,7 @@ export default function GatherPage() {
   const fetchOrders = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`${BASE_URL}/gatheredexit`, {
+      const response = await axios.get(`${apiUrl}/gatheredexit`, {
         headers: {
           'Authorization': `${token}`
         }
@@ -46,7 +46,7 @@ export default function GatherPage() {
   const fetchOrderDetails = async (ordId: string) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`${BASE_URL}/orderDetails/${ordId}`, {
+      const response = await axios.get(`${apiUrl}/orderDetails/${ordId}`, {
         headers: {
           Authorization: `${token}`,
         },
@@ -75,7 +75,7 @@ export default function GatherPage() {
       setIsPermitting(true);
       const token = localStorage.getItem('token');
       const response = await axios.put(
-        `${BASE_URL}/ordersc/${selectedOrder.ordId}`,
+        `${apiUrl}/ordersc/${selectedOrder.ordId}`,
         {},
         {
           headers: {

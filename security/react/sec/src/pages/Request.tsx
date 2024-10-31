@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Button } from "@/components/ui/button";
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
@@ -16,7 +16,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { BASE_URL } from '../hooks/apiconfig';
+const apiUrl = import.meta.env.VITE_API_URL
 
 interface RequestData {
   reqId: string;
@@ -32,6 +32,11 @@ interface UserOption {
   username: string;
 }
 
+interface ComboOption {
+  id: string;
+  name: string;
+}
+
 export default function Requests() {
   const [requests, setRequests] = useState<RequestData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -42,13 +47,17 @@ export default function Requests() {
   const [isComboOpen, setIsComboOpen] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, reqType: e.target.value });
-  };
+  // New state for additional comboboxes
+  const [combo1Options, setCombo1Options] = useState<ComboOption[]>([]);
+  const [combo1Value, setCombo1Value] = useState('');
+  const [isCombo1Open, setIsCombo1Open] = useState(false);
+  const [combo2Options, setCombo2Options] = useState<ComboOption[]>([]);
+  const [combo2Value, setCombo2Value] = useState('');
+  const [isCombo2Open, setIsCombo2Open] = useState(false);
 
   const fetchRequests = async (userId: string) => {
     try {
-      const response = await axios.get(`${BASE_URL}/secrequest`, {
+      const response = await axios.get(`${apiUrl}/secrequest`, {
         headers: {
           Authorization: `${localStorage.getItem('token')}`,
         },
@@ -69,7 +78,7 @@ export default function Requests() {
 
   const fetchComboBoxOptions = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/users`, {
+      const response = await axios.get(`${apiUrl}/users`, {
         headers: {
           Authorization: `${localStorage.getItem('token')}`,
         },
@@ -85,17 +94,55 @@ export default function Requests() {
     }
   };
 
+  // New functions to fetch options for additional comboboxes
+  const fetchCombo1Options = async () => {
+    try {
+      const response = await axios.get(`${apiUrl}/mavad`, {
+        headers: {
+          Authorization: `${localStorage.getItem('token')}`,
+        },
+      });
+
+      if (response.data && response.data.success) {
+        setCombo1Options(response.data.data);
+      } else {
+        console.warn('Failed to fetch combo1 options');
+      }
+    } catch (error) {
+      console.error('Error fetching combo1 options:', error);
+    }
+  };
+
+  const fetchCombo2Options = async () => {
+    try {
+      const response = await axios.get(`${apiUrl}/combo2options`, {
+        headers: {
+          Authorization: `${localStorage.getItem('token')}`,
+        },
+      });
+
+      if (response.data && response.data.success) {
+        setCombo2Options(response.data.data);
+      } else {
+        console.warn('Failed to fetch combo2 options');
+      }
+    } catch (error) {
+      console.error('Error fetching combo2 options:', error);
+    }
+  };
+
   const handleSubmit = async () => {
     const userId = localStorage.getItem('userId');
-    if (!userId || !formData.reqType || !comboValue) return;
+    if (!userId || !combo1Value || !combo2Value || !comboValue) return;
 
     setIsSubmitting(true);
     try {
-      const response = await axios.post(`${BASE_URL}/request/new`, {
-        reqType: formData.reqType,
-        reqDetail: formData.description,
+      const response = await axios.post(`${apiUrl}/request/new`, {
+        combo1Value,
+        combo2Value,
         userId: userId,
-        reqReciever: comboValue
+        reqReciever: comboValue,
+        reqDetail: formData.description
       }, {
         headers: {
           Authorization: `${localStorage.getItem('token')}`,
@@ -109,6 +156,8 @@ export default function Requests() {
         // Reset form data
         setFormData({ reqType: '', reqDetail: '', selectedOption: '', description: '' });
         setComboValue('');
+        setCombo1Value('');
+        setCombo2Value('');
       } else {
         alert(response.data.error || 'An error occurred while creating the request.');
       }
@@ -130,7 +179,7 @@ export default function Requests() {
     }
   }, []);
 
-  const isFormValid = formData.reqType && comboValue;
+  const isFormValid = combo1Value && combo2Value && comboValue;
 
   if (isLoading) {
     return <div className="flex justify-center items-center h-full">در حال بارگذاری...</div>;
@@ -179,7 +228,11 @@ export default function Requests() {
         <AlertDialogTrigger asChild>
           <Button
             className="fixed bottom-4 right-4"
-            onClick={fetchComboBoxOptions}
+            onClick={() => {
+              fetchComboBoxOptions();
+              fetchCombo1Options();
+              fetchCombo2Options();
+            }}
           >
             درخواست جدید 
           </Button>
@@ -192,84 +245,132 @@ export default function Requests() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <div className="space-y-4">
-            <div className="flex flex-row justify-center items-right gap-2 bg-whitebox py-4 rounded-md">
-            <label className={`px-4 py-2 rounded-lg cursor-pointer text-white font-semibold transition ${formData.reqType === '1' ? 'bg-blue-500' : 'bg-gray-300'}`}>
-              <input
-                type="radio"
-                name="option"
-                value="1"
-                className="hidden"
-                onChange={handleRadioChange}
-                checked={formData.reqType === '1'}
-              />
-              ورود
-            </label>
-            
-            <label className={`px-4 py-2 rounded-lg cursor-pointer text-white font-semibold transition ${formData.reqType === '2' ? 'bg-blue-500' : 'bg-gray-300'}`}>
-              <input
-                type="radio"
-                name="option"
-                value="2"
-                className="hidden"
-                onChange={handleRadioChange}
-                checked={formData.reqType === '2'}
-              />
-              خروج
-            </label>
-            
-            <label className={`px-4 py-2 rounded-lg cursor-pointer text-white font-semibold transition ${formData.reqType === '3' ? 'bg-blue-500' : 'bg-gray-300'}`}>
-              <input
-                type="radio"
-                name="option"
-                value="3"
-                className="hidden"
-                onChange={handleRadioChange}
-                checked={formData.reqType === '3'}
-              />
-              ریجکت
-            </label>
-              <Popover open={isComboOpen} onOpenChange={setIsComboOpen}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  role="combobox"
-                  aria-expanded={isComboOpen}
-                  className="w-full justify-between"
-                >
-                  {comboValue
-                    ? comboOptions.find((option) => option.userId === comboValue)?.fullName || 'Select an option'
-                    : "کاربران"}
-                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-[200px] p-0">
-                <Command>
-                  <CommandInput placeholder="جستجو" />
-                  <CommandList>
-                    <CommandEmpty>کاربری یافت نشد</CommandEmpty>
-                    <CommandGroup>
-                      {comboOptions.map((option) => (
-                        <CommandItem
-                          key={option.userId}
-                          onSelect={() => {
-                            setComboValue(option.userId);
-                            setIsComboOpen(false);
-                          }}
-                        >
-                          <Check
-                            className={comboValue === option.userId ? "mr-2 h-4 w-4 opacity-100" : "mr-2 h-4 w-4 opacity-0"}
-                          />
-                          {option.fullName}
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </CommandList>
-                </Command>
-              </PopoverContent>
-            </Popover>
-            </div>
+            <div className="flex flex-col gap-4 bg-whitebox py-4 rounded-md">
+              {/* Combo1 */}
+              <Popover open={isCombo1Open} onOpenChange={setIsCombo1Open}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={isCombo1Open}
+                    className="w-full justify-between"
+                  >
+                    {combo1Value
+                      ? combo1Options.find((option) => option.id === combo1Value)?.name || 'Select an option'
+                      : "مواد"}
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[200px] p-0">
+                  <Command>
+                    <CommandInput placeholder="جستجو" />
+                    <CommandList>
+                      <CommandEmpty>گزینه ای یافت نشد</CommandEmpty>
+                      <CommandGroup>
+                        {combo1Options.map((option) => (
+                          <CommandItem
+                            key={option.id}
+                            onSelect={() => {
+                              setCombo1Value(option.id);
+                              setIsCombo1Open(false);
+                            }}
+                          >
+                            <Check
+                              className={combo1Value === option.id ? "mr-2 h-4 w-4 opacity-100" : "mr-2 h-4 w-4 opacity-0"}
+                            />
+                            {option.name}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
 
-            
+              {/* Combo2 */}
+              <Popover open={isComboOpen} onOpenChange={setIsComboOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={isComboOpen}
+                    className="w-full justify-between"
+                  >
+                    {comboValue
+                      ? comboOptions.find((option) => option.userId === comboValue)?.fullName || 'Select an option'
+                      : "ارسال از"}
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[200px] p-0">
+                  <Command>
+                    <CommandInput placeholder="جستجو" />
+                    <CommandList>
+                      <CommandEmpty>کاربری یافت نشد</CommandEmpty>
+                      <CommandGroup>
+                        {comboOptions.map((option) => (
+                          <CommandItem
+                            key={option.userId}
+                            onSelect={() => {
+                              setComboValue(option.userId);
+                              setIsComboOpen(false);
+                            }}
+                          >
+                            <Check
+                              className={comboValue === option.userId ? "mr-2 h-4 w-4 opacity-100" : "mr-2 h-4 w-4 opacity-0"}
+                            />
+                            {option.fullName}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+
+              <Popover open={isCombo2Open} onOpenChange={setIsCombo2Open}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={isCombo2Open}
+                    className="w-full justify-between"
+                  >
+                    {combo2Value
+                      ? combo2Options.find((option) => option.id === combo2Value)?.name || 'Select an option'
+                      : "ارسال به"}
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[200px] p-0">
+                  <Command>
+                    <CommandInput placeholder="جستجو" />
+                    <CommandList>
+                      <CommandEmpty>گزینه ای یافت نشد</CommandEmpty>
+                      <CommandGroup>
+                        {combo2Options.map((option) => (
+                          <CommandItem
+                            key={option.id}
+                            onSelect={() => {
+                              setCombo2Value(option.id);
+                              setIsCombo2Open(false);
+                            }}
+                          >
+                            <Check
+                              className={combo2Value === option.id ? "mr-2 h-4 w-4 opacity-100" : "mr-2 h-4 w-4 opacity-0"}
+                            />
+                            {option.name}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+
+              {/* Existing Combobox (unchanged) */}
+              
+            </div>
 
             <Textarea
               placeholder="توضیحات"
@@ -282,6 +383,7 @@ export default function Requests() {
             <Button
               disabled={!isFormValid || isSubmitting}
               onClick={handleSubmit}
+              
               className="disabled:opacity-50"
             >
               {isSubmitting ? 'در حال پردازش..' : 'ثبت درخواست'}

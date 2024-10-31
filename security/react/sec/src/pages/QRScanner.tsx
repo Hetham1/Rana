@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input"; // Import Shadcn Input component
 //   PopoverTrigger
 // } from "@/components/ui/popover";
 // import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { BASE_URL } from '../hooks/apiconfig';
+const apiUrl = import.meta.env.VITE_API_URL
 import { XCircle } from 'lucide-react';
 
 export default function QRScanner() {
@@ -108,7 +108,7 @@ export default function QRScanner() {
   const getFlagState = async (uid: string) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`${BASE_URL}/ordersc/${uid}`, {
+      const response = await axios.get(`${apiUrl}/ordersc/${uid}`, {
         headers: {
           'Authorization': `${token}`
         }
@@ -138,7 +138,7 @@ export default function QRScanner() {
         ordId: scanResult            // Scanned QR code result (order ID)
       };
 
-      const response = await axios.post(`${BASE_URL}/transports/new`, postData, {
+      const response = await axios.post(`${apiUrl}/transports/new`, postData, {
         headers: {
           'Authorization': `${token}`,
           
