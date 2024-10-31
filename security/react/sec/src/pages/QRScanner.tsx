@@ -2,28 +2,31 @@ import { useEffect, useRef, useState } from 'react';
 import jsQR from 'jsqr';
 import axios from 'axios';
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input"; // Import Shadcn Input component
-// import { useNavigate } from 'react-router-dom';
-// import {
-//   Popover,
-//   PopoverContent,
-//   PopoverTrigger
-// } from "@/components/ui/popover";
-// import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-const apiUrl = import.meta.env.VITE_API_URL
+import { Input } from "@/components/ui/input";
 import { XCircle } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+
+const apiUrl = import.meta.env.VITE_API_URL;
 
 export default function QRScanner() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [scanResult, setScanResult] = useState<string | null>(null);
-  const [flag, setFlag] = useState<string | null>(null); // To store the flag state
-  // const [comboBoxItems, setComboBoxItems] = useState<any[]>([]);
-  // const [selectedItem, setSelectedItem] = useState<string | null>(null);
-  const [driverName, setDriverName] = useState<string>(''); // State for driver name input
+  const [flag, setFlag] = useState<string | null>(null);
   const [isScanning, setIsScanning] = useState(false);
   const scanIntervalRef = useRef<number | null>(null);
-  // const navigate = useNavigate();
+  const [orderDetails, setOrderDetails] = useState<any[]>([]);
+  const [isOrderDialogOpen, setIsOrderDialogOpen] = useState(false);
+  const [isDriverDialogOpen, setIsDriverDialogOpen] = useState(false);
+  const [driverName, setDriverName] = useState('');
+  const [driverPhone, setDriverPhone] = useState('');
+  const [driverLicense, setDriverLicense] = useState('');
 
   useEffect(() => {
     const startVideoStream = async () => {
@@ -40,7 +43,6 @@ export default function QRScanner() {
       }
     };
     startVideoStream();
-    // fetchComboBoxItems();
     startScanning();
 
     return () => {
@@ -51,19 +53,6 @@ export default function QRScanner() {
       stopScanning();
     };
   }, []);
-
-  // const fetchComboBoxItems = () => {
-  //   try {
-  //     const comboBoxItems = [
-  //       { id: 1, name: 'بوگاتی' },
-  //       { id: 2, name: 'بوگاتی قرمز' },
-  //       { id: 3, name: 'بوگاتی سبزم خراب شد😭' }
-  //     ];
-  //     setComboBoxItems(comboBoxItems);
-  //   } catch (error) {
-  //     console.error('Error setting combo box items:', error);
-  //   }
-  // };
 
   const startScanning = () => {
     if (!isScanning) {
@@ -134,14 +123,15 @@ export default function QRScanner() {
       const token = localStorage.getItem('token');
 
       const postData = {
-        tpDriverName: driverName,  // Value from text input (driver's name)
-        ordId: scanResult            // Scanned QR code result (order ID)
+        tpDriverName: driverName,
+        ordId: scanResult,
+        driverPhone,
+        driverLicense
       };
 
       const response = await axios.post(`${apiUrl}/transports/new`, postData, {
         headers: {
           'Authorization': `${token}`,
-          
         }
       });
 
@@ -149,12 +139,37 @@ export default function QRScanner() {
         console.log('POST request successful:', response.data);
         setScanResult(null);
         setFlag(null);
-        setDriverName('');  // Clear the text input
+        setDriverName('');
+        setDriverPhone('');
+        setDriverLicense('');
+        setIsDriverDialogOpen(false);
       } else {
         console.error('POST request failed:', response.data);
       }
     } catch (error) {
       console.error('Error in POST request:', error);
+    }
+  };
+
+  const fetchOrderDetails = async () => {
+    if (!scanResult) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${apiUrl}/orderDetails/${scanResult}`, {
+        headers: {
+          'Authorization': `${token}`
+        }
+      });
+
+      if (response.data.success) {
+        setOrderDetails(response.data.data);
+        setIsOrderDialogOpen(true);
+      } else {
+        console.error('Failed to fetch order details:', response.data.error);
+      }
+    } catch (error) {
+      console.error('Error fetching order details:', error);
     }
   };
 
@@ -170,7 +185,6 @@ export default function QRScanner() {
 
       <div className="w-full text-center p-4 bg-blue-200">
         <h2 className="text-lg font-semibold">نتیجه اسکن:</h2>
-        {/* Display Scan Result Here */}
         {scanResult && (
           <>
             <p style={{ color: flag === 'true' ? 'green' : 'red' }}>
@@ -183,22 +197,65 @@ export default function QRScanner() {
         )}
       </div>
 
-      {/* Shadcn Text Input for Driver Name */}
-      <div className="w-full max-w-md">
-        <Input 
-        className='text-center'
-          placeholder="نام راننده" 
-          value={driverName} 
-          onChange={(e) => setDriverName(e.target.value)} // Update state on input change
-        />
-      </div>
+      <Button 
+        onClick={() => setIsDriverDialogOpen(true)} 
+        disabled={flag !== 'true'}
+        className="w-full max-w-md"
+      >
+        اطلاعات راننده
+      </Button>
 
-      {/* Conditionally render the تایید button */}
-      {driverName && flag === 'true' && (
-        <Button onClick={clearFields} variant="default">
-          تایید
+      {flag === 'true' && (
+        <Button onClick={fetchOrderDetails} variant="outline">
+          مشاهده جزئیات سفارش
         </Button>
       )}
+
+      <Dialog open={isOrderDialogOpen} onOpenChange={setIsOrderDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>جزئیات سفارش</DialogTitle>
+          </DialogHeader>
+          <div className="mt-4">
+            {orderDetails.map((item, index) => (
+              <div key={index} className="mb-2">
+                <p><strong>نام محصول:</strong> {item.prodName}</p>
+                <p><strong>تعداد:</strong> {item.contCount}</p>
+              </div>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isDriverDialogOpen} onOpenChange={setIsDriverDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>اطلاعات راننده</DialogTitle>
+          </DialogHeader>
+          <div className="mt-4 space-y-4">
+            <Input
+              placeholder="نام راننده"
+              value={driverName}
+              onChange={(e) => setDriverName(e.target.value)}
+            />
+            <Input
+              placeholder="شماره تلفن راننده"
+              value={driverPhone}
+              onChange={(e) => setDriverPhone(e.target.value)}
+            />
+            <Input
+              placeholder="کد ملی راننده"
+              value={driverLicense}
+              onChange={(e) => setDriverLicense(e.target.value)}
+            />
+          </div>
+          <DialogFooter>
+            <Button onClick={clearFields} disabled={!driverName || !driverPhone || !driverLicense}>
+              تایید
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
