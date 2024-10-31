@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,6 +29,13 @@ interface TableDataItem {
   column3: string;
 }
 
+
+
+interface WorkplaceOption {
+  wpId: string;
+  wpName: string;
+}
+
 export default function Gozaresh() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [parameter1, setParameter1] = useState('');
@@ -41,12 +48,39 @@ export default function Gozaresh() {
   const [filteredData, setFilteredData] = useState<any[]>([]); // Stores the filtered data
   const [selectedItem, setSelectedItem] = useState<any>(null); // Stores the selected item for the popup
   const [isDialogOpen, setDialogOpen] = useState(false); // Controls the visibility of the dialog
+  const [option1, setOption1] = useState<WorkplaceOption[]>([]);
+  const [selectedWpId, setSelectedWpId] = useState<string>(''); 
+  const [option2, setOption2] = useState<WorkplaceOption[]>([]);
+  const [selectedpro, setSelectedpro] = useState<string>(''); 
+
+  // const [options, setOptions] = useState<string[]>([])
+  useEffect(() => {
+    const fetchOptions = async () => {
+      try {
+        const token = localStorage.getItem('token')
+        const response = await axios.get(`${apiUrl}/workplace`, {
+          headers: {
+            'Authorization': `${token}`
+          }
+        }) 
+        setOption1(response.data.data.map((item: any) => ({
+          wpId: item.wpId,
+          wpName: item.wpName,
+        })));
+      } catch (error) {
+        console.error('Error fetching options:', error);
+      }
+    };
+  
+    fetchOptions();
+  }, []);
+
 
   const handleSubmit = async () => {
     try {
       
       const token = localStorage.getItem('token');
-      const queries = `wpId=${parameter1}&date=${parameter2}&sector=${parameter3}&material=${parameter4}&color=${parameter5}&type=${parameter6}`;
+      const queries = `wpId=${selectedWpId}&date=${parameter2}&sector=${parameter3}&material=${parameter4}&color=${parameter5}&type=${parameter6}`;
       console.log(parameter4)
       const response = await axios.get(`${apiUrl}/report/query?${queries}`, {
         headers: {
@@ -87,7 +121,35 @@ export default function Gozaresh() {
     setSelectedItem(item); // Set the selected item for the popup
     setDialogOpen(true); // Open the dialog
   };
+
+
+
+  const materialOptions = ['مس', 'آلمینیوم'];
+  const colorOptions = [
+  'قرمز',
+  'آبی',
+  'سبز',
+  'زرد',
+  'بنفش',
+  'نارنجی',
+  'صورتی',
+  'قهوه‌ای',
+  'خاکستری',
+  'سیاه',
+  'سفید',
+  'آبی آسمانی',
+  'سرمه‌ای',
+  'زیتونی',
+  'کرم',
+  'فیروزه‌ای',
+  'یاسی',
+  'نقره‌ای',
+  'طلایی',
+  'عنابی'
+];
   const letters = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i));
+
+  
   return (
     <div className="p-4">
       <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
@@ -99,12 +161,44 @@ export default function Gozaresh() {
         <SheetContent side="bottom">
           <h2 className="text-lg text-center font-semibold mb-4">پارامتر ها</h2>
           <div className="space-y-4">
-            <Input
-              className='text-center'
-              placeholder="شناسه مکان"
-              value={parameter1}
-              onChange={(e) => setParameter1(e.target.value)}
-            />
+          <div>
+              <div className="w-full flex justify-center">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="w-full font-extralight">
+                      {parameter1 || 'مکان'}
+                      <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[200px] p-0">
+                    <Command>
+                      <CommandInput placeholder="جستجو" className="h-9" />
+                      <CommandList>
+                      <CommandEmpty>سکتور یافت نشد</CommandEmpty>
+                      <CommandGroup>
+                        {option1.map((option) => (
+                          <CommandItem
+                            key={option.wpId}
+                            value={option.wpName}
+                            onSelect={(currentValue) => {
+                              setParameter1(currentValue);
+                              setSelectedWpId(option.wpId);
+
+                            }}
+                          >
+                            {option.wpName}
+                            <CheckIcon
+                              className={`ml-auto h-4 w-4 ${parameter1 === option.wpName ? 'opacity-100' : 'opacity-0'}`}
+                            />
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+              </div>
+            </div>
             <Input
               className='text-center'
               value={parameter2}
@@ -147,24 +241,116 @@ export default function Gozaresh() {
                 </Popover>
               </div>
             </div>
-            <Input
-              className='text-center'
-              placeholder="جنس قرقره"
-              value={parameter4}
-              onChange={(e) => setParameter4(e.target.value)}
-            />
-            <Input
-              className='text-center'
-              placeholder="رنگ عایق"
-              value={parameter5}
-              onChange={(e) => setParameter5(e.target.value)}
-            />
-            <Input
-              className='text-center'
-              placeholder="نوع محصول"
-              value={parameter6}
-              onChange={(e) => setParameter6(e.target.value)}
-            />
+            <div>
+              <div className="w-full flex justify-center">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="w-full font-extralight">
+                      {parameter4 || 'جنس قرقره'}
+                      <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[200px] p-0">
+                    <Command>
+                      <CommandInput placeholder="جستجو" className="h-9" />
+                      <CommandList>
+                        <CommandEmpty>قرقره یافت نشد</CommandEmpty>
+                        <CommandGroup>
+                          {materialOptions.map((option) => (
+                            <CommandItem
+                              key={option}
+                              value={option}
+                              onSelect={(currentValue) => {
+                                setParameter4(currentValue);
+                              }}
+                            >
+                              {option}
+                              <CheckIcon
+                                className={`ml-auto h-4 w-4 ${parameter4 === option ? 'opacity-100' : 'opacity-0'}`}
+                              />
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+              </div>
+            </div>
+            <div>
+              <div className="w-full flex justify-center">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="w-full font-extralight">
+                      {parameter5 || 'رنگ عایق'}
+                      <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[200px] p-0">
+                    <Command>
+                      <CommandInput placeholder="جستجو" className="h-9" />
+                      <CommandList>
+                        <CommandEmpty>رنگ یافت نشد</CommandEmpty>
+                        <CommandGroup>
+                          {colorOptions.map((color) => (
+                            <CommandItem
+                              key={color}
+                              value={color}
+                              onSelect={(currentValue) => {
+                                setParameter5(currentValue);
+                              }}
+                            >
+                              {color}
+                              <CheckIcon
+                                className={`ml-auto h-4 w-4 ${parameter5 === color ? 'opacity-100' : 'opacity-0'}`}
+                              />
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+              </div>
+            </div>
+            <div>
+              <div className="w-full flex justify-center">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="w-full font-extralight">
+                      {parameter6 || 'نوع محصول'}
+                      <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[200px] p-0">
+                    <Command>
+                      <CommandInput placeholder="جستجو" className="h-9" />
+                      <CommandList>
+                      <CommandEmpty>سکتور یافت نشد</CommandEmpty>
+                      <CommandGroup>
+                        {option1.map((option) => (
+                          <CommandItem
+                            key={option.wpId}
+                            value={option.wpName}
+                            onSelect={(currentValue) => {
+                              setParameter6(currentValue);
+                              setSelectedpro(option.wpId);
+
+                            }}
+                          >
+                            {option.wpName}
+                            <CheckIcon
+                              className={`ml-auto h-4 w-4 ${parameter1 === option.wpName ? 'opacity-100' : 'opacity-0'}`}
+                            />
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+              </div>
+            </div>
             <Button className="w-full bg-sec" onClick={handleSubmit}>جستجو</Button>
           </div>
         </SheetContent>
