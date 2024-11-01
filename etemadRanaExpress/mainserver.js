@@ -30,7 +30,10 @@ function sha256(password) {
 //sha256 end
 
 // mikham csrf bokhoram
-app.use(cors());
+app.use(cors({
+  origin: ['https://handheld.xikode.lol', 'https://security.xikode.lol'],
+  credentials: true, // Optional: If you need to allow credentials
+}));
 
 app.use(express.static('public'));
 // parse form data
@@ -203,6 +206,8 @@ app.put('/api/v1/entry/:uid',authenticateToken, (req, res) => {
 });
 
 
+
+
 app.get('/api/v1/protected',authenticateToken, (req, res) => {
 
     res.json({ message: `Welcome, Jane` });
@@ -216,6 +221,72 @@ app.put('/api/v1/exit/:uid',authenticateToken, (req, res) => {
     const { wpId } = req.body;
     const uid = req.params.uid;
     console.log(wpId,uid);
+
+    let firstQueryToRun = ''
+    const firstQueries = {
+      'wsp': `
+      UPDATE xicorana.wirespool
+      SET wspLL='خروج'
+      WHERE wspId = ? AND wpId = ? AND wspQC = '1' AND wspLL != 'خروج';
+
+      `,
+      'ins': `
+      UPDATE xicorana.insul
+      SET insLL='خروج'
+      WHERE insId = ? AND wpId = ? AND insQC = '1' AND insLL != 'خروج';
+      `,
+      'car': `
+      UPDATE xicorana.cart
+      SET cartLL = 'خروج'
+      WHERE cartId = ? AND wpId = ? AND cartQC = '1' AND cartLL != 'خروج';
+
+      `,
+      'fip': `
+      UPDATE xicorana.finalproduct
+      SET fpLL = 'خروج'
+      WHERE fpId = ? AND wpId = ? AND fpLL != 'خروج';
+      `
+    };
+
+    switch (uid.substring(0, 3)) {
+      case 'wsp':
+        firstQueryToRun = queries['wsp'];
+        break;
+      case 'ins':
+        firstQueryToRun = queries['ins'];
+        break;
+      case 'car':
+        firstQueryToRun = queries['car'];
+        break;
+      case 'fip':
+        firstQueryToRun = queries['fip'];
+        break;
+      default:
+        res.status(400).json({ success: false, error: 'Invalid uid prefix' });
+        return;
+    }
+    
+    pool.query(`
+      SELECT prodname,prodId FROM xicorana.product;
+      `,[],(err,result,fields)=>{
+    
+          if(err){
+              
+              const data = String(err);
+              res.status(500).json({ success: false, error: `${data}` });
+              return console.log(err);
+              
+          }
+          if(result.length === 0 ){
+    
+              res.status(404).json({ success: false, error: ` محصولی یافت نشد` });
+              return ;
+          }
+    
+          res.status(200).json({ success: true, data: result });
+          return console.log(result);
+      });
+    
 
     let queryToRun='';
 
@@ -291,6 +362,40 @@ app.put('/api/v1/exit/:uid',authenticateToken, (req, res) => {
     });
 
     // res.status(200).json({ success: true, data: people })
+});
+
+
+//Handling displaying all products
+
+app.get('/api/v1/prod/name',authenticateToken, (req, res) => {
+
+
+  console.log('hit get /prod/name')
+
+  pool.query(`
+  SELECT prodname,prodId FROM xicorana.product;
+  `,[],(err,result,fields)=>{
+
+      if(err){
+          
+          const data = String(err);
+          res.status(500).json({ success: false, error: `${data}` });
+          return console.log(err);
+          
+      }
+      if(result.length === 0 ){
+
+          res.status(404).json({ success: false, error: ` محصولی یافت نشد` });
+          return ;
+      }
+
+      res.status(200).json({ success: true, data: result });
+      return console.log(result);
+  });
+
+  
+  
+  // res.status(200).json({ success: true, data: people })
 });
 
 
@@ -730,7 +835,7 @@ app.get('/api/v1/pp',authenticateToken, (req, res) => {
 app.put('/api/v1/pp/assign/:ppId',authenticateToken, (req, res) => {
 
   const ppId = req.params.ppId;
-  const { uid } = req.body;
+  const { uid,ppDevice } = req.body;
   const uid_dash=uid+'-';
   console.log(ppId,uid);
 
@@ -739,13 +844,13 @@ app.put('/api/v1/pp/assign/:ppId',authenticateToken, (req, res) => {
   const queries = {
       'wsp': `
       update xicorana.productionplan 
-      Set wspId=CONCAT(wspId, ?) 
+      Set wspId=CONCAT(wspId, ?), ppDevice=?
       where ppId=? and (select wspLL from xicorana.wireSpool where wspId=?)='ورود'; 
 
       `,
       'ins': `
       update xicorana.productionplan 
-      Set insId=CONCAT(insId, ?) 
+      Set insId=CONCAT(insId, ?), ppDevice=?
       where ppId=? and (select insLL from xicorana.insul where insId=?)='ورود';
       `,
       'wsp2': `
@@ -772,7 +877,7 @@ app.put('/api/v1/pp/assign/:ppId',authenticateToken, (req, res) => {
     }
 
   console.log('Executing query:', queryToRun);
-  pool.query(queryToRun[0],[uid_dash,ppId,uid],(err,result,fields)=>{
+  pool.query(queryToRun[0],[uid_dash,ppDevice,ppId,uid],(err,result,fields)=>{
       
       try{
 
@@ -969,7 +1074,75 @@ if (!type){
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////HERASAT
 
+//get manf name
 
+app.get('/api/v1/manf/name',authenticateToken, (req, res) => {
+
+
+
+  console.log('hit get manf name')
+
+  pool.query(`
+  SELECT manfName FROM xicorana.manf;
+  `,[wpId],(err,result,fields)=>{
+
+      if(err){
+          
+          const data = String(err);
+          res.status(500).json({ success: false, error: `${data}` });
+          return console.log(err);
+          
+      }
+      if(result.length === 0 ){
+
+          res.status(404).json({ success: false, error: ` سازنده ای یافت نشد` });
+          return ;
+      }
+
+      res.status(200).json({ success: true, data: result });
+      return console.log(result);
+  });
+
+  
+  
+  // res.status(200).json({ success: true, data: people })
+});
+
+
+
+app.get('/api/v1/prod/highdemand',authenticateToken, (req, res) => {
+
+
+
+  console.log('hit get manf name')
+
+  pool.query(`
+  SELECT prodname FROM xicorana.highdemand;
+  `,[wpId],(err,result,fields)=>{
+
+      if(err){
+          
+          const data = String(err);
+          res.status(500).json({ success: false, error: `${data}` });
+          return console.log(err);
+          
+      }
+      if(result.length === 0 ){
+
+          res.status(404).json({ success: false, error: ` کالای پر استفاده ای یافت نشد` });
+          return ;
+      }
+
+      res.status(200).json({ success: true, data: result });
+      return console.log(result);
+  });
+
+  
+  
+  // res.status(200).json({ success: true, data: people })
+});
+
+//get gatheredexit
 app.get('/api/v1/gatheredexit',authenticateToken, (req, res) => {
 
 
@@ -1403,7 +1576,7 @@ app.put('/api/v1/adminrequest/received/deny/:reqId',authenticateToken, (req, res
   const reqId = req.params.reqId;
 
   pool.query(`
-  Update xicorana.request Set reqOk='0' where reqId='@reqId';
+  Update xicorana.request Set reqOk='0' where reqId=? ;
   `,[reqId],(err,result,fields)=>{
 
       if(err){
