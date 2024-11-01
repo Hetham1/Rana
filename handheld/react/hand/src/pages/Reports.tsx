@@ -36,6 +36,10 @@ interface WorkplaceOption {
   wpName: string;
 }
 
+interface ManfOption {
+  manfName: string;
+}
+
 export default function Gozaresh() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [parameter1, setParameter1] = useState('');
@@ -48,10 +52,10 @@ export default function Gozaresh() {
   const [filteredData, setFilteredData] = useState<any[]>([]); // Stores the filtered data
   const [selectedItem, setSelectedItem] = useState<any>(null); // Stores the selected item for the popup
   const [isDialogOpen, setDialogOpen] = useState(false); // Controls the visibility of the dialog
-  const [option1, setOption1] = useState<WorkplaceOption[]>([]);
-  const [selectedWpId, setSelectedWpId] = useState<string>(''); 
-  const [option2, setOption2] = useState<WorkplaceOption[]>([]);
-  const [selectedpro, setSelectedpro] = useState<string>(''); 
+  const [option1, setOption1] = useState<WorkplaceOption[]>([]); //option for workplace
+  const [selectedWpId, setSelectedWpId] = useState<string>(''); //workplace that is sent to shahab
+  const [option2, setOption2] = useState<ManfOption[]>([]); //option for manf high demand
+  const [selectedpro, setSelectedpro] = useState<string>(''); //manf that is sent to shahab
 
   // const [options, setOptions] = useState<string[]>([])
   useEffect(() => {
@@ -63,9 +67,17 @@ export default function Gozaresh() {
             'Authorization': `${token}`
           }
         }) 
+        const response2 = await axios.get(`${apiUrl}/manf/name`, {
+          headers: {
+            'Authorization': `${token}`
+          }
+        }) 
         setOption1(response.data.data.map((item: any) => ({
           wpId: item.wpId,
           wpName: item.wpName,
+        })));
+        setOption2(response2.data.data.map((item: any) => ({
+          manfName: item.manfName
         })));
       } catch (error) {
         console.error('Error fetching options:', error);
@@ -80,7 +92,7 @@ export default function Gozaresh() {
     try {
       
       const token = localStorage.getItem('token');
-      const queries = `wpId=${selectedWpId}&date=${parameter2}&sector=${parameter3}&material=${parameter4}&color=${parameter5}&type=${parameter6}`;
+      const queries = `wpId=${selectedWpId}&date=${parameter2}&sector=${parameter3}&material=${parameter4}&color=${parameter5}&type=${selectedpro}`;
       console.log(parameter4)
       const response = await axios.get(`${apiUrl}/report/query?${queries}`, {
         headers: {
@@ -328,19 +340,19 @@ export default function Gozaresh() {
                       <CommandList>
                       <CommandEmpty>سکتور یافت نشد</CommandEmpty>
                       <CommandGroup>
-                        {option1.map((option) => (
+                        {option2.map((option) => (
                           <CommandItem
-                            key={option.wpId}
-                            value={option.wpName}
+                            key={option.manfName}
+                            value={option.manfName}
                             onSelect={(currentValue) => {
                               setParameter6(currentValue);
-                              setSelectedpro(option.wpId);
+                              setSelectedpro(option.manfName);
 
                             }}
                           >
-                            {option.wpName}
+                            {option.manfName}
                             <CheckIcon
-                              className={`ml-auto h-4 w-4 ${parameter1 === option.wpName ? 'opacity-100' : 'opacity-0'}`}
+                              className={`ml-auto h-4 w-4 ${parameter6 === option.manfName ? 'opacity-100' : 'opacity-0'}`}
                             />
                           </CommandItem>
                         ))}

@@ -1082,7 +1082,7 @@ app.get('/api/v1/manf/name',authenticateToken, (req, res) => {
 
   pool.query(`
   SELECT manfName FROM xicorana.manf;
-  `,[wpId],(err,result,fields)=>{
+  `,[],(err,result,fields)=>{
 
       if(err){
           
