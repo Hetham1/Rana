@@ -30,10 +30,7 @@ function sha256(password) {
 //sha256 end
 
 // mikham csrf bokhoram
-app.use(cors({
-  origin: ['https://handheld.xikode.lol', 'https://security.xikode.lol'],
-  credentials: true, // Optional: If you need to allow credentials
-}));
+app.use(cors());
 
 app.use(express.static('public'));
 // parse form data
@@ -47,6 +44,7 @@ const httpsServer = https.createServer({
     cert: sslCert,
 }, app);
 //created 
+
 
 
 function authenticateToken(req, res, next) {

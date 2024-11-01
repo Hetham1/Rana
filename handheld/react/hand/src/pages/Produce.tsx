@@ -35,7 +35,7 @@ const QRScannerComponent: React.FC = () => {
   const [comboBoxOpen, setComboBoxOpen] = useState(false);
   const [staticComboBoxOpen, setStaticComboBoxOpen] = useState(false);
   const [value, setValue] = useState("");
-  const [staticValue, setStaticValue] = useState("");
+  const [staticppValue, setStaticppValue] = useState("");
   const [comboBoxItems, setComboBoxItems] = useState<ComboBoxItem[]>([]);
   const [scanResult, setScanResult] = useState<string>('');
   const [isScanning, setIsScanning] = useState<boolean>(false);
@@ -138,7 +138,7 @@ const QRScannerComponent: React.FC = () => {
   };
 
   const handleSubmit = async () => {
-    if (!value || !scanResult || !staticValue) {
+    if (!value || !scanResult || !staticppValue) {
       console.error('Production plan ID, scan result, or static value is missing');
       return;
     }
@@ -147,7 +147,7 @@ const QRScannerComponent: React.FC = () => {
       const token = localStorage.getItem('token'); 
       const response = await axios.put(`${apiUrl}/pp/assign/${value}`, {
         uid: scanResult,
-        staticValue: staticValue 
+        ppDevice: staticppValue 
       },{
         headers: {
           Authorization: `${token}`,
@@ -221,7 +221,7 @@ const QRScannerComponent: React.FC = () => {
               aria-expanded={staticComboBoxOpen}
               className="w-full justify-between"
             >
-              {staticValue ? staticValue : " لاین تولید را انتخاب کنید"}
+              {staticppValue ? staticppValue : " لاین تولید را انتخاب کنید"}
               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
           </PopoverTrigger>
@@ -235,14 +235,14 @@ const QRScannerComponent: React.FC = () => {
                       key={item}
                       value={item}
                       onSelect={(currentValue) => {
-                        setStaticValue(currentValue);
+                        setStaticppValue(currentValue);
                         setStaticComboBoxOpen(false);
                       }}
                     >
                       <Check
                         className={cn(
                           "mr-2 h-4 w-4",
-                          staticValue === item ? "opacity-100" : "opacity-0"
+                          staticppValue === item ? "opacity-100" : "opacity-0"
                         )}
                       />
                       {item}
