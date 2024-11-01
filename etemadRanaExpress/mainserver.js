@@ -371,7 +371,7 @@ app.get('/api/v1/prod/name',authenticateToken, (req, res) => {
   console.log('hit get /prod/name')
 
   pool.query(`
-  SELECT prodname,prodId FROM xicorana.product;
+  SELECT prodName,prodId FROM xicorana.product;
   `,[],(err,result,fields)=>{
 
       if(err){
@@ -1115,8 +1115,8 @@ app.get('/api/v1/prod/highdemand',authenticateToken, (req, res) => {
   console.log('hit get manf name')
 
   pool.query(`
-  SELECT prodname FROM xicorana.highdemand;
-  `,[wpId],(err,result,fields)=>{
+  SELECT prodName FROM xicorana.highdemand;
+  `,[],(err,result,fields)=>{
 
       if(err){
           

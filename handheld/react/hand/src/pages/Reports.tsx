@@ -36,8 +36,9 @@ interface WorkplaceOption {
   wpName: string;
 }
 
-interface ManfOption {
-  manfName: string;
+interface prodOption {
+  prodId: string;
+  prodName: string;
 }
 
 export default function Gozaresh() {
@@ -54,10 +55,10 @@ export default function Gozaresh() {
   const [isDialogOpen, setDialogOpen] = useState(false); // Controls the visibility of the dialog
   const [option1, setOption1] = useState<WorkplaceOption[]>([]); //option for workplace
   const [selectedWpId, setSelectedWpId] = useState<string>(''); //workplace that is sent to shahab
-  const [option2, setOption2] = useState<ManfOption[]>([]); //option for manf high demand
-  const [selectedpro, setSelectedpro] = useState<string>(''); //manf that is sent to shahab
+  const [option2, setOption2] = useState<prodOption[]>([]); //option for prod high demand
+  const [selectedpro, setSelectedpro] = useState<string>(''); //prod that is sent to shahab
 
-  // const [options, setOptions] = useState<string[]>([])
+ 
   useEffect(() => {
     const fetchOptions = async () => {
       try {
@@ -67,18 +68,24 @@ export default function Gozaresh() {
             'Authorization': `${token}`
           }
         }) 
-        const response2 = await axios.get(`${apiUrl}/manf/name`, {
+
+        const response2 = await axios.get(`${apiUrl}/prod/name`, {
           headers: {
             'Authorization': `${token}`
           }
         }) 
+
         setOption1(response.data.data.map((item: any) => ({
           wpId: item.wpId,
           wpName: item.wpName,
         })));
+
         setOption2(response2.data.data.map((item: any) => ({
-          manfName: item.manfName
+          prodName: item.prodName,
+          prodId: item.prodId,
         })));
+
+        console.log(response2)
       } catch (error) {
         console.error('Error fetching options:', error);
       }
@@ -93,7 +100,7 @@ export default function Gozaresh() {
       
       const token = localStorage.getItem('token');
       const queries = `wpId=${selectedWpId}&date=${parameter2}&sector=${parameter3}&material=${parameter4}&color=${parameter5}&type=${selectedpro}`;
-      console.log(parameter4)
+    
       const response = await axios.get(`${apiUrl}/report/query?${queries}`, {
         headers: {
           'Authorization': `${token}`,
@@ -340,19 +347,20 @@ export default function Gozaresh() {
                       <CommandList>
                       <CommandEmpty>سکتور یافت نشد</CommandEmpty>
                       <CommandGroup>
-                        {option2.map((option) => (
+                        {option2.map((optionkir) => (
                           <CommandItem
-                            key={option.manfName}
-                            value={option.manfName}
+                            key={optionkir.prodId}
+                            value={optionkir.prodName}
                             onSelect={(currentValue) => {
                               setParameter6(currentValue);
-                              setSelectedpro(option.manfName);
+                              setSelectedpro(optionkir.prodId);
 
                             }}
+                            
                           >
-                            {option.manfName}
+                            {optionkir.prodName}
                             <CheckIcon
-                              className={`ml-auto h-4 w-4 ${parameter6 === option.manfName ? 'opacity-100' : 'opacity-0'}`}
+                              className={`ml-auto h-4 w-4 ${parameter6 === optionkir.prodName ? 'opacity-100' : 'opacity-0'}`}
                             />
                           </CommandItem>
                         ))}

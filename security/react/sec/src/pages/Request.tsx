@@ -32,9 +32,12 @@ interface UserOption {
   username: string;
 }
 
-interface ComboOption {
-  id: string;
-  name: string;
+interface manfOption {
+  manfName: string;
+}
+
+interface highOption {
+  prodName: string;
 }
 
 export default function Requests() {
@@ -48,10 +51,10 @@ export default function Requests() {
   const [dialogOpen, setDialogOpen] = useState(false);
 
   // New state for additional comboboxes
-  const [combo1Options, setCombo1Options] = useState<ComboOption[]>([]);
+  const [combo1Options, setCombo1Options] = useState<highOption[]>([]);
   const [combo1Value, setCombo1Value] = useState('');
   const [isCombo1Open, setIsCombo1Open] = useState(false);
-  const [combo2Options, setCombo2Options] = useState<ComboOption[]>([]);
+  const [combo2Options, setCombo3Options] = useState<manfOption[]>([]);
   const [combo2Value, setCombo2Value] = useState('');
   const [isCombo2Open, setIsCombo2Open] = useState(false);
 
@@ -97,7 +100,7 @@ export default function Requests() {
   // New functions to fetch options for additional comboboxes
   const fetchCombo1Options = async () => {
     try {
-      const response = await axios.get(`${apiUrl}/mavad`, {
+      const response = await axios.get(`${apiUrl}/prod/highdemand`, {
         headers: {
           Authorization: `${localStorage.getItem('token')}`,
         },
@@ -113,16 +116,16 @@ export default function Requests() {
     }
   };
 
-  const fetchCombo2Options = async () => {
+  const fetchCombo3Options = async () => {
     try {
-      const response = await axios.get(`${apiUrl}/combo2options`, {
+      const response = await axios.get(`${apiUrl}/manf/name`, {
         headers: {
           Authorization: `${localStorage.getItem('token')}`,
         },
       });
 
       if (response.data && response.data.success) {
-        setCombo2Options(response.data.data);
+        setCombo3Options(response.data.data);
       } else {
         console.warn('Failed to fetch combo2 options');
       }
@@ -138,11 +141,11 @@ export default function Requests() {
     setIsSubmitting(true);
     try {
       const response = await axios.post(`${apiUrl}/request/new`, {
-        combo1Value,
-        combo2Value,
+        
         userId: userId,
         reqReciever: comboValue,
-        reqDetail: formData.description
+        reqDetail: combo2Value + " - " + formData.description,
+        reqType: combo1Value 
       }, {
         headers: {
           Authorization: `${localStorage.getItem('token')}`,
@@ -231,7 +234,7 @@ export default function Requests() {
             onClick={() => {
               fetchComboBoxOptions();
               fetchCombo1Options();
-              fetchCombo2Options();
+              fetchCombo3Options();
             }}
           >
             درخواست جدید 
@@ -256,7 +259,7 @@ export default function Requests() {
                     className="w-full justify-between"
                   >
                     {combo1Value
-                      ? combo1Options.find((option) => option.id === combo1Value)?.name || 'Select an option'
+                      ? combo1Options.find((option) => option.prodName === combo1Value)?.prodName || 'Select an option'
                       : "مواد"}
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                   </Button>
@@ -269,16 +272,16 @@ export default function Requests() {
                       <CommandGroup>
                         {combo1Options.map((option) => (
                           <CommandItem
-                            key={option.id}
+                            key={option.prodName}
                             onSelect={() => {
-                              setCombo1Value(option.id);
+                              setCombo1Value(option.prodName);
                               setIsCombo1Open(false);
                             }}
                           >
                             <Check
-                              className={combo1Value === option.id ? "mr-2 h-4 w-4 opacity-100" : "mr-2 h-4 w-4 opacity-0"}
+                              className={combo1Value === option.prodName ? "mr-2 h-4 w-4 opacity-100" : "mr-2 h-4 w-4 opacity-0"}
                             />
-                            {option.name}
+                            {option.prodName}
                           </CommandItem>
                         ))}
                       </CommandGroup>
@@ -288,6 +291,48 @@ export default function Requests() {
               </Popover>
 
               {/* Combo2 */}
+              
+
+              <Popover open={isCombo2Open} onOpenChange={setIsCombo2Open}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={isCombo2Open}
+                    className="w-full justify-between"
+                  >
+                    {combo2Value
+                      ? combo2Options.find((option) => option.manfName === combo2Value)?.manfName || 'Select an option'
+                      : "ارسال از"}
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[200px] p-0">
+                  <Command>
+                    <CommandInput placeholder="جستجو" />
+                    <CommandList>
+                      <CommandEmpty>گزینه ای یافت نشد</CommandEmpty>
+                      <CommandGroup>
+                        {combo2Options.map((option) => (
+                          <CommandItem
+                            key={option.manfName}
+                            onSelect={() => {
+                              setCombo2Value(option.manfName);
+                              setIsCombo2Open(false);
+                            }}
+                          >
+                            <Check
+                              className={combo2Value === option.manfName ? "mr-2 h-4 w-4 opacity-100" : "mr-2 h-4 w-4 opacity-0"}
+                            />
+                            {option.manfName}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+
               <Popover open={isComboOpen} onOpenChange={setIsComboOpen}>
                 <PopoverTrigger asChild>
                   <Button
@@ -298,7 +343,7 @@ export default function Requests() {
                   >
                     {comboValue
                       ? comboOptions.find((option) => option.userId === comboValue)?.fullName || 'Select an option'
-                      : "ارسال از"}
+                      : "ارسال به"}
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                   </Button>
                 </PopoverTrigger>
@@ -327,47 +372,6 @@ export default function Requests() {
                   </Command>
                 </PopoverContent>
               </Popover>
-
-              <Popover open={isCombo2Open} onOpenChange={setIsCombo2Open}>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    role="combobox"
-                    aria-expanded={isCombo2Open}
-                    className="w-full justify-between"
-                  >
-                    {combo2Value
-                      ? combo2Options.find((option) => option.id === combo2Value)?.name || 'Select an option'
-                      : "ارسال به"}
-                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-[200px] p-0">
-                  <Command>
-                    <CommandInput placeholder="جستجو" />
-                    <CommandList>
-                      <CommandEmpty>گزینه ای یافت نشد</CommandEmpty>
-                      <CommandGroup>
-                        {combo2Options.map((option) => (
-                          <CommandItem
-                            key={option.id}
-                            onSelect={() => {
-                              setCombo2Value(option.id);
-                              setIsCombo2Open(false);
-                            }}
-                          >
-                            <Check
-                              className={combo2Value === option.id ? "mr-2 h-4 w-4 opacity-100" : "mr-2 h-4 w-4 opacity-0"}
-                            />
-                            {option.name}
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover>
-
               {/* Existing Combobox (unchanged) */}
               
             </div>
