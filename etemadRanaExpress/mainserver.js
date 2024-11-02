@@ -46,7 +46,6 @@ const httpsServer = https.createServer({
 //created 
 
 
-
 function authenticateToken(req, res, next) {
     const token = req.header('Authorization');
     if (!token) {
@@ -371,7 +370,7 @@ app.get('/api/v1/prod/name',authenticateToken, (req, res) => {
   console.log('hit get /prod/name')
 
   pool.query(`
-  SELECT prodName,prodId FROM xicorana.product;
+  SELECT prodname,prodId FROM xicorana.product;
   `,[],(err,result,fields)=>{
 
       if(err){
@@ -1082,7 +1081,7 @@ app.get('/api/v1/manf/name',authenticateToken, (req, res) => {
 
   pool.query(`
   SELECT manfName FROM xicorana.manf;
-  `,[],(err,result,fields)=>{
+  `,[wpId],(err,result,fields)=>{
 
       if(err){
           
@@ -1115,8 +1114,8 @@ app.get('/api/v1/prod/highdemand',authenticateToken, (req, res) => {
   console.log('hit get manf name')
 
   pool.query(`
-  SELECT prodName FROM xicorana.highdemand;
-  `,[],(err,result,fields)=>{
+  SELECT prodname FROM xicorana.highdemand;
+  `,[wpId],(err,result,fields)=>{
 
       if(err){
           
@@ -1291,7 +1290,7 @@ app.post('/api/v1/transports/new',authenticateToken, (req, res) => {
 
 
   console.log('hit /transports/new')
-  const { tpDriverName, ordId } = req.body
+  const { tpDriverName, orderId } = req.body
   
   // Check if the username and password are valid
   pool.query(`
@@ -1307,7 +1306,7 @@ FROM xicorana.order o
 JOIN customer c ON o.custId = c.custId
 WHERE o.ordId = ?
   AND o.orderSituation = 'security Checked'
-  ;`,[tpDriverName, ordId],(err,result,fields)=>{
+  ;`,[tpDriverName, orderId],(err,result,fields)=>{
 
       if(err){
           
@@ -1698,3 +1697,4 @@ app.listen(PORT,()=>{
 
     console.log('server running on port ' + PORT )
 })
+

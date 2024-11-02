@@ -123,10 +123,8 @@ export default function QRScanner() {
       const token = localStorage.getItem('token');
 
       const postData = {
-        tpDriverName: driverName,
-        ordId: scanResult,
-        driverPhone,
-        driverLicense
+        tpDriverName: driverName + " | " + driverPhone + " | " + driverLicense,
+        orderId: scanResult,
       };
 
       const response = await axios.post(`${apiUrl}/transports/new`, postData, {
