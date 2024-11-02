@@ -13,6 +13,9 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
+import { toast } from "sonner"
+
+
 const apiUrl = import.meta.env.VITE_API_URL
 
 export default function QRScanner() {
@@ -26,6 +29,7 @@ export default function QRScanner() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const scanIntervalRef = useRef<number | null>(null);
+  const [alert, setAlert] = useState<string | null>(null);
   
 
   useEffect(() => {
@@ -124,7 +128,11 @@ export default function QRScanner() {
         console.log('API response:', response.data);
         if (response.data.success) {
           setOkCount(prevCount => prevCount + 1);
-        } else {
+        } 
+        if (response.data.success === 'alert') {
+          setAlert(response.data.alert)
+        }
+        else {
           setFalseCount(prevCount => prevCount + 1);
         }
       })
