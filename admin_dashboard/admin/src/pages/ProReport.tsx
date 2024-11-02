@@ -22,7 +22,7 @@ import {
 
 import DatePicker from "react-multi-date-picker"
 import persian from "react-date-object/calendars/persian"
-import persian_fa from "react-date-object/locales/persian_fa"
+import persian_en from "react-date-object/locales/persian_en"
 import gregorian from "react-date-object/calendars/gregorian"
 
 interface ReportData {
@@ -35,36 +35,25 @@ export default function Component() {
   const [startDate, setStartDate] = useState<any>(null)
   const [endDate, setEndDate] = useState<any>(null)
 
- 
+  // Convert Persian date to Gregorian format (yyyy-mm-dd)
   const convertToGregorian = (date: any): string => {
     if (!date) return ""
-        return date.convert(gregorian).format("YYYY-MM-DD")
+    const gregorianDate = date.convert(gregorian).format("YYYY-MM-DD")
+    const [year, month, day] = gregorianDate.split("-")
+    return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`
   }
 
   const handleSubmit = () => {
-    setLoading(true);
-    const baseUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000';
-  
- 
-    const formattedStartDate = convertToGregorian(startDate);
-    const formattedEndDate = convertToGregorian(endDate);
-  
+    setLoading(true)
+    const baseUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000'
 
+    const formattedStartDate = convertToGregorian(startDate)
+    const formattedEndDate = convertToGregorian(endDate)
     
-    console.log("Formatted Start Date:", formattedStartDate);
-    console.log("Formatted End Date:", formattedEndDate);
- 
-    
-    if (!formattedStartDate || !formattedEndDate) {
-      console.error("Invalid date(s)");
-      setLoading(false);
-      return;
-    }
-  
-    const url = `${baseUrl}/adminreport/pp?startDate=${formattedStartDate}&endDate=${formattedEndDate}`;
-    
-    const token = localStorage.getItem("token") || "";
-  
+    const url = `${baseUrl}/adminreport/pp?startDate=${formattedStartDate}&endDate=${formattedEndDate}`
+
+    const token = localStorage.getItem("token") || ""
+
     axios
       .get(url, {
         headers: {
@@ -72,13 +61,13 @@ export default function Component() {
         },
       })
       .then((response) => {
-        setData(response.data.data);
-        setLoading(false);
+        setData(response.data.data)
+        setLoading(false)
       })
       .catch((error) => {
-        console.error("Error fetching report data:", error);
-        setLoading(false);
-      });
+        console.error("Error fetching report data:", error)
+        setLoading(false)
+      })
   }
 
   const getTableHeaders = (): string[] => {
@@ -117,32 +106,34 @@ export default function Component() {
         </DrawerTrigger>
         <DrawerContent>
           <DrawerHeader>
-            <DrawerTitle className="text-center">فیلترهای گزارش</DrawerTitle>
+            <DrawerTitle className="text-center">تاریخ های شروع و پایان را وارد کنید</DrawerTitle>
           </DrawerHeader>
 
-          <div className="space-y-4 p-4 w-full flex flex-col gap-4">
+          <div className="space-y-4 p-4 w-full flex flex-row flex-nowrap gap-4">
             <div className="w-full">
               <DatePicker
                 calendar={persian}
-                locale={persian_fa}
+                locale={persian_en}
                 value={startDate}
                 onChange={setStartDate}
                 format="YYYY/MM/DD"
-                placeholder="تاریخ شروع را وارد کنید"
+                placeholder="تاریخ شروع"
                 style={datePickerStyle}
                 calendarPosition="bottom-right"
+                digits={["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]}
               />
             </div>
             <div className="w-full">
               <DatePicker
                 calendar={persian}
-                locale={persian_fa}
+                locale={persian_en}
                 value={endDate}
                 onChange={setEndDate}
                 format="YYYY/MM/DD"
-                placeholder="تاریخ پایان را وارد کنید"
+                placeholder="تاریخ پایان"
                 style={datePickerStyle}
                 calendarPosition="bottom-right"
+                digits={["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]}
               />
             </div>
           </div>
