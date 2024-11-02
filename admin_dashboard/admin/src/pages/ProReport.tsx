@@ -20,61 +20,68 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-import { format } from "date-fns"
-import { Calendar as CalendarIcon } from "lucide-react"
- 
-import { cn } from "@/lib/utils"
+import DatePicker from "react-multi-date-picker"
+import persian from "react-date-object/calendars/persian"
+import persian_fa from "react-date-object/locales/persian_fa"
+import gregorian from "react-date-object/calendars/gregorian"
 
-import { Calendar } from "@/components/ui/calendar"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
 interface ReportData {
   [key: string]: string | number | null
 }
 
-
-
 export default function Component() {
-
   const [data, setData] = useState<ReportData[]>([])
   const [loading, setLoading] = useState<boolean>(false)
-  const [startDate, setstartDate] = useState<Date>()
-  const [endDate, setendDate] = useState<Date>()
+  const [startDate, setStartDate] = useState<any>(null)
+  const [endDate, setEndDate] = useState<any>(null)
 
-
+ 
+  const convertToGregorian = (date: any): string => {
+    if (!date) return ""
+        return date.convert(gregorian).format("YYYY-MM-DD")
+  }
 
   const handleSubmit = () => {
-    setLoading(true)
-    const apiUrl = import.meta.env.VITE_API_URL || 'https://defaulturl.com'
+    setLoading(true);
+    const baseUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000';
+  
+ 
+    const formattedStartDate = convertToGregorian(startDate);
+    const formattedEndDate = convertToGregorian(endDate);
+  
 
-    const formattedStartDate = startDate ? format(startDate, "yyyy-MM-dd") : ""
-    const formattedEndDate = endDate ? format(endDate, "yyyy-MM-dd") : ""
-
-    const queris = `startDate=${formattedStartDate}&endDate=${formattedEndDate}`
-
-    console.log(startDate, endDate)
-
-    const token = localStorage.getItem('token')
+    
+    console.log("Formatted Start Date:", formattedStartDate);
+    console.log("Formatted End Date:", formattedEndDate);
+ 
+    
+    if (!formattedStartDate || !formattedEndDate) {
+      console.error("Invalid date(s)");
+      setLoading(false);
+      return;
+    }
+  
+    const url = `${baseUrl}/adminreport/pp?startDate=${formattedStartDate}&endDate=${formattedEndDate}`;
+    
+    const token = localStorage.getItem("token") || "";
+  
     axios
-      .get(`${apiUrl}/adminreport/pp?${queris}`, {
+      .get(url, {
         headers: {
-          Authorization: `${token}`
+          Authorization: `${token}`,
         },
       })
       .then((response) => {
-        setData(response.data.data)
-        setLoading(false)
+        setData(response.data.data);
+        setLoading(false);
       })
       .catch((error) => {
-        console.error("Error fetching report data:", error)
-        setLoading(false)
-      })
+        console.error("Error fetching report data:", error);
+        setLoading(false);
+      });
   }
 
-  const getTableHeaders = () => {
+  const getTableHeaders = (): string[] => {
     if (data.length === 0) return []
     return Object.keys(data[0])
   }
@@ -89,6 +96,19 @@ export default function Component() {
     ))
   }
 
+  const datePickerStyle = {
+    backgroundColor: "var(--background)",
+    borderRadius: "0.5rem",
+    padding: "0.5rem",
+    border: "1px solid var(--border)",
+    width: "100%",
+    height: "40px",
+    fontSize: "14px",
+    display: "flex",
+    alignItems: "center",
+    cursor: "pointer",
+  }
+
   return (
     <div>
       <Drawer>
@@ -97,55 +117,34 @@ export default function Component() {
         </DrawerTrigger>
         <DrawerContent>
           <DrawerHeader>
-            <DrawerTitle className="text-center">فیلترهای گذارش</DrawerTitle>
+            <DrawerTitle className="text-center">فیلترهای گزارش</DrawerTitle>
           </DrawerHeader>
 
-          <div className="space-y-4 p-4 w-full felx flex-row flex-nowrap">
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant={"outline"}
-                className={cn(
-                  "w-full justify-start text-left font-normal",
-                  !startDate && "text-muted-foreground"
-                )}
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {startDate ? format(startDate, "yyyy-MM-dd") : <span>تاریخ شروع را وارد کنید</span>}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0">
-              <Calendar
-                mode="single"
-                selected={startDate}
-                onSelect={setstartDate}
-                initialFocus
+          <div className="space-y-4 p-4 w-full flex flex-col gap-4">
+            <div className="w-full">
+              <DatePicker
+                calendar={persian}
+                locale={persian_fa}
+                value={startDate}
+                onChange={setStartDate}
+                format="YYYY/MM/DD"
+                placeholder="تاریخ شروع را وارد کنید"
+                style={datePickerStyle}
+                calendarPosition="bottom-right"
               />
-            </PopoverContent>
-          </Popover>
-
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant={"outline"}
-                className={cn(
-                  "w-full justify-start text-left font-normal",
-                  !endDate && "text-muted-foreground"
-                )}
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {endDate ? format(endDate, "yyyy-MM-dd") : <span>تاریخ  ایران </span>}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0">
-              <Calendar
-                mode="single"
-                selected={endDate}
-                onSelect={setendDate}
-                initialFocus
+            </div>
+            <div className="w-full">
+              <DatePicker
+                calendar={persian}
+                locale={persian_fa}
+                value={endDate}
+                onChange={setEndDate}
+                format="YYYY/MM/DD"
+                placeholder="تاریخ پایان را وارد کنید"
+                style={datePickerStyle}
+                calendarPosition="bottom-right"
               />
-            </PopoverContent>
-          </Popover>
+            </div>
           </div>
 
           <DrawerFooter>
