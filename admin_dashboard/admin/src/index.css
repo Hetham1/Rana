@@ -7,6 +7,11 @@
   src: url('../public/Kalameh\ Bold.ttf'); /* Locate the .ttf file within your directory*/
 }
 
+.rtl {
+  direction: rtl;
+  text-align: right;
+}
+
 html, body, #root {
  
   height: 100%;

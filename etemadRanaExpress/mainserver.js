@@ -128,18 +128,80 @@ app.put('/api/v1/entry/:uid',authenticateToken, (req, res) => {
     const uid = req.params.uid;
     console.log(wpId,uid);
 
+    let aghayeQC=''
+
+    let firstQueryToRun = ''
+    const firstQueries = {
+      'wsp': `
+      SELECT wspQC
+      FROM xicorana.wirespool
+      WHERE wspId = ? ;
+
+      `,
+      'ins': `
+      SELECT insQC
+      FROM xicorana.insul
+      WHERE insId = ? ;
+      `,
+      'car': `
+      SELECT cartQC
+      FROM xicorana.cart
+      WHERE cartId = ? ;
+
+      `,
+      'fip': `fip`
+    };
+
+    switch (uid.substring(0, 3)) {
+      case 'wsp':
+        firstQueryToRun = firstQueries['wsp'];
+        break;
+      case 'ins':
+        firstQueryToRun = firstQueries['ins'];
+        break;
+      case 'car':
+        firstQueryToRun = firstQueries['car'];
+        break;
+      case 'fip':
+        firstQueryToRun = firstQueries['fip'];
+        break;
+      default:
+        res.status(400).json({ success: false, error: 'Invalid uid prefix' });
+        return;
+    }
+    if (firstQueryToRun != 'fip'){
+    pool.query(firstQueryToRun,[uid],(err,result,fields)=>{
+    
+          if(err){
+              
+              const data = String(err);
+              res.status(500).json({ success: false, error: `${data}` });
+              return console.log(err);
+              
+          }
+          if(result[0].insQC==1 || result[0].cartQC==1 || result[0].wspQC==1){
+    
+              aghayeQC=1;
+              return ;
+          }else{
+            aghayeQC=0;
+          }
+  
+      });
+    }
+
     let queryToRun='';
 
     const queries = {
         'wsp': `
           UPDATE xicorana.wirespool
           SET wpId = ?, wspLL='ورود'
-          WHERE wspId = ? AND wpId != ? AND wspQC = '1' AND wspLL != 'ورود';
+          WHERE wspId = ? AND wpId != ? AND wspLL != 'ورود';
         `,
         'ins': `
           UPDATE xicorana.insul
           SET wpId = ?, insLL='ورود'
-          WHERE insId = ? AND wpId != ? AND insQC = '1' AND insLL != 'ورود';
+          WHERE insId = ? AND wpId != ? AND insLL != 'ورود';
         `,
         'car': `
           UPDATE xicorana.cart
@@ -188,8 +250,12 @@ app.put('/api/v1/entry/:uid',authenticateToken, (req, res) => {
                 res.status(404).json({ success: false, error: `محصولی برای ورود ثبت نشد. برای اطلاعات بیشتر وضعیت کنترل کیفیت و یا مکان فعلی محصول را مشاهده کنید.` });
                 return;
             }else{
-                console.log(result);
+              if(aghayeQC==1){
                 res.status(200).json({ success: true, data: `محصول وارد شد` });
+              }else{
+                res.status(200).json({ success: 'alert' , data: `محصول وارد شد` });
+              }
+                  
             }
 
 
@@ -219,53 +285,49 @@ app.put('/api/v1/exit/:uid',authenticateToken, (req, res) => {
     const uid = req.params.uid;
     console.log(wpId,uid);
 
+    let aghayeQC=''
+
     let firstQueryToRun = ''
     const firstQueries = {
       'wsp': `
-      UPDATE xicorana.wirespool
-      SET wspLL='خروج'
-      WHERE wspId = ? AND wpId = ? AND wspQC = '1' AND wspLL != 'خروج';
+      SELECT wspQC
+      FROM xicorana.wirespool
+      WHERE wspId = ? ;
 
       `,
       'ins': `
-      UPDATE xicorana.insul
-      SET insLL='خروج'
-      WHERE insId = ? AND wpId = ? AND insQC = '1' AND insLL != 'خروج';
+      SELECT insQC
+      FROM xicorana.insul
+      WHERE insId = ? ;
       `,
       'car': `
-      UPDATE xicorana.cart
-      SET cartLL = 'خروج'
-      WHERE cartId = ? AND wpId = ? AND cartQC = '1' AND cartLL != 'خروج';
+      SELECT cartQC
+      FROM xicorana.cart
+      WHERE cartId = ? ;
 
       `,
-      'fip': `
-      UPDATE xicorana.finalproduct
-      SET fpLL = 'خروج'
-      WHERE fpId = ? AND wpId = ? AND fpLL != 'خروج';
-      `
+      'fip': `fip`
     };
 
     switch (uid.substring(0, 3)) {
       case 'wsp':
-        firstQueryToRun = queries['wsp'];
+        firstQueryToRun = firstQueries['wsp'];
         break;
       case 'ins':
-        firstQueryToRun = queries['ins'];
+        firstQueryToRun = firstQueries['ins'];
         break;
       case 'car':
-        firstQueryToRun = queries['car'];
+        firstQueryToRun = firstQueries['car'];
         break;
       case 'fip':
-        firstQueryToRun = queries['fip'];
+        firstQueryToRun = firstQueries['fip'];
         break;
       default:
         res.status(400).json({ success: false, error: 'Invalid uid prefix' });
         return;
     }
-    
-    pool.query(`
-      SELECT prodname,prodId FROM xicorana.product;
-      `,[],(err,result,fields)=>{
+    if (firstQueryToRun != 'fip'){
+    pool.query(firstQueryToRun,[uid],(err,result,fields)=>{
     
           if(err){
               
@@ -274,16 +336,16 @@ app.put('/api/v1/exit/:uid',authenticateToken, (req, res) => {
               return console.log(err);
               
           }
-          if(result.length === 0 ){
+          if(result[0].insQC==1 || result[0].cartQC==1 || result[0].wspQC==1){
     
-              res.status(404).json({ success: false, error: ` محصولی یافت نشد` });
+              aghayeQC=1;
               return ;
+          }else{
+            aghayeQC=0;
           }
-    
-          res.status(200).json({ success: true, data: result });
-          return console.log(result);
+  
       });
-    
+    }
 
     let queryToRun='';
 
@@ -291,18 +353,18 @@ app.put('/api/v1/exit/:uid',authenticateToken, (req, res) => {
         'wsp': `
         UPDATE xicorana.wirespool
         SET wspLL='خروج'
-        WHERE wspId = ? AND wpId = ? AND wspQC = '1' AND wspLL != 'خروج';
+        WHERE wspId = ? AND wpId = ? AND wspLL != 'خروج';
 
         `,
         'ins': `
         UPDATE xicorana.insul
         SET insLL='خروج'
-        WHERE insId = ? AND wpId = ? AND insQC = '1' AND insLL != 'خروج';
+        WHERE insId = ? AND wpId = ? AND insLL != 'خروج';
         `,
         'car': `
         UPDATE xicorana.cart
         SET cartLL = 'خروج'
-        WHERE cartId = ? AND wpId = ? AND cartQC = '1' AND cartLL != 'خروج';
+        WHERE cartId = ? AND wpId = ? AND cartLL != 'خروج';
 
         `,
         'fip': `
@@ -346,9 +408,12 @@ app.put('/api/v1/exit/:uid',authenticateToken, (req, res) => {
             if (result.affectedRows === 0) {
                 res.status(404).json({ success: false, error: `محصولی برای خروج ثبت نشد. برای اطلاعات بیشتر وضعیت کنترل کیفیت و یا مکان فعلی محصول را مشاهده کنید.` });
                 return;
+            }else{if(aghayeQC==1){
+              res.status(200).json({ success: true, data: `محصول خارج شد` });
             }else{
-                console.log(result);
-                res.status(200).json({ success: true, data: `محصول خارج شد` });
+              res.status(200).json({ success: 'alert' , data: `محصول خارج شد` });
+            }
+                
             }
 
 
@@ -370,7 +435,7 @@ app.get('/api/v1/prod/name',authenticateToken, (req, res) => {
   console.log('hit get /prod/name')
 
   pool.query(`
-  SELECT prodname,prodId FROM xicorana.product;
+  SELECT prodName,prodId FROM xicorana.product;
   `,[],(err,result,fields)=>{
 
       if(err){
@@ -1081,7 +1146,7 @@ app.get('/api/v1/manf/name',authenticateToken, (req, res) => {
 
   pool.query(`
   SELECT manfName FROM xicorana.manf;
-  `,[wpId],(err,result,fields)=>{
+  `,[],(err,result,fields)=>{
 
       if(err){
           
@@ -1114,8 +1179,8 @@ app.get('/api/v1/prod/highdemand',authenticateToken, (req, res) => {
   console.log('hit get manf name')
 
   pool.query(`
-  SELECT prodname FROM xicorana.highdemand;
-  `,[wpId],(err,result,fields)=>{
+  SELECT prodName FROM xicorana.highdemand;
+  `,[],(err,result,fields)=>{
 
       if(err){
           
@@ -1681,6 +1746,39 @@ app.get('/api/v1/adminreport',authenticateToken, (req, res) => {
   // res.status(200).json({ success: true, data: people })
 });
 
+app.get('/api/v1/adminreport/pp',authenticateToken, (req, res) => {
+
+
+  const { startDate,endDate } = req.query;
+  
+
+  console.log('hit get adminrep pp')
+
+  pool.query(`
+  SELECT * FROM xicorana.productionplan WHERE ppMFG BETWEEN ? AND ?;
+  `,[startDate,endDate],(err,result,fields)=>{
+
+      if(err){
+          
+          const data = String(err);
+          res.status(500).json({ success: false, error: `${data}` });
+          return console.log(err);
+          
+      }
+      if(result.length === 0 ){
+
+          res.status(404).json({ success: false, error: `برنامه تولیدی یافت نشد` });
+          return ;
+      }
+
+      res.status(200).json({ success: true, data: result });
+      return console.log(result);
+  });
+
+  
+  
+  // res.status(200).json({ success: true, data: people })
+});
 
 
 

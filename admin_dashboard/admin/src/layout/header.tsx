@@ -38,7 +38,13 @@ const Header = ({ onLogout }: { onLogout: () => void }) => {
 
         <Link to="/rep" className="w-full">
           <Button variant="outline" className="w-full">
-            گزارش 1
+            گزارش کلی
+          </Button>
+        </Link>
+
+        <Link to="/pro-rep" className="w-full">
+          <Button variant="outline" className="w-full">
+            گزارش تولید
           </Button>
         </Link>
       </nav>

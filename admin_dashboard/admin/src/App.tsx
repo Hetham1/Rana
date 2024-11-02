@@ -11,6 +11,7 @@ import Header from "./layout/header";
 import Requesto from "./pages/RequestO";
 import Requesti from "./pages/RequestI";
 import Report from "./pages/Report";
+import ProReport from "./pages/ProReport"
 import Login from "./pages/login";
 import ProtectedRoute from './layout/protect';
 
@@ -87,6 +88,8 @@ export default function App() {
           <Route path="/req-sent" element={<Requesto />} />
           {/* Render the Report page */}
           <Route path="/rep" element={<Report />} />
+          
+          <Route path="/pro-rep" element={<ProReport />} />
         </Route>
 
         {/* If the user is not authenticated, redirect to the login page */}
