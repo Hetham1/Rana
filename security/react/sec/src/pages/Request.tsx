@@ -189,9 +189,9 @@ export default function Requests() {
   }
 
   return (
-    <div className="flex flex-col h-full relative p-4">
+    <div className="flex flex-col h-full relative px-4 py-0">
       <h1 className="text-2xl font-bold mb-4">درخواست ها</h1>
-      <div className="flex-grow overflow-auto pb-16">
+      <div className="flex-grow overflow-auto pb-16" style={{ maxHeight: '100vh' }}>
         <div className="space-y-4">
           {requests.length === 0 ? (
             <div className="text-center text-gray-500">No requests found</div>
