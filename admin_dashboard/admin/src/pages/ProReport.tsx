@@ -90,10 +90,12 @@ export default function Component() {
     borderRadius: "0.5rem",
     padding: "0.5rem",
     border: "1px solid var(--border)",
-    width: "100%",
+    width: "100vw",
     height: "40px",
     fontSize: "14px",
     display: "flex",
+    text: "center",
+    justifyContent: "center",
     alignItems: "center",
     cursor: "pointer",
   }
@@ -109,7 +111,7 @@ export default function Component() {
             <DrawerTitle className="text-center">تاریخ های شروع و پایان را وارد کنید</DrawerTitle>
           </DrawerHeader>
 
-          <div className="space-y-4 p-4 w-full flex flex-row flex-nowrap gap-4">
+          <div className="space-y-4 p-4 w-full flex flex-col flex-nowrap gap-4">
             <div className="w-full">
               <DatePicker
                 calendar={persian}
