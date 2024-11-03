@@ -89,7 +89,7 @@ export default function Requests() {
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle className='text-right'>{request.reqType} جزییات</AlertDialogTitle>
+                    <AlertDialogTitle className='text-right'> جزئیات: {request.reqType} </AlertDialogTitle>
                     <AlertDialogDescription className='text-right'>
                       {request.reqDetail}
                     </AlertDialogDescription>

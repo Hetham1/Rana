@@ -193,7 +193,7 @@ export default function Gozaresh() {
                     <Command>
                       <CommandInput placeholder="جستجو" className="h-9" />
                       <CommandList>
-                      <CommandEmpty>سکتور یافت نشد</CommandEmpty>
+                      <CommandEmpty>مکان مورد نظر یافت نشد</CommandEmpty>
                       <CommandGroup>
                         {option1.map((option) => (
                           <CommandItem
@@ -237,7 +237,7 @@ export default function Gozaresh() {
                     <Command>
                       <CommandInput placeholder="جستجو" className="h-9" />
                       <CommandList>
-                        <CommandEmpty>سکتور یافت نشد</CommandEmpty>
+                        <CommandEmpty>سکتور مورد نظر یافت نشد</CommandEmpty>
                         <CommandGroup>
                           {letters.map((letter) => (
                             <CommandItem
@@ -273,7 +273,7 @@ export default function Gozaresh() {
                     <Command>
                       <CommandInput placeholder="جستجو" className="h-9" />
                       <CommandList>
-                        <CommandEmpty>قرقره یافت نشد</CommandEmpty>
+                        <CommandEmpty>جنس مورد نظر یافت نشد</CommandEmpty>
                         <CommandGroup>
                           {materialOptions.map((option) => (
                             <CommandItem
@@ -309,7 +309,7 @@ export default function Gozaresh() {
                     <Command>
                       <CommandInput placeholder="جستجو" className="h-9" />
                       <CommandList>
-                        <CommandEmpty>رنگ یافت نشد</CommandEmpty>
+                        <CommandEmpty>رنگ مورد نظر یافت نشد</CommandEmpty>
                         <CommandGroup>
                           {colorOptions.map((color) => (
                             <CommandItem
@@ -345,22 +345,22 @@ export default function Gozaresh() {
                     <Command>
                       <CommandInput placeholder="جستجو" className="h-9" />
                       <CommandList>
-                      <CommandEmpty>سکتور یافت نشد</CommandEmpty>
+                      <CommandEmpty>محصول مورد نظر یافت نشد</CommandEmpty>
                       <CommandGroup>
-                        {option2.map((optionkir) => (
+                        {option2.map((optionout) => (
                           <CommandItem
-                            key={optionkir.prodId}
-                            value={optionkir.prodName}
+                            key={optionout.prodId}
+                            value={optionout.prodName}
                             onSelect={(currentValue) => {
                               setParameter6(currentValue);
-                              setSelectedpro(optionkir.prodId);
+                              setSelectedpro(optionout.prodId);
 
                             }}
                             
                           >
-                            {optionkir.prodName}
+                            {optionout.prodName}
                             <CheckIcon
-                              className={`ml-auto h-4 w-4 ${parameter6 === optionkir.prodName ? 'opacity-100' : 'opacity-0'}`}
+                              className={`ml-auto h-4 w-4 ${parameter6 === optionout.prodName ? 'opacity-100' : 'opacity-0'}`}
                             />
                           </CommandItem>
                         ))}

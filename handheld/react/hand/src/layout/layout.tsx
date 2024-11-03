@@ -98,7 +98,7 @@ export default function Layout() {
           <div>
           <button
             onClick={handleLogout}
-            className="bg-whitebox text-text py-1 text-center px-3 rounded-lg"
+            className="bg-whitebox border-0 transition-all hover:bg-red-500 hover:text-white text-text py-1 text-center px-3 rounded-lg"
           >
             <LogOutIcon/>
           </button>

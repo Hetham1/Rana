@@ -105,7 +105,7 @@ export default function Entry() {
 
   return (
     <div className="w-full flex flex-col items-center justify-center p-4 space-y-6 ">
-      <p className="text-xl font-semibold">{workPlaceName || 'درحال بارگذاری...'}</p>
+      <p className="text-xl font-semibold">{"مکان فعلی شما: " + workPlaceName|| 'درحال بارگذاری...'}</p>
 
       <div className="p-4 flex flex-row gap-6 rounded-md bg-whitebox">
         <div className="flex flex-col justify-center items-right gap-2 bg-whitebox p-4 rounded-md">
@@ -178,7 +178,7 @@ export default function Entry() {
               <Command>
                 <CommandInput placeholder="جستجو" className="h-9" />
                 <CommandList>
-                  <CommandEmpty>No framework found.</CommandEmpty>
+                  <CommandEmpty>مکانی یافت نشد</CommandEmpty>
                   <CommandGroup>
                     {Array.isArray(comboBoxData) && comboBoxData.length > 0 ? (
                       comboBoxData.map((framework: Framework) => (

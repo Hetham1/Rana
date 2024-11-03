@@ -124,307 +124,150 @@ function authenticateToken(req, res, next) {
 app.put('/api/v1/entry/:uid',authenticateToken, (req, res) => {
 
 
-  const { wpId } = req.body;
-  const uid = req.params.uid;
-  console.log(wpId,uid);
+    const { wpId } = req.body;
+    const uid = req.params.uid;
+    console.log(wpId,uid);
 
-  let aghayeQC=''
+    let aghayeQC=''
 
-  let firstQueryToRun = ''
-  const firstQueries = {
-    'wsp': `
-    SELECT wspQC
-    FROM xicorana.wirespool
-    WHERE wspId = ? ;
-
-    `,
-    'ins': `
-    SELECT insQC
-    FROM xicorana.insul
-    WHERE insId = ? ;
-    `,
-    'car': `
-    SELECT cartQC
-    FROM xicorana.cart
-    WHERE cartId = ? ;
-
-    `,
-    'fip': `fip`
-  };
-
-  switch (uid.substring(0, 3)) {
-    case 'wsp':
-      firstQueryToRun = firstQueries['wsp'];
-      break;
-    case 'ins':
-      firstQueryToRun = firstQueries['ins'];
-      break;
-    case 'car':
-      firstQueryToRun = firstQueries['car'];
-      break;
-    case 'fip':
-      firstQueryToRun = firstQueries['fip'];
-      break;
-    default:
-      res.status(400).json({ success: false, error: 'Invalid uid prefix' });
-      return;
-  }
-  if (firstQueryToRun != 'fip'){
-  pool.query(firstQueryToRun,[uid],(err,result,fields)=>{
-  
-        if(err){
-            
-            const data = String(err);
-            res.status(500).json({ success: false, error: `${data}` });
-            return console.log(err);
-            
-        }
-        if(result[0].insQC==1 || result[0].cartQC==1 || result[0].wspQC==1){
-  
-            aghayeQC=1;
-            return ;
-        }else{
-          aghayeQC=0;
-        }
-
-    });
-  }
-
-  let queryToRun='';
-
-  const queries = {
+    let firstQueryToRun = ''
+    const firstQueries = {
       'wsp': `
-        UPDATE xicorana.wirespool
-        SET wpId = ?, wspLL='ورود'
-        WHERE wspId = ? AND wpId != ? AND wspLL != 'ورود';
+      SELECT wspQC
+      FROM xicorana.wirespool
+      WHERE wspId = ? ;
+
       `,
       'ins': `
-        UPDATE xicorana.insul
-        SET wpId = ?, insLL='ورود'
-        WHERE insId = ? AND wpId != ? AND insLL != 'ورود';
+      SELECT insQC
+      FROM xicorana.insul
+      WHERE insId = ? ;
       `,
       'car': `
-        UPDATE xicorana.cart
-        SET wpId = ?, cartLL = 'ورود'
-        WHERE cartId = ? AND wpId != ? AND cartLL != 'ورود';
+      SELECT cartQC
+      FROM xicorana.cart
+      WHERE cartId = ? ;
+
       `,
-      'fip': `
-        UPDATE xicorana.finalproduct
-        SET wpId = ?, fpLL = 'ورود'
-        WHERE fpId = ? AND wpId != ? AND fpLL != 'ورود';
-      `
+      'fip': `fip`
     };
-    
+
     switch (uid.substring(0, 3)) {
       case 'wsp':
-        queryToRun = queries['wsp'];
+        firstQueryToRun = firstQueries['wsp'];
         break;
       case 'ins':
-        queryToRun = queries['ins'];
+        firstQueryToRun = firstQueries['ins'];
         break;
       case 'car':
-        queryToRun = queries['car'];
+        firstQueryToRun = firstQueries['car'];
         break;
       case 'fip':
-        queryToRun = queries['fip'];
+        firstQueryToRun = firstQueries['fip'];
         break;
       default:
         res.status(400).json({ success: false, error: 'Invalid uid prefix' });
         return;
     }
-
-  console.log('Executing query:', queryToRun);
-  pool.query(queryToRun,[wpId,uid,wpId],(err,result,fields)=>{
-      
-      try{
-
-          if(err){
-          
-              const data = String(err);
-              res.status(500).json({ success: false, error: `${data}` });
-              return console.log(err);
-          
-          }
-          
-          if (result.affectedRows === 0) {
-              res.status(404).json({ success: false, error: `محصولی برای ورود ثبت نشد. برای اطلاعات بیشتر وضعیت کنترل کیفیت و یا مکان فعلی محصول را مشاهده کنید.` });
-              return;
-          }else{
-            if(aghayeQC==1){
-              res.status(200).json({ success: true, data: `محصول وارد شد` });
-            }else{
-              res.status(200).json({ success: 'alert' , data: `محصول وارد شد`, alert:'محصول مورد نظر دارایی تاییدیه کنترل کیفی نیست!'});
-            }
-                
-          }
-
-
-      
-      }catch(err){
-          res.status(500).json({ success: false, error: `${err}` });
-      }
-  });
-
-  // res.status(200).json({ success: true, data: people })
-});
-
-
-
-
-app.get('/api/v1/protected',authenticateToken, (req, res) => {
-
-  res.json({ message: `Welcome, Jane` });
-});
-
-//HANDELING EXITS
-
-app.put('/api/v1/exit/:uid',authenticateToken, (req, res) => {
-
-
-  const { wpId } = req.body;
-  const uid = req.params.uid;
-  console.log(wpId,uid);
-
-  let aghayeQC=''
-
-  let firstQueryToRun = ''
-  const firstQueries = {
-    'wsp': `
-    SELECT wspQC
-    FROM xicorana.wirespool
-    WHERE wspId = ? ;
-
-    `,
-    'ins': `
-    SELECT insQC
-    FROM xicorana.insul
-    WHERE insId = ? ;
-    `,
-    'car': `
-    SELECT cartQC
-    FROM xicorana.cart
-    WHERE cartId = ? ;
-
-    `,
-    'fip': `fip`
-  };
-
-  switch (uid.substring(0, 3)) {
-    case 'wsp':
-      firstQueryToRun = firstQueries['wsp'];
-      break;
-    case 'ins':
-      firstQueryToRun = firstQueries['ins'];
-      break;
-    case 'car':
-      firstQueryToRun = firstQueries['car'];
-      break;
-    case 'fip':
-      firstQueryToRun = firstQueries['fip'];
-      break;
-    default:
-      res.status(400).json({ success: false, error: 'Invalid uid prefix' });
-      return;
-  }
-  if (firstQueryToRun != 'fip'){
-  pool.query(firstQueryToRun,[uid],(err,result,fields)=>{
-  
-        if(err){
-            
-            const data = String(err);
-            res.status(500).json({ success: false, error: `${data}` });
-            return console.log(err);
-            
-        }
-        if(result[0].insQC==1 || result[0].cartQC==1 || result[0].wspQC==1){
-  
-            aghayeQC=1;
-            return ;
-        }else{
-          aghayeQC=0;
-        }
-
-    });
-  }
-
-  let queryToRun='';
-
-  const queries = {
-      'wsp': `
-      UPDATE xicorana.wirespool
-      SET wspLL='خروج'
-      WHERE wspId = ? AND wpId = ? AND wspLL != 'خروج';
-
-      `,
-      'ins': `
-      UPDATE xicorana.insul
-      SET insLL='خروج'
-      WHERE insId = ? AND wpId = ? AND insLL != 'خروج';
-      `,
-      'car': `
-      UPDATE xicorana.cart
-      SET cartLL = 'خروج'
-      WHERE cartId = ? AND wpId = ? AND cartLL != 'خروج';
-
-      `,
-      'fip': `
-      UPDATE xicorana.finalproduct
-      SET fpLL = 'خروج'
-      WHERE fpId = ? AND wpId = ? AND fpLL != 'خروج';
-      `
-    };
+    if (firstQueryToRun != 'fip'){
+    pool.query(firstQueryToRun,[uid],(err,result,fields)=>{
     
-    switch (uid.substring(0, 3)) {
-      case 'wsp':
-        queryToRun = queries['wsp'];
-        break;
-      case 'ins':
-        queryToRun = queries['ins'];
-        break;
-      case 'car':
-        queryToRun = queries['car'];
-        break;
-      case 'fip':
-        queryToRun = queries['fip'];
-        break;
-      default:
-        res.status(400).json({ success: false, error: 'Invalid uid prefix' });
-        return;
-    }
-
-  console.log('Executing query:', queryToRun);
-  pool.query(queryToRun,[uid,wpId],(err,result,fields)=>{
-      
-      try{
-
           if(err){
-          
+              
               const data = String(err);
               res.status(500).json({ success: false, error: `${data}` });
               return console.log(err);
-          
-          }
-          
-          if (result.affectedRows === 0) {
-              res.status(404).json({ success: false, error: `محصولی برای خروج ثبت نشد. برای اطلاعات بیشتر وضعیت کنترل کیفیت و یا مکان فعلی محصول را مشاهده کنید.` });
-              return;
-          }else{if(aghayeQC==1){
-            res.status(200).json({ success: true, data: `محصول خارج شد` });
-          }else{
-            res.status(200).json({ success: 'alert' , data: `محصول خارج شد`, alert:'محصول مورد نظر دارایی تاییدیه کنترل کیفی نیست!' });
-          }
               
           }
+          if(result[0].insQC==1 || result[0].cartQC==1 || result[0].wspQC==1){
+    
+              aghayeQC=1;
+              return ;
+          }else{
+            aghayeQC=0;
+          }
+  
+      });
+    }
 
+    let queryToRun='';
 
+    const queries = {
+        'wsp': `
+          UPDATE xicorana.wirespool
+          SET wpId = ?, wspLL='ورود'
+          WHERE wspId = ? AND wpId != ? AND wspLL != 'ورود';
+        `,
+        'ins': `
+          UPDATE xicorana.insul
+          SET wpId = ?, insLL='ورود'
+          WHERE insId = ? AND wpId != ? AND insLL != 'ورود';
+        `,
+        'car': `
+          UPDATE xicorana.cart
+          SET wpId = ?, cartLL = 'ورود'
+          WHERE cartId = ? AND wpId != ? AND cartLL != 'ورود';
+        `,
+        'fip': `
+          UPDATE xicorana.finalproduct
+          SET wpId = ?, fpLL = 'ورود'
+          WHERE fpId = ? AND wpId != ? AND fpLL != 'ورود';
+        `
+      };
       
-      }catch(err){
-          res.status(500).json({ success: false, error: `${err}` });
+      switch (uid.substring(0, 3)) {
+        case 'wsp':
+          queryToRun = queries['wsp'];
+          break;
+        case 'ins':
+          queryToRun = queries['ins'];
+          break;
+        case 'car':
+          queryToRun = queries['car'];
+          break;
+        case 'fip':
+          queryToRun = queries['fip'];
+          break;
+        default:
+          res.status(400).json({ success: false, error: 'Invalid uid prefix' });
+          return;
       }
-  });
 
-  // res.status(200).json({ success: true, data: people })
+    console.log('Executing query:', queryToRun);
+    pool.query(queryToRun,[wpId,uid,wpId],(err,result,fields)=>{
+        
+        try{
+
+            if(err){
+            
+                const data = String(err);
+                res.status(500).json({ success: false, error: `${data}` });
+                return console.log(err);
+            
+            }
+            
+            if (result.affectedRows === 0) {
+                res.status(404).json({ success: false, error: `محصولی برای ورود ثبت نشد. برای اطلاعات بیشتر وضعیت کنترل کیفیت و یا مکان فعلی محصول را مشاهده کنید.` });
+                return;
+            }else{
+              if(aghayeQC==1){
+                res.status(200).json({ success: true, data: `محصول وارد شد` });
+              }else{
+                res.status(200).json({ success: 'alert' , data: `محصول وارد شد`, alert:'محصول مورد نظر دارایی تاییدیه کنترل کیفی نیست!'});
+              }
+                  
+            }
+
+
+        
+        }catch(err){
+            res.status(500).json({ success: false, error: `${err}` });
+        }
+    });
+
+    // res.status(200).json({ success: true, data: people })
 });
+
 
 
 
@@ -568,7 +411,7 @@ app.put('/api/v1/exit/:uid',authenticateToken, (req, res) => {
             }else{if(aghayeQC==1){
               res.status(200).json({ success: true, data: `محصول خارج شد` });
             }else{
-              res.status(200).json({ success: 'alert' , data: `محصول خارج شد` });
+              res.status(200).json({ success: 'alert' , data: `محصول خارج شد`, alert:'محصول مورد نظر دارایی تاییدیه کنترل کیفی نیست!' });
             }
                 
             }
@@ -981,6 +824,44 @@ app.get('/api/v1/workplace/:wpId',authenticateToken, (req, res) => {
   // res.status(200).json({ success: true, data: people })
 });
 
+/////////////////////////////////////////////////////NSFW
+app.get('/api/v1/workplace/reverse/:wpName',authenticateToken, (req, res) => {
+
+
+  const wpName = req.params.wpName;
+
+  console.log('hit get workplace name to wpId')
+
+  pool.query(`
+  SELECT wpId,wpName,wpType,wpAddress,wpPhoneNumber 
+  FROM xicorana.workplace 
+  WHERE wpName= ? ;
+  `,[wpName],(err,result,fields)=>{
+
+      if(err){
+          
+          const data = String(err);
+          res.status(500).json({ success: false, error: `${data}` });
+          return console.log(err);
+          
+      }
+      if(result.length === 0 ){
+
+          res.status(404).json({ success: false, error: ` مکان کار یافت نشد` });
+          return ;
+      }
+
+      res.status(200).json({ success: true, data: result });
+      return console.log(result);
+  });
+
+  
+  
+  // res.status(200).json({ success: true, data: people })
+});
+
+
+/////////////////////////////////////////////////////NSFW
 
 app.get('/api/v1/workplace',authenticateToken, (req, res) => {
 
@@ -1952,4 +1833,5 @@ app.listen(PORT,()=>{
 
     console.log('server running on port ' + PORT )
 })
+
 

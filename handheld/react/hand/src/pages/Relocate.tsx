@@ -43,37 +43,42 @@ export default function Relocate() {
   const [falseCount, setFalseCount] = useState(0);
   const [isScanning, setIsScanning] = useState(false);
   const scanIntervalRef = useRef<number | null>(null);
-  const [workPlaceName, setWorkPlaceName] = useState<string>('');
+ 
   const [comboBoxValue, setComboBoxValue] = useState<string>('');
   const [uidDetails, setUidDetails] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
-  useEffect(() => {
-    const workPlace = localStorage.getItem('workPlace'); 
+ 
 
-    if (workPlace) {
-      
-      const token = localStorage.getItem('token');
-      axios.get(`${apiUrl}/workplace?workPlace=${workPlace}`, {
+  const workPlace = localStorage.getItem('workPlace');
+ 
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (workPlace && token) {
+      console.log("Token found:", token);
+      axios.get(`${apiUrl}/workplace/reverse/${workPlace}`, {
         headers: {
           'Authorization': `${token}`
         }
       })
         .then((response) => {
+          console.log("API response for Workplace:", response);
           const { data } = response.data;
-          if (data.length > 0) {
-            setWorkPlaceName(data[0].wpName);
-          }
+          
+            
+            localStorage.setItem('wpId', data[0].wpId);
+            console.log("Workplace ID set to:", data[0].wpId);
+          
         })
         .catch((error) => {
-          console.error('Error fetching workPlace data:', error);
+          console.error('Error fetching workplace data:', error);
         });
+    } else {
+      console.log("Workplace or token missing.");
     }
-
     startVideoStream();
     startScanning();
-
+  
     return () => {
       if (videoRef.current && videoRef.current.srcObject) {
         const tracks = (videoRef.current.srcObject as MediaStream).getTracks();
@@ -139,18 +144,24 @@ export default function Relocate() {
   };
 
   const sendDataToAPI = (uid: string) => {
+
     const token = localStorage.getItem('token');
-    const wpId = localStorage.getItem('workPlace');
-
-    console.log('Token:', token);
-    console.log('Combo Box Value:', comboBoxValue);
-    console.log('Scan Result (UID):', uid);
-    console.log('Workplace ID:', wpId);
-
-    if (uid && comboBoxValue && token && wpId) {
+    const wpid = localStorage.getItem('wpId');
+    const sector = localStorage.getItem('sector');
+    
+    console.log('Sending data with values:', {
+      token,
+      sector,
+      uid,
+      wpid
+    });
+      
+    if (!sector) {
+        alert('لطفا سکتور مورد نظر را وارد کنید');
+    } else {
       axios.put(`${apiUrl}/placement/${uid}`, {
-        sectorNew: comboBoxValue,
-        wpId: wpId, 
+        sectorNew: sector,
+        wpId: wpid, 
       }, {
         headers: {
           Authorization: `${token}`,
@@ -160,6 +171,9 @@ export default function Relocate() {
         console.log('API response:', response.data);
         if (response.data.success) {
           setOkCount(prevCount => prevCount + 1);
+          // Reset comboBoxValue after successful update if needed
+          setComboBoxValue('');
+          localStorage.removeItem('sector');
         } else {
           setFalseCount(prevCount => prevCount + 1);
         }
@@ -168,9 +182,8 @@ export default function Relocate() {
         console.error('Error sending data to API:', error);
         setFalseCount(prevCount => prevCount + 1);
       });
-    } else {
-      console.error('UID, comboBoxValue, token, or wpId is missing');
-      setFalseCount(prevCount => prevCount + 1);
+      
+      
     }
   };
 
@@ -199,9 +212,73 @@ export default function Relocate() {
     }
   };
 
+  const renderUidDetails = () => {
+    if (!uidDetails || uidDetails.length === 0) return null;
+  
+    const detail = uidDetails[0]; // Assuming you want to display the first item in the data array
+  
+    if (detail.wspId) { // Check for WSP details
+      return (
+        <div>
+          <h3>جزئیات WSP</h3>
+          <p>شناسه WSP: {detail.wspId}</p>
+          <p>جهت: {detail.wspDirection}</p>
+          <p>مواد: {detail.wspMaterial}</p>
+          <p>نوع: {detail.wspType}</p>
+          <p>وضعیت: {detail.wspState}</p>
+          <p>تاریخ: {detail.wspDate}</p>
+          <p>ورود: {detail.wspIn}</p>
+          <p>خروج: {detail.wspOut}</p>
+          <p>طول: {detail.wspLength}</p>
+          <p>خالی: {detail.wspWempty}</p>
+          <p>پر: {detail.wspWfull}</p>
+          <p>خالص: {detail.wspWpure}</p>
+          <p>QC: {detail.wspQC}</p>
+        </div>
+      );
+    } else if (detail.insId) { // Check for insulation details
+      return (
+        <div>
+          <h3>جزئیات عایق</h3>
+          <p>شناسه عایق: {detail.insId}</p>
+          <p>نوع: {detail.insType}</p>
+          <p>کد: {detail.insCode}</p>
+          <p>شناسه سازنده: {detail.manfId}</p>
+          <p>تاریخ ورود: {detail.insEntryDate}</p>
+          <p>شماره رکورد: {detail.insRecNum}</p>
+          <p>وضعیت: {detail.insState}</p>
+          <p>EXP: {detail.insEXP}</p>
+          <p>محل: {detail.insLoc}</p>
+          <p>رنگ: {detail.insColor}</p>
+          <p>تعداد: {detail.insCount}</p>
+          <p>QC: {detail.insQC}</p>
+        </div>
+      );
+    } else if (detail.fpId) { // Check for FIP details
+      return (
+        <div>
+          <h3>جزئیات FIP</h3>
+          <p>شناسه FIP: {detail.fpId}</p>
+          <p>نوع: {detail.fpType}</p>
+          <p>کارت: {detail.fpCart}</p>
+          <p>شناسه کاربر: {detail.uesrId}</p>
+          <p>کد کاربر نهایی: {detail.fpEndUserCode}</p>
+          <p>محل: {detail.fpLoc}</p>
+          <p>پیچیده: {detail.fpWrapped}</p>
+          <p>وضعیت: {detail.fpSituation}</p>
+          <p>شناسه WP: {detail.wpId}</p>
+          <p>LL: {detail.fpLL}</p>
+          <p>بخش: {detail.fpSector}</p>
+        </div>
+      );
+    }
+  
+    return <p>هیچ جزئیاتی برای این UID موجود نیست.</p>;
+  };
+
   return (
     <div className="flex flex-col items-center justify-center h-full p-4 space-y-4">
-      <p className="text-xl font-semibold">{workPlaceName || 'Loading workplace name...'}</p>
+      <p className="text-xl font-semibold">{"مکان فعلی شما: " + workPlace || 'در حال بارگذاری...'}</p>
 
       <div className="bg-gray-200 w-full max-w-md h-64 relative">
         <video ref={videoRef} className="absolute top-0 left-0 w-full h-full object-cover" />
@@ -210,7 +287,7 @@ export default function Relocate() {
 
       <div className="w-full text-center p-4 bg-blue-200">
         <h2 className="text-lg font-semibold">نتیجه اسکن:</h2>
-        <p>{scanResult || 'بارکدی یافت نشد'}</p>
+        <p>{scanResult}</p>
       </div>
 
       <div className="flex flex-col space-x-4">
@@ -234,17 +311,19 @@ export default function Relocate() {
                 <CommandGroup>
                   {letters.map((letter) => (
                     <CommandItem
-                      key={letter}
-                      value={letter}
-                      onSelect={(currentValue) => {
-                        setComboBoxValue(currentValue);
-                      }}
-                    >
-                      {letter}
-                      <CheckIcon
-                        className={`ml-auto h-4 w-4 ${comboBoxValue === letter ? 'opacity-100' : 'opacity-0'}`}
-                      />
-                    </CommandItem>
+                    key={letter}
+                    value={letter}
+                    onSelect={(currentValue) => {
+                      setComboBoxValue(currentValue);
+                      localStorage.setItem('sector', currentValue);
+                      console.log("Selected Combo Box Value:", currentValue); // Add this log
+                    }}
+                  >
+                    {letter}
+                    <CheckIcon
+                      className={`ml-auto h-4 w-4 ${comboBoxValue === letter ? 'opacity-100' : 'opacity-0'}`}
+                    />
+                  </CommandItem>
                   ))}
                 </CommandGroup>
               </CommandList>
@@ -261,11 +340,11 @@ export default function Relocate() {
           <AlertDialogHeader>
             <AlertDialogTitle>UID Details</AlertDialogTitle>
             <AlertDialogDescription>
-              {loading ? 'Loading...' : (error ? error : JSON.stringify(uidDetails))}
+              {loading ? 'Loading...' : (error ? error : renderUidDetails())}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogAction >بستن</AlertDialogAction>
+            <AlertDialogAction>بستن</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

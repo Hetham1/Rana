@@ -31,7 +31,7 @@ export default function QRScanner() {
   const scanIntervalRef = useRef<number | null>(null);
   const [alert, setAlert] = useState<string | null>(null);
   
-
+console.log(alert)
   useEffect(() => {
     const startVideoStream = async () => {
       try {
@@ -132,7 +132,7 @@ export default function QRScanner() {
           toast(response.data.data, {
             description: response.data.alert,
             action: {
-              label: "Close",
+              label: "بستن",
               onClick: () => setAlert(null),
             },
           });
