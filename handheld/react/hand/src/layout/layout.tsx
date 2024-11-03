@@ -6,6 +6,7 @@ import Particles from "react-tsparticles";
 import { loadSlim } from "tsparticles-slim";
 import { LogOutIcon } from 'lucide-react';
 import type { Engine, ISourceOptions } from "tsparticles-engine";
+import { Toaster } from "@/components/ui/sonner"
 
 export default function Layout() {
   const fullName = localStorage.getItem('fullName');
@@ -108,6 +109,7 @@ export default function Layout() {
 
       <main className="flex-1 px-4 py-4 overflow-auto relative z-10">
         <Outlet />
+        <Toaster />
       </main>
     </div>
   );

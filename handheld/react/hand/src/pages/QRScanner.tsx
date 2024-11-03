@@ -104,19 +104,14 @@ export default function QRScanner() {
     const radioOption = localStorage.getItem('radioOption');
     const comboBoxValue = localStorage.getItem('comboBoxValue');
     const token = localStorage.getItem('token');
-
-    console.log('Token:', token);
-    console.log('Radio Option:', radioOption);
-    console.log('Combo Box Value:', comboBoxValue);
-    console.log('Scan Result (UID):', uid);
-
+  
     if (radioOption && comboBoxValue && token) {
       const endpoint = radioOption === '1' 
         ? 'entry' 
         : radioOption === '2' 
         ? 'exit' 
         : 'reject';
-
+  
       axios.put(`${apiUrl}/${endpoint}/${uid}`, {
         wpId: comboBoxValue,
       }, {
@@ -126,13 +121,24 @@ export default function QRScanner() {
       })
       .then(response => {
         console.log('API response:', response.data);
-        if (response.data.success) {
-          setOkCount(prevCount => prevCount + 1);
-        } 
+  
         if (response.data.success === 'alert') {
-          setAlert(response.data.alert)
-        }
-        else {
+          setAlert(response.data.alert);
+          
+          console.log(response.data)
+          
+          setOkCount(prevCount => prevCount + 1);
+          // Show toast with the main message and alert description
+          toast(response.data.data, {
+            description: response.data.alert,
+            action: {
+              label: "Close",
+              onClick: () => setAlert(null),
+            },
+          });
+        } else if (response.data.success) {
+          setOkCount(prevCount => prevCount + 1);
+        } else {
           setFalseCount(prevCount => prevCount + 1);
         }
       })
