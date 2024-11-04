@@ -46,23 +46,10 @@ export default function Entry() {
   useEffect(() => {
     const workPlace = localStorage.getItem('workPlace'); 
     const token = localStorage.getItem('token')
-
+    setWorkPlaceName(workPlace || 'درحال بارگذاری...');
     if (workPlace) {
       
-      axios.get(`${apiUrl}/workplace?workPlace=${workPlace}`, {
-        headers: {
-          'Authorization': `${token}`
-        }
-      })
-        .then((response) => {
-          const { data } = response.data; // Extract data from response
-          if (data.length > 0) {
-            setWorkPlaceName(data[0].wpName); // Set workplace name
-          }
-        })
-        .catch((error) => {
-          console.error('Error fetching workPlace data:', error);
-        });
+      
 
       // Fetch all workplace data for the combo box
       axios.get(`${apiUrl}/workplace`, {
@@ -105,7 +92,7 @@ export default function Entry() {
 
   return (
     <div className="w-full flex flex-col items-center justify-center p-4 space-y-6 ">
-      <p className="text-xl font-semibold">{"مکان فعلی شما: " + workPlaceName|| 'درحال بارگذاری...'}</p>
+      <p className="text-xl font-semibold">{"مکان فعلی شما: " + workPlaceName || 'درحال بارگذاری...'}</p>
 
       <div className="p-4 flex flex-row gap-6 rounded-md bg-whitebox">
         <div className="flex flex-col justify-center items-right gap-2 bg-whitebox p-4 rounded-md">
@@ -212,7 +199,7 @@ export default function Entry() {
 
       <div>
         <Button variant="outline" onClick={handleSubmit} disabled={isSubmitDisabled}>
-          ثبت
+          انتقال به صفحه اسکن
         </Button>
       </div>
     </div>

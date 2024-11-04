@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import Particles from "react-tsparticles";
 import { loadSlim } from "tsparticles-slim";
-import { LogOutIcon } from 'lucide-react';
+import { LogOutIcon, ArrowLeftIcon } from 'lucide-react'; // Import the icons
 import type { Engine, ISourceOptions } from "tsparticles-engine";
 import { Toaster } from "@/components/ui/sonner"
 
@@ -17,6 +17,10 @@ export default function Layout() {
   const handleLogout = () => {
     localStorage.clear();
     navigate('/login');
+  };
+
+  const handleBack = () => {
+    navigate(-1); // Navigate to the previous page
   };
 
   const particlesInit = useCallback(async (engine: Engine) => {
@@ -84,27 +88,32 @@ export default function Layout() {
       />
       <header className="bg-supblue text-white p-4 flex justify-between items-center relative z-10">
         <div>
-          
+          {location.pathname === '/' && (
+            <h1 className="text-xl font-bold">خوش آمدید</h1>
+          )}
+          <p>{fullName} | {date}</p>
+        </div>
+
+        <div className="flex items-center space-x-2">
+          {/* Render Back button only if not on '/' */}
+          {location.pathname !== '/' && (
+            <button
+              onClick={handleBack}
+              className="bg-whitebox border-0 transition-all hover:bg-blue-500 hover:text-white text-text py-1 px-3 rounded-lg"
+            >
+              <ArrowLeftIcon />
+            </button>
+          )}
           
           {location.pathname === '/' && (
-          <div>
-          <h1 className="text-xl font-bold">خوش آمدید</h1>
-          </div>
-          
-        )}
-        <p>{fullName} | {date}</p>
+            <button
+              onClick={handleLogout}
+              className="bg-whitebox border-0 transition-all hover:bg-red-500 hover:text-white text-text py-1 text-center px-3 rounded-lg"
+            >
+              <LogOutIcon />
+            </button>
+          )}
         </div>
-        {location.pathname === '/' && (
-          <div>
-          <button
-            onClick={handleLogout}
-            className="bg-whitebox border-0 transition-all hover:bg-red-500 hover:text-white text-text py-1 text-center px-3 rounded-lg"
-          >
-            <LogOutIcon/>
-          </button>
-          </div>
-          
-        )}
       </header>
 
       <main className="flex-1 px-4 py-4 overflow-auto relative z-10">

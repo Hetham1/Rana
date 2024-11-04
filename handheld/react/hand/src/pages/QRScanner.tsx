@@ -175,6 +175,71 @@ console.log(alert)
       setLoading(false);
     }
   };
+
+  const renderUidDetails = () => {
+    if (!uidDetails || uidDetails.length === 0) return null;
+  
+    const detail = uidDetails[0]; // Assuming you want to display the first item in the data array
+  
+    if (detail.wspId) { // Check for WSP details
+      return (
+        <div>
+          <h3>جزئیات WSP</h3>
+          <p>شناسه WSP: {detail.wspId}</p>
+          <p>جهت: {detail.wspDirection}</p>
+          <p>مواد: {detail.wspMaterial}</p>
+          <p>نوع: {detail.wspType}</p>
+          <p>وضعیت: {detail.wspState}</p>
+          <p>تاریخ: {detail.wspDate}</p>
+          <p>ورود: {detail.wspIn}</p>
+          <p>خروج: {detail.wspOut}</p>
+          <p>طول: {detail.wspLength}</p>
+          <p>خالی: {detail.wspWempty}</p>
+          <p>پر: {detail.wspWfull}</p>
+          <p>خالص: {detail.wspWpure}</p>
+          <p>QC: {detail.wspQC}</p>
+        </div>
+      );
+    } else if (detail.insId) { // Check for insulation details
+      return (
+        <div>
+          <h3>جزئیات عایق</h3>
+          <p>شناسه عایق: {detail.insId}</p>
+          <p>نوع: {detail.insType}</p>
+          <p>کد: {detail.insCode}</p>
+          <p>شناسه سازنده: {detail.manfId}</p>
+          <p>تاریخ ورود: {detail.insEntryDate}</p>
+          <p>شماره رکورد: {detail.insRecNum}</p>
+          <p>وضعیت: {detail.insState}</p>
+          <p>EXP: {detail.insEXP}</p>
+          <p>محل: {detail.insLoc}</p>
+          <p>رنگ: {detail.insColor}</p>
+          <p>تعداد: {detail.insCount}</p>
+          <p>QC: {detail.insQC}</p>
+        </div>
+      );
+    } else if (detail.fpId) { // Check for FIP details
+      return (
+        <div>
+          <h3>جزئیات FIP</h3>
+          <p>شناسه FIP: {detail.fpId}</p>
+          <p>نوع: {detail.fpType}</p>
+          <p>کارت: {detail.fpCart}</p>
+          <p>شناسه کاربر: {detail.uesrId}</p>
+          <p>کد کاربر نهایی: {detail.fpEndUserCode}</p>
+          <p>محل: {detail.fpLoc}</p>
+          <p>پیچیده: {detail.fpWrapped}</p>
+          <p>وضعیت: {detail.fpSituation}</p>
+          <p>شناسه WP: {detail.wpId}</p>
+          <p>LL: {detail.fpLL}</p>
+          <p>بخش: {detail.fpSector}</p>
+        </div>
+      );
+    }
+  
+    return <p>هیچ جزئیاتی برای این UID موجود نیست.</p>;
+  };
+
   return (
     <div className="flex flex-col items-center justify-center h-full p-4 space-y-4">
   <div className="bg-gray-200 w-full max-w-md h-64 rounded-xl relative">
@@ -193,46 +258,21 @@ console.log(alert)
   </div>
 
   <AlertDialog>
-    <AlertDialogTrigger asChild>
-      <Button variant="outline" onClick={() => scanResult && fetchUidDetails(scanResult)} disabled={!scanResult}>
-        مشخصات سبد
-      </Button>
-    </AlertDialogTrigger>
-    <AlertDialogContent>
-      <AlertDialogHeader>
-        <AlertDialogTitle>UID Details</AlertDialogTitle>
-      </AlertDialogHeader>
-      <AlertDialogDescription>
-        {loading && <p>Loading UID details...</p>}
-        {error && <p className="text-red-500">{error}</p>}
-        {uidDetails && uidDetails.length > 0 && (
-          <div className="grid grid-cols-2 gap-4">
-            <p><strong>شناسه سبد:</strong> {uidDetails[0].cartId}</p>
-            <p><strong>نوع سبد:</strong> {uidDetails[0].cartType}</p>
-            <p><strong>دستگاه سبد:</strong> {uidDetails[0].cartDevice}</p>
-            <p><strong>ورود سبد:</strong> {uidDetails[0].cartIn}</p>
-            <p><strong>خروج سبد:</strong> {uidDetails[0].cartOut}</p>
-            <p><strong>شیفت:</strong> {uidDetails[0].cartShift}</p>
-            <p><strong>طول:</strong> {uidDetails[0].cartLenght}</p>
-            <p><strong>نام محصول:</strong> {uidDetails[0].prodName}</p>
-            <p><strong>شناسه PP:</strong> {uidDetails[0].ppId}</p>
-            <p><strong>تاریخ تولید:</strong> {new Date(uidDetails[0].cartMFG).toLocaleDateString()}</p>
-            <p><strong>شناسه کاربر:</strong> {uidDetails[0].userId}</p>
-            <p><strong>رنگ سبد:</strong> {uidDetails[0].cartColor}</p>
-            <p><strong>شناسه عایق:</strong> {uidDetails[0].insulId}</p>
-            <p><strong>شناسه قرقره سیم:</strong> {uidDetails[0].wireSpId}</p>
-            <p><strong>شناسه محل کار:</strong> {uidDetails[0].wpId}</p>
-            <p><strong>LL سبد:</strong> {uidDetails[0].cartLL}</p>
-            <p><strong>کنترل کیفیت:</strong> {uidDetails[0].cartQC}</p>
-          </div>
-        )}
-      </AlertDialogDescription>
-
-      <AlertDialogFooter>
-        <AlertDialogAction onClick={() => setUidDetails(null)}>Close</AlertDialogAction>
-      </AlertDialogFooter>
-    </AlertDialogContent>
-  </AlertDialog>
+        <AlertDialogTrigger asChild>
+          <Button variant="outline" onClick={() => scanResult && fetchUidDetails(scanResult)} disabled={!scanResult}>مشخصات سبد</Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>UID Details</AlertDialogTitle>
+            <AlertDialogDescription>
+              {loading ? 'Loading...' : (error ? error : renderUidDetails())}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction>بستن</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 </div>
   );
 }
