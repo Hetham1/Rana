@@ -129,7 +129,7 @@ console.log(alert)
           
           setOkCount(prevCount => prevCount + 1);
           // Show toast with the main message and alert description
-          toast(response.data.data, {
+          toast.warning(response.data.data, {
             description: response.data.alert,
             action: {
               label: "بستن",
@@ -177,8 +177,8 @@ console.log(alert)
   };
   return (
     <div className="flex flex-col items-center justify-center h-full p-4 space-y-4">
-  <div className="bg-gray-200 w-full max-w-md h-64 relative">
-    <video ref={videoRef} className="absolute top-0 left-0 w-full h-full object-cover" />
+  <div className="bg-gray-200 w-full max-w-md h-64 rounded-xl relative">
+    <video ref={videoRef} className="absolute top-0 left-0 w-full h-full rounded-xl object-cover" />
     <canvas ref={canvasRef} className="hidden" />
   </div>
 

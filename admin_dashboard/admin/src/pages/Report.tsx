@@ -20,7 +20,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-
+import { toast } from "sonner"
 interface ReportData {
   [key: string]: string | number | null
 }
@@ -37,7 +37,7 @@ export default function Component() {
   const [loading, setLoading] = useState<boolean>(false)
   const [workPlaceName, setWorkPlaceName] = useState<string>("")
   const [comboBoxData, setComboBoxData] = useState<{ value: string; label: string }[]>([])
-
+  const [isEmpty, setIsEmpty] = useState(false);
   useEffect(() => {
     const workPlace = localStorage.getItem('workPlace')
     const token = localStorage.getItem('token')
@@ -86,24 +86,33 @@ export default function Component() {
   }, [])
 
   const handleSubmit = () => {
-    setLoading(true)
-    const apiUrl = import.meta.env.VITE_API_URL || 'https://defaulturl.com'
-    const queris = `searchType=${searchType}&wpId=${wpId}`
-    const token = localStorage.getItem('token')
-    axios
-      .get(`${apiUrl}/adminreport?${queris}`, {
-        headers: {
-          Authorization: `${token}`
-        },
-      })
-      .then((response) => {
-        setData(response.data.data)
-        setLoading(false)
-      })
-      .catch((error) => {
-        console.error("Error fetching report data:", error)
-        setLoading(false)
-      })
+    if (!wpId) {
+      setIsEmpty(true);
+      toast.error("لطفا شناسه محل کار را انتخاب کنید")
+    } else {
+      
+    
+      setLoading(true)
+      const apiUrl = import.meta.env.VITE_API_URL || 'https://defaulturl.com'
+      const queris = `searchType=${searchType}&wpId=${wpId}`
+      const token = localStorage.getItem('token')
+      axios
+        .get(`${apiUrl}/adminreport?${queris}`, {
+          headers: {
+            Authorization: `${token}`
+          },
+        })
+        .then((response) => {
+          setData(response.data.data)
+          setLoading(false)
+        })
+        .catch((error) => {
+          console.error("Error fetching report data:", error)
+          toast.error(error)
+          setLoading(false)
+        })
+    }
+    
   }
 
   const getTableHeaders = () => {
@@ -120,24 +129,30 @@ export default function Component() {
       </TableRow>
     ))
   }
+  
+
+  const handleSelectTriggerClick = () => {
+    setIsEmpty(false); // Remove border-red-500 on click
+  };
+
 
   return (
-    <div>
+    <div className="p-4">
       <Drawer>
         <DrawerTrigger asChild>
-          <Button variant="outline">باز کردن فیلترها</Button>
+          <Button variant="outline">باز کردن فیلترهای گزارش کلی</Button>
         </DrawerTrigger>
         <DrawerContent>
           <DrawerHeader>
-            <DrawerTitle className="text-center">فیلترهای گذارش</DrawerTitle>
+            <DrawerTitle className="text-center">فیلترهای گزارش</DrawerTitle>
           </DrawerHeader>
 
           <div className="space-y-4 p-4">
             <Select onValueChange={(value) => setWpId(value)} value={wpId}>
-              <SelectTrigger className="text-center">
+              <SelectTrigger className={`text-center ${isEmpty ? 'border-red-500' : ''}`} onClick={handleSelectTriggerClick}>
                 <SelectValue placeholder="شناسه محل کار را انتخاب کنید" />
               </SelectTrigger>
-              <SelectContent className="text-center">
+              <SelectContent className="text-center" position="popper">
                 {comboBoxData.map((item) => (
                   <SelectItem key={item.value} value={item.value}>{item.label}</SelectItem>
                 ))}

@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
 import axios from 'axios'
-
+import { toast } from "sonner"
 const apiUrl = import.meta.env.VITE_API_URL
 
 interface Order {
@@ -54,6 +54,10 @@ export default function GatherPage() {
           Authorization: `${token}`,
         },
       })
+      if (response.data.data == "no") {
+        toast.error('سفارش مورد نظر حاوی محصولی نیست')
+        return
+      }
       setProducts(response.data.data)
       setIsDialogOpen(true)
     } catch (error) {

@@ -57,7 +57,7 @@ export default function Gozaresh() {
   const [selectedWpId, setSelectedWpId] = useState<string>(''); //workplace that is sent to shahab
   const [option2, setOption2] = useState<prodOption[]>([]); //option for prod high demand
   const [selectedpro, setSelectedpro] = useState<string>(''); //prod that is sent to shahab
-
+  const [activeFilter, setActiveFilter] = useState<string | null>(null);
  
   useEffect(() => {
     const fetchOptions = async () => {
@@ -121,6 +121,7 @@ export default function Gozaresh() {
   };
 
   const handleFilter = (section: 'wsp' | 'insul' | 'fp') => {
+    setActiveFilter(section);
     switch (section) {
       case 'wsp':
         setFilteredData(tableData[0]);
@@ -377,22 +378,28 @@ export default function Gozaresh() {
       </Sheet>
 
       <div className="mt-8">
-        {tableData.length > 0 && (
+      {tableData.length > 0 && (
           <div className='flex flex-row gap-2 justify-center'>
-          <Button onClick={() => handleFilter('wsp')} className='bg-sec'>
-            قرقره ({tableData[0]?.length || 0})
-          </Button>
-    
-          <Button onClick={() => handleFilter('insul')} className='bg-sec'>
-            عایق ({tableData[1]?.length || 0})
-          </Button>
-    
-          <Button onClick={() => handleFilter('fp')} className='bg-sec'>
-            محصول نهایی ({tableData[2]?.length || 0})
-          </Button>
-        </div>
+            <Button
+              onClick={() => handleFilter('wsp')}
+              className={`bg-sec ${activeFilter === 'wsp' ? 'bg-prim' : ''}`}
+            >
+              قرقره ({tableData[0]?.length || 0})
+            </Button>
+            <Button
+              onClick={() => handleFilter('insul')}
+              className={`bg-sec ${activeFilter === 'insul' ? 'bg-prim' : ''}`}
+            >
+              عایق ({tableData[1]?.length || 0})
+            </Button>
+            <Button
+              onClick={() => handleFilter('fp')}
+              className={`bg-sec ${activeFilter === 'fp' ? 'bg-prim' : ''}`}
+            >
+              محصول نهایی ({tableData[2]?.length || 0})
+            </Button>
+          </div>
         )}
-
         <Table className='mt-8'>
           <TableHeader>
             <TableRow>
@@ -418,62 +425,62 @@ export default function Gozaresh() {
                 <DialogTitle>جزییات</DialogTitle>
               </DialogHeader>
               <div>
-  {selectedItem.wspId && (
-    <div className="grid grid-cols-2 gap-4">
-    <div>
-      <p><strong>شناسه:</strong> {selectedItem.wspId}</p>
-      <p><strong>جهت:</strong> {selectedItem.wspDirection}</p>
-      <p><strong>مواد:</strong> {selectedItem.wspMaterial}</p>
-      <p><strong>نوع:</strong> {selectedItem.wspType}</p>
-      <p><strong>پ پ:</strong> {selectedItem.wspPp}</p>
-      <p><strong>وضعیت:</strong> {selectedItem.wspState}</p>
-      <p><strong>تاریخ:</strong> {selectedItem.wspDate}</p>
-    </div>
-    <div>
-      <p><strong>ورودی:</strong> {selectedItem.wspIn}</p>
-      <p><strong>خروجی:</strong> {selectedItem.wspOut}</p>
-      <p><strong>طول:</strong> {selectedItem.wspLength}</p>
-      <p><strong>وزن خالی:</strong> {selectedItem.wspWempty}</p>
-      <p><strong>وزن پر:</strong> {selectedItem.wspWfull}</p>
-      <p><strong>وزن خالص:</strong> {selectedItem.wspWpure}</p>
-      <p><strong>کنترل کیفیت:</strong> {selectedItem.wspQC}</p>
-      <p><strong>بخش:</strong> {selectedItem.wspSector}</p>
-    </div>
-  </div>
-  )}
+              {selectedItem.wspId && (
+                <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p><strong>شناسه:</strong> {selectedItem.wspId}</p>
+                  <p><strong>جهت:</strong> {selectedItem.wspDirection}</p>
+                  <p><strong>مواد:</strong> {selectedItem.wspMaterial}</p>
+                  <p><strong>نوع:</strong> {selectedItem.wspType}</p>
+                  <p><strong>پ پ:</strong> {selectedItem.wspPp}</p>
+                  <p><strong>وضعیت:</strong> {selectedItem.wspState}</p>
+                  <p><strong>تاریخ:</strong> {selectedItem.wspDate}</p>
+                </div>
+                <div>
+                  <p><strong>ورودی:</strong> {selectedItem.wspIn}</p>
+                  <p><strong>خروجی:</strong> {selectedItem.wspOut}</p>
+                  <p><strong>طول:</strong> {selectedItem.wspLength}</p>
+                  <p><strong>وزن خالی:</strong> {selectedItem.wspWempty}</p>
+                  <p><strong>وزن پر:</strong> {selectedItem.wspWfull}</p>
+                  <p><strong>وزن خالص:</strong> {selectedItem.wspWpure}</p>
+                  <p><strong>کنترل کیفیت:</strong> {selectedItem.wspQC}</p>
+                  <p><strong>بخش:</strong> {selectedItem.wspSector}</p>
+                </div>
+              </div>
+              )}
 
-  {selectedItem.insId && (
-    <div className="grid grid-cols-2 gap-4">
-    <p><strong>شناسه:</strong> {selectedItem.insId}</p>
-    <p><strong>نوع:</strong> {selectedItem.insType}</p>
-    <p><strong>کد:</strong> {selectedItem.insCode}</p>
-    <p><strong>شناسه سازنده:</strong> {selectedItem.manfId}</p>
-    <p><strong>تاریخ ورود:</strong> {selectedItem.insEntryDate}</p>
-    <p><strong>شماره رسید:</strong> {selectedItem.insRecNum}</p>
-    <p><strong>وضعیت:</strong> {selectedItem.insState}</p>
-    <p><strong>انقضا:</strong> {selectedItem.insEXP}</p>
-    <p><strong>مکان:</strong> {selectedItem.insLoc}</p>
-    <p><strong>رنگ:</strong> {selectedItem.insColor}</p>
-    <p><strong>تعداد:</strong> {selectedItem.insCount}</p>
-    <p><strong>کنترل کیفیت:</strong> {selectedItem.insQC}</p>
-    <p><strong>بخش:</strong> {selectedItem.insSector}</p>
-  </div>
-  )}
+              {selectedItem.insId && (
+                <div className="grid grid-cols-2 gap-4">
+                <p><strong>شناسه:</strong> {selectedItem.insId}</p>
+                <p><strong>نوع:</strong> {selectedItem.insType}</p>
+                <p><strong>کد:</strong> {selectedItem.insCode}</p>
+                <p><strong>شناسه سازنده:</strong> {selectedItem.manfId}</p>
+                <p><strong>تاریخ ورود:</strong> {selectedItem.insEntryDate}</p>
+                <p><strong>شماره رسید:</strong> {selectedItem.insRecNum}</p>
+                <p><strong>وضعیت:</strong> {selectedItem.insState}</p>
+                <p><strong>انقضا:</strong> {selectedItem.insEXP}</p>
+                <p><strong>مکان:</strong> {selectedItem.insLoc}</p>
+                <p><strong>رنگ:</strong> {selectedItem.insColor}</p>
+                <p><strong>تعداد:</strong> {selectedItem.insCount}</p>
+                <p><strong>کنترل کیفیت:</strong> {selectedItem.insQC}</p>
+                <p><strong>بخش:</strong> {selectedItem.insSector}</p>
+              </div>
+              )}
 
-  {selectedItem.fpId && (
-    <div className="grid grid-cols-2 gap-4">
-    <p><strong>شناسه:</strong> {selectedItem.fpId}</p>
-    <p><strong>نوع:</strong> {selectedItem.fpType}</p>
-    <p><strong>کارت:</strong> {selectedItem.fpCart}</p>
-    <p><strong>شناسه کاربر:</strong> {selectedItem.uesrId}</p>
-    <p><strong>کد کاربر نهایی:</strong> {selectedItem.fpEndUserCode}</p>
-    <p><strong>مکان:</strong> {selectedItem.fpLoc}</p>
-    <p><strong>بسته بندی:</strong> {selectedItem.fpWrapped}</p>
-    <p><strong>وضعیت:</strong> {selectedItem.fpSituation}</p>
-    <p><strong>بخش:</strong> {selectedItem.fpSector}</p>
-  </div>
-  )}
-</div>
+              {selectedItem.fpId && (
+                <div className="grid grid-cols-2 gap-4">
+                <p><strong>شناسه:</strong> {selectedItem.fpId}</p>
+                <p><strong>نوع:</strong> {selectedItem.fpType}</p>
+                <p><strong>کارت:</strong> {selectedItem.fpCart}</p>
+                <p><strong>شناسه کاربر:</strong> {selectedItem.uesrId}</p>
+                <p><strong>کد کاربر نهایی:</strong> {selectedItem.fpEndUserCode}</p>
+                <p><strong>مکان:</strong> {selectedItem.fpLoc}</p>
+                <p><strong>بسته بندی:</strong> {selectedItem.fpWrapped}</p>
+                <p><strong>وضعیت:</strong> {selectedItem.fpSituation}</p>
+                <p><strong>بخش:</strong> {selectedItem.fpSector}</p>
+              </div>
+              )}
+            </div>
 
             </DialogContent>
           </Dialog>

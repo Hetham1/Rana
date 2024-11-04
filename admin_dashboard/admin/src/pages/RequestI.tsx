@@ -26,7 +26,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
+import { toast } from "sonner"
 interface Request {
   reqId: string;
   reqDate: string;
@@ -76,6 +76,7 @@ export default function Component() {
       })
       .then((response) => {
         console.log("Request approved:", response.data);
+        toast.success("درخواست ارسالی تایید شد")
         fetchRequests(); 
       })
       .catch((error) => {
@@ -94,6 +95,7 @@ export default function Component() {
       })
       .then((response) => {
         console.log("Request denied:", response.data);
+        toast.error("درخواست ارسالی رد شد")
         fetchRequests(); 
       })
       .catch((error) => {

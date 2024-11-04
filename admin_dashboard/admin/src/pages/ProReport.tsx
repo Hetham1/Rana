@@ -19,7 +19,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-
+import { toast } from "sonner"
 import DatePicker from "react-multi-date-picker"
 import persian from "react-date-object/calendars/persian"
 import persian_en from "react-date-object/locales/persian_en"
@@ -44,9 +44,13 @@ export default function Component() {
   }
 
   const handleSubmit = () => {
-    setLoading(true)
-    const baseUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000'
+    if (!startDate || !endDate) {
+      toast.error("لطفا تاریخ پایان را وارد کنید")
 
+    } else {
+      setLoading(true)
+    const baseUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000'
+    console.log(startDate)
     const formattedStartDate = convertToGregorian(startDate)
     const formattedEndDate = convertToGregorian(endDate)
     
@@ -68,6 +72,8 @@ export default function Component() {
         console.error("Error fetching report data:", error)
         setLoading(false)
       })
+    }
+    
   }
 
   const getTableHeaders = (): string[] => {
@@ -101,10 +107,10 @@ export default function Component() {
   }
 
   return (
-    <div>
+    <div className="p-4">
       <Drawer>
         <DrawerTrigger asChild>
-          <Button variant="outline">باز کردن فیلترها</Button>
+          <Button variant="outline">باز کردن فیلتر تاریخ</Button>
         </DrawerTrigger>
         <DrawerContent>
           <DrawerHeader>

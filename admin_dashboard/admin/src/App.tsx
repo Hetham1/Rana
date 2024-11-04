@@ -14,7 +14,7 @@ import Report from "./pages/Report";
 import ProReport from "./pages/ProReport"
 import Login from "./pages/login";
 import ProtectedRoute from './layout/protect';
-
+import { Toaster } from "@/components/ui/sonner"
 /**
  * This component wraps the Header component and determines whether
  * the Header should be rendered or not based on the current location.
@@ -91,11 +91,13 @@ export default function App() {
           
           <Route path="/pro-rep" element={<ProReport />} />
         </Route>
-
+        
         {/* If the user is not authenticated, redirect to the login page */}
         <Route path="*" element={<Navigate to={isAuthenticated ? "/" : "/login"} replace />} />
       </Routes>
+      <Toaster closeButton position="top-center"/>
     </Router>
+    
   );
 }
 

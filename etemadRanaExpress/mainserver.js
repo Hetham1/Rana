@@ -687,7 +687,7 @@ WHERE c.ordId = ?;
       }
       if(result.length === 0 ){
 
-          res.status(404).json({ success: false, error: `سفارشی یافت نشد` });
+        res.status(200).json({ success: true, data: "no" });
           return ;
       }
 
@@ -1589,7 +1589,7 @@ app.get('/api/v1/adminrequest/received',authenticateToken, (req, res) => {
       }
       if(result.length === 0 ){
 
-          res.status(404).json({ success: false, error: `درخواست دریافتی ای یافت نشد` });
+          res.status(200).json({ success: true, data: result });
           return ;
       }
 

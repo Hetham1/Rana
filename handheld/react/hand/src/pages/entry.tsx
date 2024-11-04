@@ -110,7 +110,7 @@ export default function Entry() {
       <div className="p-4 flex flex-row gap-6 rounded-md bg-whitebox">
         <div className="flex flex-col justify-center items-right gap-2 bg-whitebox p-4 rounded-md">
         <label
-        className={`px-4 py-2 rounded-lg cursor-pointer text-white font-semibold transition ${
+        className={`px-4 py-2 rounded-lg cursor-pointer text-center text-white font-semibold transition ${
           radioOption === '1' ? 'bg-blue-500' : 'bg-gray-300'
         }`}
       >
@@ -126,7 +126,7 @@ export default function Entry() {
       </label>
 
       <label
-        className={`px-4 py-2 rounded-lg cursor-pointer text-white font-semibold transition ${
+        className={`px-4 py-2 rounded-lg cursor-pointer text-center text-white font-semibold transition ${
           radioOption === '2' ? 'bg-blue-500' : 'bg-gray-300'
         }`}
       >
@@ -142,8 +142,8 @@ export default function Entry() {
       </label>
 
       <label
-        className={`px-4 py-2 rounded-lg cursor-pointer text-white font-semibold transition ${
-          radioOption === '3' ? 'bg-blue-500' : 'bg-gray-300'
+        className={`px-4 py-2 rounded-lg cursor-pointer text-center text-white font-semibold transition ${
+          radioOption === '3' ? 'bg-blue-500' : 'bg-red-100'
         }`}
       >
         <input

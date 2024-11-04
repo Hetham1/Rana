@@ -39,7 +39,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"; // Importing Select components
-
+import { toast } from "sonner"
 // Define the type for the request data
 interface Request {
   reqId: string;
@@ -126,6 +126,7 @@ export default function Component() {
         },
       })
       .then(() => {
+        toast.error("درخواست ارسالی حذف شد")
         // Remove the deleted request from the list
         setRequests((prevRequests) =>
           prevRequests.filter((request) => request.reqId !== reqId)
@@ -162,6 +163,7 @@ export default function Component() {
       .then(() => {
         fetchRequests(); // Refresh the list of requests after submission
         setNewRequest({ reqType: "", reqDetail: "", reqReciever: "" }); // Clear the form fields
+        toast.success("درخواست ایجاد شد")
         setIsSubmitting(false);
       })
       .catch((error) => {

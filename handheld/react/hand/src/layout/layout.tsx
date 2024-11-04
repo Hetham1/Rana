@@ -109,7 +109,7 @@ export default function Layout() {
 
       <main className="flex-1 px-4 py-4 overflow-auto relative z-10">
         <Outlet />
-        <Toaster />
+        <Toaster position="bottom-center"/>
       </main>
     </div>
   );
