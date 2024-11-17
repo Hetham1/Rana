@@ -192,19 +192,19 @@ export default function Component() {
           variant={selectedDays === 7 ? "default" : "outline"}
           onClick={() => fetchDefaultData(7)}
         >
-          7 روز
+          7 روز اخیر
         </Button>
         <Button 
           variant={selectedDays === 30 ? "default" : "outline"}
           onClick={() => fetchDefaultData(30)}
         >
-          30 روز
+          30 روز اخیر
         </Button>
         <Button 
           variant={selectedDays === 180 ? "default" : "outline"}
           onClick={() => fetchDefaultData(180)}
         >
-          180 روز
+          180 روز اخیر
         </Button>
         <Drawer>
           <DrawerTrigger asChild>
