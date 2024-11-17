@@ -1813,12 +1813,39 @@ app.get('/api/v1/adminreport/pp',authenticateToken, (req, res) => {
       return console.log(result);
   });
 
-  //kir
+
   
   // res.status(200).json({ success: true, data: people })
 });
 
 
+
+app.get('/api/v1/adminreport/pp/default', authenticateToken, (req, res) => {
+
+  console.log('hit get adminrep pp')
+
+  const {daysBefore} = req.query;
+
+  pool.query(
+      `SELECT * FROM xicorana.productionplan WHERE ppMFG BETWEEN DATE_SUB(CURDATE(), INTERVAL ? DAY) AND NOW() ORDER BY ppMFG DESC;`,
+      [daysBefore], 
+      (err, result,fields) => {
+          if (err) {
+              console.log(err);
+              res.status(500).json({ success: false, error: String(err) });
+              return;
+          }
+
+          if (result.length === 0) {
+              res.status(404).json({ success: false, error: 'برنامه تولیدی یافت نشد' });
+              return;
+          }
+
+          console.log(result);
+          res.status(200).json({ success: true, data: result });
+      }
+  );
+});
 
 
 
