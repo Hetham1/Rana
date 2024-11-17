@@ -95,7 +95,7 @@ export default function App() {
         {/* If the user is not authenticated, redirect to the login page */}
         <Route path="*" element={<Navigate to={isAuthenticated ? "/" : "/login"} replace />} />
       </Routes>
-      <Toaster closeButton position="top-center"/>
+      <Toaster position="top-center"/>
     </Router>
     
   );

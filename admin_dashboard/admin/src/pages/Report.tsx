@@ -132,7 +132,7 @@ export default function Component() {
   
 
   const handleSelectTriggerClick = () => {
-    setIsEmpty(false); // Remove border-red-500 on click
+    setIsEmpty(false); 
   };
 
 
@@ -166,7 +166,7 @@ export default function Component() {
               <SelectContent className="text-center">
                 <SelectItem value="wsp">قرقره</SelectItem>
                 <SelectItem value="ins">عایق</SelectItem>
-                <SelectItem value="car">کارت</SelectItem>
+                <SelectItem value="car">سبد</SelectItem>
                 <SelectItem value="fip">محصول نهایی</SelectItem>
               </SelectContent>
             </Select>
