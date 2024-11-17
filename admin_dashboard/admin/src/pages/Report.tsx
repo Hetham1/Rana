@@ -58,8 +58,8 @@ export default function Component() {
       wspQC: "کنترل کیفیت",
       wpId: "شناسه محل کار",
       wspLL: "موقعیت",
-      wspSector: "بخش",
-      wspBj: "بیج",
+      wspSector: "سکتور",
+      wspBj: "شماره بیجک",
     },
     ins: {
       insId: "شناسه عایق",
@@ -199,25 +199,24 @@ console.log(workPlaceName)
   const getTableHeaders = () => {
     if (data.length === 0) return [];
   
-    // Get all fields for the current searchType
+ 
     const fields = Object.keys(data[0]);
   
-    // Exclude fields based on the searchType
+ 
     const filteredFields = fields.filter(
       (field) => !excludeFields[searchType]?.includes(field)
     );
-  
-    // Map fields to their custom headers or fallback to field name
+
     return filteredFields.map((key) => headerMappings[searchType]?.[key] || key);
   };
   
   const renderTableRows = () => {
     if (data.length === 0) return null;
   
-    // Get all fields for the current searchType
+
     const fields = Object.keys(data[0]);
   
-    // Exclude fields based on the searchType
+   
     const filteredFields = fields.filter(
       (field) => !excludeFields[searchType]?.includes(field)
     );

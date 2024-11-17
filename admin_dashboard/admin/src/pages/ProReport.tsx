@@ -29,11 +29,45 @@ interface ReportData {
   [key: string]: string | number | null
 }
 
+
 export default function Component() {
   const [data, setData] = useState<ReportData[]>([])
   const [loading, setLoading] = useState<boolean>(false)
   const [startDate, setStartDate] = useState<any>(null)
   const [endDate, setEndDate] = useState<any>(null)
+
+  const headerMappings: { [key: string]: { [key: string]: string } } = {
+    pp: {
+      ppId: "شماره تولید",
+      ppMFG: "تاریخ تولید",
+      ppDevice: "خط تولید",
+      ppProductAmount: "مقدار محصول تولیدی",
+      ppLinearVel: "سرعت خطی",
+      ppOverlap: "اورلپ",
+      insId: "کد عایق مصرفی", 
+      ppProdState: "وضعیت محصول",
+      ppLength: "طول تولیدی",
+      ppGauge: "ضخامت تولیدی",
+      ppAnnealing: "درصد آنیل",
+      insType: "نوع عایق مصرفی",
+      insColor: "رنگ عایق مصرفی",
+      ppSize: "سایز نولید",
+      prodId: "محصول تولیدی", 
+      ppOutGauge: "قطر خروجی",
+      ppArcLength: "طول تاب",
+      ppMaterialAmount: "مقدار مواد",
+      ppInSp: "سرعت ورودی",
+      ppOutSp: "سرعت خروجی",
+      ppUserId: "شناسه کاربر",
+      ppSituation: "وضعیت",
+      ppDetail: "جزئیات",
+      wspId: "رسانه مصرفی",
+    },
+  };
+  
+  const excludeFields: { [key: string]: string[] } = {
+    pp: [], // Fields to exclude for pp type data
+  };
 
   // Convert Persian date to Gregorian format (yyyy-mm-dd)
   const convertToGregorian = (date: any): string => {
@@ -76,20 +110,40 @@ export default function Component() {
     
   }
 
-  const getTableHeaders = (): string[] => {
-    if (data.length === 0) return []
-    return Object.keys(data[0])
-  }
+const getTableHeaders = (): string[] => {
+  if (data.length === 0) return [];
 
-  const renderTableRows = () => {
-    return data.map((item, index) => (
-      <TableRow key={index}>
-        {Object.values(item).map((value, idx) => (
-          <TableCell key={idx}>{value ?? "N/A"}</TableCell>
-        ))}
-      </TableRow>
-    ))
-  }
+  // Get all fields for the current searchType (pp)
+  const fields = Object.keys(data[0]);
+
+  // Exclude fields based on the searchType
+  const filteredFields = fields.filter(
+    (field) => !excludeFields.pp?.includes(field)
+  );
+
+  // Map fields to their custom headers or fallback to field name
+  return filteredFields.map((key) => headerMappings.pp[key] || key);
+};
+
+const renderTableRows = () => {
+  if (data.length === 0) return null;
+
+  // Get all fields for the current searchType (pp)
+  const fields = Object.keys(data[0]);
+
+  // Exclude fields based on the searchType
+  const filteredFields = fields.filter(
+    (field) => !excludeFields.pp?.includes(field)
+  );
+
+  return data.map((item, index) => (
+    <TableRow key={index}>
+      {filteredFields.map((key, idx) => (
+        <TableCell key={idx}>{item[key] ?? "N/A"}</TableCell>
+      ))}
+    </TableRow>
+  ));
+};
 
   const datePickerStyle = {
     backgroundColor: "var(--background)",
