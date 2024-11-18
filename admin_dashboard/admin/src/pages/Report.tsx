@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import {
   Drawer,
@@ -32,13 +32,16 @@ interface Workplace {
 }
 
 export default function Component() {
+  
+
   const [wpId, setWpId] = useState<string>("");
-  const [searchType, setSearchType] = useState<string>("wsp");
+  const searchTypeRef = useRef<any>(null);
   const [data, setData] = useState<ReportData[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [workPlaceName, setWorkPlaceName] = useState<string>("");
   const [comboBoxData, setComboBoxData] = useState<{ value: string; label: string }[]>([]);
   const [isEmpty, setIsEmpty] = useState(false);
+  const [selectedUid, setSelectedUid] = useState<any>('wsp')
 
   const headerMappings: { [key: string]: { [key: string]: string } } = {
     wsp: {
@@ -120,60 +123,94 @@ export default function Component() {
   };
 
 
-console.log(workPlaceName)
 
-  useEffect(() => {
-    const workPlace = localStorage.getItem("workPlace");
-    const token = localStorage.getItem("token");
-    const apiUrl = import.meta.env.VITE_API_URL || "https://defaulturl.com";
 
-    if (workPlace && token) {
-      axios
-        .get(`${apiUrl}/workplace?workPlace=${workPlace}`, {
-          headers: {
-            Authorization: `${token}`,
-          },
-        })
-        .then((response) => {
-          const { data } = response.data;
-          if (data.length > 0) {
-            setWorkPlaceName(data[0].wpName);
-          }
-        })
-        .catch((error) => {
-          console.error("Error fetching workPlace data:", error);
-        });
+useEffect(() => {
+  const workPlace = localStorage.getItem("workPlace");
+  const token = localStorage.getItem("token");
+  const apiUrl = import.meta.env.VITE_API_URL || "https://defaulturl.com";
+  console.log(workPlaceName)
+  if (workPlace && token) {
+    // Fetch workplace data
+    axios
+      .get(`${apiUrl}/workplace?workPlace=${workPlace}`, {
+        headers: {
+          Authorization: `${token}`,
+        },
+      })
+      .then((response) => {
+        const { data } = response.data;
+        if (data.length > 0) {
+          setWorkPlaceName(data[0].wpName);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching workPlace data:", error);
+      });
 
-      axios
-        .get(`${apiUrl}/workplace`, {
-          headers: {
-            Authorization: `${token}`,
-          },
-        })
-        .then((response) => {
-          const { data } = response.data;
-          if (Array.isArray(data)) {
-            const frameworks = data.map((item: Workplace) => ({
-              value: item.wpId,
-              label: item.wpName,
-            }));
-            setComboBoxData(frameworks);
-          }
-        })
-        .catch((error) => {
-          console.error("Error fetching combo box data:", error);
-        });
-    }
-  }, []);
+    // Fetch combo box data
+    axios
+      .get(`${apiUrl}/workplace`, {
+        headers: {
+          Authorization: `${token}`,
+        },
+      })
+      .then((response) => {
+        const { data } = response.data;
+        if (Array.isArray(data)) {
+          const frameworks = data.map((item: Workplace) => ({
+            value: item.wpId,
+            label: item.wpName,
+          }));
+          setComboBoxData(frameworks);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching combo box data:", error);
+      });
 
+    // Fetch admin report data (runs only once)
+    
+  }
+}, []);
+
+useEffect(() => {
+  fetchDefaultData(selectedUid)
+}, [])
+
+const fetchDefaultData = (uid: string) => {
+  
+  const token = localStorage.getItem("token");
+  const apiUrl = import.meta.env.VITE_API_URL || "https://defaulturl.com";
+  setSelectedUid(uid);
+  searchTypeRef.current = uid;
+  axios
+      .get(`${apiUrl}/adminreport/default?searchType=${uid}`, {
+        headers: {
+          Authorization: `${token}`,
+        },
+      })
+      .then((response) => {
+        if (response.data.success) {
+          setData(response.data.data); 
+          
+        } else {
+          console.warn("No data returned from the adminreport API.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching default admin report data:", error);
+      });
+}
   const handleSubmit = () => {
     if (!wpId) {
       setIsEmpty(true);
       toast.error("لطفا شناسه محل کار را انتخاب کنید");
     } else {
+      
       setLoading(true);
       const apiUrl = import.meta.env.VITE_API_URL || "https://defaulturl.com";
-      const queris = `searchType=${searchType}&wpId=${wpId}`;
+      const queris = `searchType=${searchTypeRef.current}&wpId=${wpId}`;
       const token = localStorage.getItem("token");
       axios
         .get(`${apiUrl}/adminreport?${queris}`, {
@@ -198,17 +235,17 @@ console.log(workPlaceName)
 
   const getTableHeaders = () => {
     if (data.length === 0) return [];
-  
+    
  
     const fields = Object.keys(data[0]);
 
-    console.log("yoooooooo",fields)
+    
  
     const filteredFields = fields.filter(
-      (field) => !excludeFields[searchType]?.includes(field)
+      (field) => !excludeFields[searchTypeRef.current]?.includes(field)
     );
 
-    return filteredFields.map((key) => headerMappings[searchType]?.[key] || key);
+    return filteredFields.map((key) => headerMappings[searchTypeRef.current]?.[key] || key);
   };
   
   const renderTableRows = () => {
@@ -219,7 +256,7 @@ console.log(workPlaceName)
   
    
     const filteredFields = fields.filter(
-      (field) => !excludeFields[searchType]?.includes(field)
+      (field) => !excludeFields[searchTypeRef.current]?.includes(field)
     );
   
     return data.map((item, index) => (
@@ -237,6 +274,32 @@ console.log(workPlaceName)
 
   return (
     <div className="p-4">
+      <div className="flex gap-2 mb-4">
+      <Button 
+          variant={selectedUid === 'wsp' ? "default" : "outline"}
+          onClick={() => fetchDefaultData('wsp')}
+        >
+          قرقره
+        </Button>
+        <Button 
+          variant={selectedUid === 'ins' ? "default" : "outline"}
+          onClick={() => fetchDefaultData('ins')}
+        >
+          عایق
+        </Button>
+        <Button 
+          variant={selectedUid === 'car' ? "default" : "outline"}
+          onClick={() => fetchDefaultData('car')}
+        >
+          سبد
+        </Button>
+        <Button 
+          variant={selectedUid === 'fip' ? "default" : "outline"}
+          onClick={() => fetchDefaultData('fip')}
+        >
+          محصول نهایی
+        </Button>
+        </div>
       <Drawer>
         <DrawerTrigger asChild>
           <Button variant="outline">باز کردن فیلترهای گزارش کلی</Button>
@@ -263,9 +326,10 @@ console.log(workPlaceName)
               </SelectContent>
             </Select>
 
-            <Select onValueChange={(value) => setSearchType(value)} defaultValue="wsp">
+            
+            <Select onValueChange={(value) => searchTypeRef.current = value}>
               <SelectTrigger className="text-center">
-                <SelectValue placeholder="نوع را انتخاب کنید" />
+                <SelectValue placeholder="نوع محصول را انتخاب کنید" />
               </SelectTrigger>
               <SelectContent className="text-center">
                 <SelectItem value="wsp">قرقره</SelectItem>
@@ -274,6 +338,7 @@ console.log(workPlaceName)
                 <SelectItem value="fip">محصول نهایی</SelectItem>
               </SelectContent>
             </Select>
+          
           </div>
 
           <DrawerFooter>
@@ -291,6 +356,7 @@ console.log(workPlaceName)
             {getTableHeaders().map((header, index) => (
               <TableHead key={index}>{header}</TableHead>
             ))}
+           
           </TableRow>
         </TableHeader>
         <TableBody>{renderTableRows()}</TableBody>

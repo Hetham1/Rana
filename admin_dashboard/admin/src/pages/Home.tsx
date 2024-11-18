@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import * as React from "react"
 import {
   
   ArrowUpRight,
@@ -24,7 +25,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-import { Bar, BarChart,  XAxis, YAxis } from "recharts"
+import { Bar, BarChart,  XAxis, YAxis, CartesianGrid } from "recharts"
 import { TrendingUp } from "lucide-react"
 
 import {
@@ -50,8 +51,16 @@ import {
   RadialBar,
   RadialBarChart,
 } from "recharts"
-import { Noodle } from "@/components/ui/charts"
+// import { Noodle,Bars } from "@/components/ui/charts"
+interface HighDemandChartItem {
+  prodName: string;
+  totalCount: string;
+}
 
+interface HighDemandChartResponse {
+  success: boolean;
+  data: HighDemandChartItem[];
+}
 interface LastOfUsOrder {
   ordId: string;
   orderDate: string;
@@ -96,13 +105,14 @@ export function Home() {
   const [warehouseStock, setWarehouseStock] = useState({ wireSpoolCount: 0, InsulCount: 0, cartCount: 0 })
   const [lastOfUsOrders, setLastOfUsOrders] = useState<LastOfUsOrder[]>([])
   const [lastOfUs2Orders, setLastOfUs2Orders] = useState<LastOfUsOrder[]>([])
+  const [highDemandData, setHighDemandData] = useState<HighDemandChartItem[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const apiUrl = import.meta.env.VITE_API_URL || "https://defaulturl.com";
         const token = localStorage.getItem("token");
-        const [submitted, gathered, exited, cart, stock, naQc, lastOfUs, lastOfUs2] = await Promise.all([
+        const [submitted, gathered, exited, cart, stock, naQc, lastOfUs, lastOfUs2, highDemand] = await Promise.all([
           axios.get<OrderApiResponse>(`${apiUrl}/adminreport/order/submitted/counter`, {
             headers: {
               Authorization: `${token}`,
@@ -139,6 +149,9 @@ export function Home() {
           }),
           axios.get<LastOfUsApiResponse>(`${apiUrl}/adminreport/order/lastOfUs2`, {
             headers: { Authorization: `${token}` },
+          }),
+          axios.get<HighDemandChartResponse>(`${apiUrl}/adminreport/highDemandChart`, {
+            headers: { Authorization: `${token}` },
           })
         ])
         console.log("sabt", submitted.data.data[0].counted, "jam",gathered.data.data[0].counted, "ersal", exited.data.data[0].counted, "meqdar sim", cart.data.data)
@@ -159,6 +172,7 @@ export function Home() {
         })
         setLastOfUsOrders(lastOfUs.data.data)
         setLastOfUs2Orders(lastOfUs2.data.data)
+        setHighDemandData(highDemand.data.data ?? []);
 
       } catch (error) {
         console.error("Error fetching data:", error)
@@ -230,9 +244,9 @@ export function Home() {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle>تراکنش‌ها</CardTitle>
+                    <CardTitle>سفارشات</CardTitle>
                     <CardDescription>
-                      تراکنش‌های اخیر فروشگاه شما.
+                      سفارشات اخیر  شما.
                     </CardDescription>
                   </div>
                   <Button asChild size="sm" className="bg-prim hover:bg-sec">
@@ -278,17 +292,19 @@ export function Home() {
 
             <Card className="col-span-3">
               <CardHeader>
-                <CardTitle>آخرین سفارشات</CardTitle>
+                <CardTitle>آخرین سفارشات خارج شده</CardTitle>
               </CardHeader>
               <CardContent className="space-y-8">
                 {lastOfUs2Orders.map((order) => (
-                  <div key={order.ordId} className="flex items-center">
+                  <div key={order.ordId} className="flex items-center gap-32">
                     <Avatar className="h-9 w-9">
                       <AvatarFallback>{order.custId.slice(0, 2).toUpperCase()}</AvatarFallback>
                     </Avatar>
                     <div className="ml-4 space-y-1">
-                      <p className="text-sm font-medium leading-none">{order.userId}</p>
-                      <p className="text-sm text-muted-foreground">{order.custId}</p>
+
+                      <p className="text-sm font-bold leading-none">{order.custId}</p>
+                      <p className="text-sm text-muted-foreground leading-none">{order.userId}</p>
+                      
                     </div>
                     <div className="ml-auto font-medium">
                       {new Date(order.orderDate).toLocaleDateString('fa-IR')}
@@ -298,7 +314,7 @@ export function Home() {
               </CardContent>
             </Card>
           </div>
-        <Noodle/>
+        <Bars highDemandData={highDemandData}/>
               <div className="flex flex-row gap-4 justify-between content-stretch">
                   <Radial cartLength={cartLength}/>
                   <VertBar warehouseStock={warehouseStock} />
@@ -313,9 +329,9 @@ export function Home() {
 
 export function VertBar({ warehouseStock }: { warehouseStock: { wireSpoolCount: number; InsulCount: number; cartCount: number } }) {
   const chartData = [
-    { item: "Wire Spool", count: warehouseStock.wireSpoolCount, fill: "#4b49ac" },
-    { item: "Insul", count: warehouseStock.InsulCount, fill: "var(--color-safari)" },
-    { item: "Cart", count: warehouseStock.cartCount, fill: "var(--color-firefox)" },
+    { item: "Wire Spool", count: warehouseStock.wireSpoolCount, fill: "#98bdff" },
+    { item: "Insul", count: warehouseStock.InsulCount, fill: "#7978e9" },
+    { item: "Cart", count: warehouseStock.cartCount, fill: "#f3797e" },
   ]
 
   const chartConfig = {
@@ -323,8 +339,8 @@ export function VertBar({ warehouseStock }: { warehouseStock: { wireSpoolCount: 
       label: "تعداد",
     },
     "Wire Spool": {
-      label: "قرقره سیم",
-      color: "#4b49ac",
+      label: "قرقره",
+      color: "#f3797e",
     },
     "Insul": {
       label: "عایق",
@@ -332,7 +348,7 @@ export function VertBar({ warehouseStock }: { warehouseStock: { wireSpoolCount: 
     },
     "Cart": {
       label: "سبد",
-      color: "#7da0fa",
+      color: "#f3797e",
     },
   } satisfies ChartConfig
 
@@ -400,8 +416,8 @@ export function Radial({ cartLength }: RadialProps) {
   return (
     <Card className="flex flex-col justify-between w-full">
       <CardHeader className="items-center pb-0">
-        <CardTitle>چارت دایره ایی</CardTitle>
-        <CardDescription>ژانویه - ژوئن ۲۰۲۴</CardDescription>
+        <CardTitle>مایل استون تولیدی</CardTitle>
+        <CardDescription>در هفته اخیر</CardDescription>
       </CardHeader>
       <CardContent className="flex-2 pb-0">
         <ChartContainer
@@ -446,7 +462,7 @@ export function Radial({ cartLength }: RadialProps) {
                           y={(viewBox.cy || 0) + 30}
                           className="fill-muted-foreground"
                         >
-                          کیلومتر
+                          متر
                         </tspan>
                       </text>
                     )
@@ -460,7 +476,7 @@ export function Radial({ cartLength }: RadialProps) {
       </CardContent>
       <CardFooter className="flex-col gap-2 text-sm">
         <div className="flex items-center gap-2 font-medium leading-none">
-          میزان سیم تولید شده (کیلومتر) <TrendingUp className="h-4 w-4" />
+          میزان سیم تولید شده (متر) <TrendingUp className="h-4 w-4" />
         </div>
         <div className="leading-none text-muted-foreground">
           
@@ -468,4 +484,93 @@ export function Radial({ cartLength }: RadialProps) {
       </CardFooter>
     </Card>
   )
+}
+
+
+
+
+
+
+export function Bars({ highDemandData }: { highDemandData: HighDemandChartItem[] }) {
+  const chartData = highDemandData.map((item) => ({
+    name: item.prodName,
+    count: parseInt(item.totalCount), // convert string to number
+  }));
+
+  const chartConfig = {
+    desktop: {
+      label: "ورود",
+      color: "#4b49ac",
+    },
+  };
+
+  const totalDesktop = React.useMemo(
+    () => chartData.reduce((acc, curr) => acc + curr.count, 0),
+    []
+  );
+
+  return (
+    <Card>
+      <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
+        <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6">
+          <CardTitle>چارت میله ایی</CardTitle>
+          <CardDescription>
+            اطلاعات مورد نظر شما در این چارت قرار میگیرد
+          </CardDescription>
+        </div>
+        <div className="flex">
+          <div className="relative z-30 bg-white text-text flex flex-1 flex-col justify-center gap-1 px-6 py-4 text-center sm:border-l sm:border-t-0 sm:px-8 sm:py-6">
+            <span className="text-xs text-muted-foreground">
+              {chartConfig.desktop.label}
+            </span>
+            <span className="text-lg font-bold leading-none sm:text-3xl">
+              {totalDesktop.toLocaleString()}
+            </span>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent className="px-2 sm:p-6">
+        <ChartContainer
+          config={chartConfig}
+          className="aspect-auto h-[250px] w-full"
+        >
+          <BarChart
+            accessibilityLayer
+            data={chartData}
+            margin={{
+              left: 12,
+              right: 12,
+            }}
+          >
+            <CartesianGrid vertical={false} />
+            <XAxis
+              dataKey="date"
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              minTickGap={3}
+              tickFormatter={(value) => value}
+              
+            />
+            <ChartTooltip
+              content={
+                <ChartTooltipContent
+                  className="w-[150px]"
+                  nameKey="name"
+                  labelFormatter={(value) => {
+                    return new Date(value).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    });
+                  }}
+                />
+              }
+            />
+            <Bar dataKey="count" fill={chartConfig.desktop.color} />
+          </BarChart>
+        </ChartContainer>
+      </CardContent>
+    </Card>
+  );
 }
