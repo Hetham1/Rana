@@ -2062,7 +2062,7 @@ app.get('/api/v1/adminreport/order/lastOfUs', authenticateToken, (req, res) => {
 
 app.get('/api/v1/adminreport/order/lastOfUs2', authenticateToken, (req, res) => {
 
-  console.log('hit get adminrep order Last Of Us: Part II (kir tu madar shahab)')
+  console.log('hit get adminrep order Last Of Us: Part II (shahabs pronouns KOSKESH/ KOSOONE VAVEYLA)')
 
 
   pool.query(
