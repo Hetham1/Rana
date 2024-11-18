@@ -201,7 +201,8 @@ console.log(workPlaceName)
   
  
     const fields = Object.keys(data[0]);
-  
+
+    console.log("yoooooooo",fields)
  
     const filteredFields = fields.filter(
       (field) => !excludeFields[searchType]?.includes(field)

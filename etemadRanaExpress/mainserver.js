@@ -1819,7 +1819,6 @@ app.get('/api/v1/adminreport/pp',authenticateToken, (req, res) => {
 });
 
 
-
 app.get('/api/v1/adminreport/pp/default', authenticateToken, (req, res) => {
 
   console.log('hit get adminrep pp')
@@ -1837,7 +1836,34 @@ app.get('/api/v1/adminreport/pp/default', authenticateToken, (req, res) => {
           }
 
           if (result.length === 0) {
-              res.status(404).json({ success: false, error: 'برنامه تولیدی یافت نشد' });
+              res.status(200).json({ success: true, data: result });
+              return;
+          }
+
+          console.log(result);
+          res.status(200).json({ success: true, data: result });
+      }
+  );
+});
+
+
+app.get('/api/v1/adminreport/order/submitted/counter', authenticateToken, (req, res) => {
+
+  console.log('hit get adminrep order submitted counter')
+
+
+  pool.query(
+      `SELECT count(ordId) AS counted FROM xicorana.order where orderSituation='submitted';`,
+      [], 
+      (err, result,fields) => {
+          if (err) {
+              console.log(err);
+              res.status(500).json({ success: false, error: String(err) });
+              return;
+          }
+
+          if (result.length === 0) {
+              res.status(200).json({ success: true, data: result });
               return;
           }
 
@@ -1849,7 +1875,216 @@ app.get('/api/v1/adminreport/pp/default', authenticateToken, (req, res) => {
 
 
 
+app.get('/api/v1/adminreport/order/gathered/counter', authenticateToken, (req, res) => {
 
+  console.log('hit get adminrep order gathered countered')
+
+
+  pool.query(
+      `SELECT count(ordId) AS counted FROM xicorana.order where orderSituation='Gathered';`,
+      [], 
+      (err, result,fields) => {
+          if (err) {
+              console.log(err);
+              res.status(500).json({ success: false, error: String(err) });
+              return;
+          }
+
+          if (result.length === 0) {
+              res.status(200).json({ success: true, data: result });
+              return;
+          }
+
+          console.log(result);
+          res.status(200).json({ success: true, data: result });
+      }
+  );
+});
+
+
+app.get('/api/v1/adminreport/order/exited/counter', authenticateToken, (req, res) => {
+
+  console.log('hit get adminrep order gathered countered')
+
+
+  pool.query(
+      `SELECT COUNT(ordId) AS counted FROM xicorana.order WHERE orderSituation = 'exited' AND orderDate >= DATE_SUB(CURDATE(), INTERVAL 1 WEEK);`,
+      [], 
+      (err, result,fields) => {
+          if (err) {
+              console.log(err);
+              res.status(500).json({ success: false, error: String(err) });
+              return;
+          }
+
+          if (result.length === 0) {
+              res.status(200).json({ success: true, data: result });
+              return;
+          }
+
+          console.log(result);
+          res.status(200).json({ success: true, data: result });
+      }
+  );
+});
+
+
+
+app.get('/api/v1/adminreport/cart/length', authenticateToken, (req, res) => {
+
+  console.log('hit get adminrep order gathered countered')
+
+
+  pool.query(
+      `SELECT cartLenght FROM xicorana.cart WHERE cartMFG >= DATE_SUB(CURDATE(), INTERVAL 1 WEEK);`,
+      [], 
+      (err, result,fields) => {
+          if (err) {
+              console.log(err);
+              res.status(500).json({ success: false, error: String(err) });
+              return;
+          }
+
+          if (result.length === 0) {
+              res.status(200).json({ success: true, data: 0 });
+              return;
+          }
+
+          console.log(result);
+          let forLength = parseInt(result.length)
+          console.log(forLength);
+          let cartLenght = 0
+
+          for (let i = 0; i < forLength; i++) {
+              console.log(result[i].cartLenght);
+              cartLenght += parseInt(result[i].cartLenght);
+          }
+
+          res.status(200).json({ success: true, data: cartLenght });
+      }
+  );
+});
+
+
+
+app.get('/api/v1/adminreport/warehouse/stock', authenticateToken, (req, res) => {
+
+
+  let {wpId} = req.query;
+  if (!wpId){
+
+
+    wpId = 'wp1'
+
+  }
+
+  console.log('hit get adminrep warehouse/stock')
+
+
+  pool.query(
+      `SELECT 
+    (SELECT COUNT(wspId) FROM xicorana.wirespool WHERE wpId = ?) AS wireSpoolCount,
+    (SELECT COUNT(insId) FROM xicorana.insul WHERE wpId = ?) AS InsulCount,
+    (SELECT COUNT(cartId) FROM xicorana.cart WHERE wpId = ?) AS cartCount;`,
+      [wpId,wpId,wpId], 
+      (err, result,fields) => {
+        if (err) {
+          console.log(err);
+          res.status(500).json({ success: false, error: String(err) });
+          return;
+      }
+
+      if (result.length === 0) {
+          res.status(200).json({ success: true, data: result });
+          return;
+      }
+
+      console.log(result);
+      res.status(200).json({ success: true, data: result });
+      }
+  );
+});
+
+app.get('/api/v1/adminreport/noQC', authenticateToken, (req, res) => {
+
+  console.log('hit get adminrep noQC')
+
+
+  pool.query(
+      `SELECT 
+    (SELECT COUNT(wspId) FROM xicorana.wirespool WHERE wspQC = '0') AS wireSpoolCount,
+    (SELECT COUNT(insId) FROM xicorana.insul WHERE insQC = '0') AS InsulCount,
+    (SELECT COUNT(cartId) FROM xicorana.cart WHERE cartQc = '0') AS cartCount;`,
+      [], 
+      (err, result,fields) => {
+          if (err) {
+              console.log(err);
+              res.status(500).json({ success: false, error: String(err) });
+              return;
+          }
+
+          if (result.length === 0) {
+              res.status(200).json({ success: true, data: result });
+              return;
+          }
+
+          console.log(result);
+          res.status(200).json({ success: true, data: result });
+      }
+  );
+});
+
+app.get('/api/v1/adminreport/order/lastOfUs', authenticateToken, (req, res) => {
+
+  console.log('hit get adminrep order Last Of Us: Part I')
+
+
+  pool.query(
+      `SELECT * FROM xicorana.order ORDER BY orderDate DESC limit 5;`,
+      [], 
+      (err, result,fields) => {
+          if (err) {
+              console.log(err);
+              res.status(500).json({ success: false, error: String(err) });
+              return;
+          }
+
+          if (result.length === 0) {
+              res.status(200).json({ success: true, data: result });
+              return;
+          }
+
+          console.log(result);
+          res.status(200).json({ success: true, data: result });
+      }
+  );
+});
+
+app.get('/api/v1/adminreport/order/lastOfUs2', authenticateToken, (req, res) => {
+
+  console.log('hit get adminrep order Last Of Us: Part II (kir tu madar shahab)')
+
+
+  pool.query(
+      `SELECT * FROM xicorana.order WHERE orderSituation = 'exited' ORDER BY orderDate DESC limit 5;`,
+      [], 
+      (err, result,fields) => {
+          if (err) {
+              console.log(err);
+              res.status(500).json({ success: false, error: String(err) });
+              return;
+          }
+
+          if (result.length === 0) {
+              res.status(200).json({ success: true, data: result });
+              return;
+          }
+
+          console.log(result);
+          res.status(200).json({ success: true, data: result });
+      }
+  );
+});
 
 //start the https server
 const PORT = 5000;
