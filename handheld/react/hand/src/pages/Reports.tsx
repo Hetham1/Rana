@@ -52,7 +52,7 @@ export default function Gozaresh() {
   const [tableData, setTableData] = useState<any[]>([]); // Stores the entire API data
   const [filteredData, setFilteredData] = useState<any[]>([]); // Stores the filtered data
   const [selectedItem, setSelectedItem] = useState<any>(null); // Stores the selected item for the popup
-  const [isDialogOpen, setDialogOpen] = useState(false); // Controls the visibility of the dialog
+  const [isDialogOpen, setDialogOpen] = useState(false); 
   const [option1, setOption1] = useState<WorkplaceOption[]>([]); //option for workplace
   const [selectedWpId, setSelectedWpId] = useState<string>(''); //workplace that is sent to shahab
   const [option2, setOption2] = useState<prodOption[]>([]); //option for prod high demand
@@ -69,23 +69,27 @@ export default function Gozaresh() {
           }
         }) 
 
+        
+        setOption1(response.data.data.map((item: any) => ({
+          wpId: item.wpId,
+          wpName: item.wpName,
+        })));
+
+
         const response2 = await axios.get(`${apiUrl}/prod/name`, {
           headers: {
             'Authorization': `${token}`
           }
         }) 
 
-        setOption1(response.data.data.map((item: any) => ({
-          wpId: item.wpId,
-          wpName: item.wpName,
-        })));
+        
 
         setOption2(response2.data.data.map((item: any) => ({
           prodName: item.prodName,
           prodId: item.prodId,
         })));
 
-        console.log(response2)
+  
       } catch (error) {
         console.error('Error fetching options:', error);
       }
@@ -138,8 +142,8 @@ export default function Gozaresh() {
   };
 
   const openDialog = (item: any) => {
-    setSelectedItem(item); // Set the selected item for the popup
-    setDialogOpen(true); // Open the dialog
+    setSelectedItem(item); 
+    setDialogOpen(true); 
   };
 
 

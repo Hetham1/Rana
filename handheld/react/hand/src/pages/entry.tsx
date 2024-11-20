@@ -51,20 +51,20 @@ export default function Entry() {
       
       
 
-      // Fetch all workplace data for the combo box
+
       axios.get(`${apiUrl}/workplace`, {
         headers: {
           'Authorization': `${token}`
         }
       })
         .then((response) => {
-          const { data } = response.data; // Extract data from response
+          const { data } = response.data; 
           if (Array.isArray(data)) {
             const frameworks = data.map((item: Workplace) => ({
               value: item.wpId,
               label: item.wpName
             }));
-            setComboBoxData(frameworks); // Set data for the combo box options
+            setComboBoxData(frameworks); 
           } else {
             console.error('Unexpected response data:', data);
           }
@@ -75,27 +75,27 @@ export default function Entry() {
     }
   }, []);
 
-  // Function to handle radio button change
+
   const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setRadioOption(e.target.value);
   };
 
-  // Function to handle navigation
+
   const handleSubmit = () => {
     localStorage.setItem('radioOption', radioOption);
     localStorage.setItem('comboBoxValue', value);
-    navigate('/qr'); // Navigate to the QR page
+    navigate('/qr'); 
   };
 
-  // Check if both radioOption and comboBox value are selected
+
   const isSubmitDisabled = !radioOption || !value;
 
   return (
     <div className="w-full flex flex-col items-center justify-center p-4 space-y-6 ">
       <p className="text-xl font-semibold">{"مکان فعلی شما: " + workPlaceName || 'درحال بارگذاری...'}</p>
 
-      <div className="p-4 flex flex-row gap-6 rounded-md bg-whitebox">
-        <div className="flex flex-col justify-center items-right gap-2 bg-whitebox p-4 rounded-md">
+      <div className="p-4 flex flex-col-reverse gap-6 rounded-md bg-whitebox">
+        <div className="flex flex-row justify-center items-right gap-2 bg-whitebox p-4 rounded-md">
         <label
         className={`px-4 py-2 rounded-lg cursor-pointer text-center text-white font-semibold transition ${
           radioOption === '1' ? 'bg-blue-500' : 'bg-gray-300'

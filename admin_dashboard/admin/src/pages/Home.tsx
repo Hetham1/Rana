@@ -499,7 +499,7 @@ export function Bars({ highDemandData }: { highDemandData: HighDemandChartItem[]
 
   const chartConfig = {
     desktop: {
-      label: "ورود",
+      label: "تعداد کل",
       color: "#4b49ac",
     },
   };
@@ -513,9 +513,9 @@ export function Bars({ highDemandData }: { highDemandData: HighDemandChartItem[]
     <Card>
       <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6">
-          <CardTitle>چارت میله ایی</CardTitle>
+          <CardTitle>محصولات بر اساس تقاضا</CardTitle>
           <CardDescription>
-            اطلاعات مورد نظر شما در این چارت قرار میگیرد
+            
           </CardDescription>
         </div>
         <div className="flex">
@@ -544,26 +544,19 @@ export function Bars({ highDemandData }: { highDemandData: HighDemandChartItem[]
           >
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="date"
+              dataKey="name"
               tickLine={false}
               axisLine={false}
               tickMargin={8}
               minTickGap={3}
               tickFormatter={(value) => value}
-              
             />
             <ChartTooltip
               content={
                 <ChartTooltipContent
                   className="w-[150px]"
                   nameKey="name"
-                  labelFormatter={(value) => {
-                    return new Date(value).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                    });
-                  }}
+                  labelFormatter={(value) => value}
                 />
               }
             />
