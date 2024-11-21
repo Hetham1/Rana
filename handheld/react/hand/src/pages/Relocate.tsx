@@ -170,6 +170,7 @@ export default function Relocate() {
       .then(response => {
         console.log('API response:', response.data);
         if (response.data.success) {
+          alert('محصول به سکتور مورد نظر انتقال یافت');
           setOkCount(prevCount => prevCount + 1);
           // Reset comboBoxValue after successful update if needed
           setComboBoxValue('');
@@ -338,7 +339,7 @@ export default function Relocate() {
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>UID Details</AlertDialogTitle>
+            <AlertDialogTitle>مشخصات بارکد</AlertDialogTitle>
             <AlertDialogDescription>
               {loading ? 'Loading...' : (error ? error : renderUidDetails())}
             </AlertDialogDescription>

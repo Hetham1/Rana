@@ -263,7 +263,7 @@ console.log(alert)
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>UID Details</AlertDialogTitle>
+            <AlertDialogTitle>مشخصات بارکد</AlertDialogTitle>
             <AlertDialogDescription>
               {loading ? 'Loading...' : (error ? error : renderUidDetails())}
             </AlertDialogDescription>

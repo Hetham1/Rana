@@ -157,7 +157,7 @@ export default function Entry() {
               >
                 {value
                   ? comboBoxData.find((item) => item.value === value)?.label
-                  : "مقصد را مشخص کنید"}
+                  : "مکان را مشخص کنید"}
                 <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </Button>
             </PopoverTrigger>

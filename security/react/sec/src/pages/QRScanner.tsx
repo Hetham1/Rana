@@ -141,6 +141,7 @@ export default function QRScanner() {
         setDriverPhone('');
         setDriverLicense('');
         setIsDriverDialogOpen(false);
+        alert('خروج با موفقیت ثبت شد');
       } else {
         console.error('POST request failed:', response.data);
       }
