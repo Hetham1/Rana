@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import Particles from "react-tsparticles";
 import { loadSlim } from "tsparticles-slim";
-import { LogOutIcon, ArrowLeftIcon } from 'lucide-react'; // Import the icons
+import { LogOutIcon, ArrowLeftIcon } from 'lucide-react'; 
 import type { Engine, ISourceOptions } from "tsparticles-engine";
 import { Toaster } from "@/components/ui/sonner"
 
@@ -20,7 +20,7 @@ export default function Layout() {
   };
 
   const handleBack = () => {
-    navigate(-1); // Navigate to the previous page
+    navigate(-1); 
   };
 
   const particlesInit = useCallback(async (engine: Engine) => {
@@ -30,7 +30,7 @@ export default function Layout() {
   const particlesOptions: ISourceOptions = {
     background: {
       color: {
-        value: "#f3f4f6", // Light gray background
+        value: "#f3f4f6", 
       },
     },
     fpsLimit: 60,
@@ -47,7 +47,7 @@ export default function Layout() {
     },
     particles: {
       color: {
-        value: "#3b82f6", // Blue particles
+        value: "#3b82f6",  
       },
       move: {
         direction: "none",

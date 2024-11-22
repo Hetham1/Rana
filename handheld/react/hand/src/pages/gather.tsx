@@ -21,7 +21,7 @@ interface Product {
 
 export default function GatherPage() {
   const [orders, setOrders] = useState<Order[]>([]);
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null); // This is correct
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null); 
   const [orderDetails, setOrderDetails] = useState<Product[] | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -57,7 +57,7 @@ export default function GatherPage() {
         toast.error('سفارش مورد نظر حاوی محصولی نیست')
         return
       }
-      setOrderDetails(response.data.data); // Assuming response.data.data is an array of products
+      setOrderDetails(response.data.data); 
       setIsDialogOpen(true);
     } catch (error) {
       console.error('Error fetching order details:', error);
@@ -70,14 +70,14 @@ export default function GatherPage() {
   };
 
   const handleCardClick = (order: Order) => {
-    setSelectedOrder(order); // Set the selected order
+    setSelectedOrder(order); 
     fetchOrderDetails(order.ordId);
   };
 
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">سفارشات</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[80vh] overflow-y-auto">
         {orders.map((order) => (
           <Card
             key={order.ordId}

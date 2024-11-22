@@ -172,7 +172,6 @@ export default function Relocate() {
         if (response.data.success) {
           alert('محصول به سکتور مورد نظر انتقال یافت');
           setOkCount(prevCount => prevCount + 1);
-          // Reset comboBoxValue after successful update if needed
           setComboBoxValue('');
           localStorage.removeItem('sector');
         } else {
@@ -216,9 +215,9 @@ export default function Relocate() {
   const renderUidDetails = () => {
     if (!uidDetails || uidDetails.length === 0) return null;
   
-    const detail = uidDetails[0]; // Assuming you want to display the first item in the data array
+    const detail = uidDetails[0]; 
   
-    if (detail.wspId) { // Check for WSP details
+    if (detail.wspId) { 
       return (
         <div>
           <h3>جزئیات WSP</h3>
@@ -274,7 +273,7 @@ export default function Relocate() {
       );
     }
   
-    return <p>هیچ جزئیاتی برای این UID موجود نیست.</p>;
+    return <p>هیچ جزئیاتی برای این شناسه موجود نیست.</p>;
   };
 
   return (
@@ -282,18 +281,18 @@ export default function Relocate() {
       <p className="text-xl font-semibold">{"مکان فعلی شما: " + workPlace || 'در حال بارگذاری...'}</p>
 
       <div className="bg-gray-200 w-full max-w-md h-64 relative">
-        <video ref={videoRef} className="absolute top-0 left-0 w-full h-full object-cover" />
+        <video ref={videoRef} className="absolute top-0 left-0 w-full h-full rounded-xl object-cover" />
         <canvas ref={canvasRef} className="hidden" />
       </div>
 
-      <div className="w-full text-center p-4 bg-blue-200">
+      <div className="w-full text-center p-4 bg-blue-200 rounded-xl">
         <h2 className="text-lg font-semibold">نتیجه اسکن:</h2>
         <p>{scanResult}</p>
       </div>
 
-      <div className="flex flex-col space-x-4">
-        <p>✅: {okCount}</p>
-        <p>❌: {falseCount}</p>
+      <div className="flex flex-col space-x-4 gap-2">
+        <p className='text-2xl bg-green-200 rounded-xl p-4 w-full'>✅: {okCount}</p>
+        <p className='text-2xl bg-red-200 rounded-xl p-4 w-full'>❌: {falseCount}</p>
       </div>
 
       <div className="w-full flex justify-center">
@@ -308,7 +307,7 @@ export default function Relocate() {
             <Command>
               <CommandInput placeholder="جستجو" className="h-9" />
               <CommandList>
-                <CommandEmpty>No letter found.</CommandEmpty>
+                <CommandEmpty>سکتوری یافت نشد.</CommandEmpty>
                 <CommandGroup>
                   {letters.map((letter) => (
                     <CommandItem

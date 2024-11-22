@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom'; 
 import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
 import {
   Command,
@@ -20,7 +20,7 @@ import {
 const apiUrl = import.meta.env.VITE_API_URL
 
 
-// Define the type for the workplace data
+
 interface Workplace {
   wpId: string;
   wpName: string;
@@ -29,8 +29,8 @@ interface Workplace {
   wpPhoneNumber: string;
 }
 
-// Define the type for the comboBox data
-interface Framework {
+
+interface workPlaceStruct {
   value: string;
   label: string;
 }
@@ -38,10 +38,10 @@ interface Framework {
 export default function Entry() {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState('');
-  const [comboBoxData, setComboBoxData] = useState<Framework[]>([]); // Initialize as an empty array
-  const [workPlaceName, setWorkPlaceName] = useState(''); // State for workplace name
-  const [radioOption, setRadioOption] = useState<string>(''); // State for radio button choice
-  const navigate = useNavigate(); // Initialize useNavigate
+  const [comboBoxData, setComboBoxData] = useState<workPlaceStruct[]>([]); 
+  const [workPlaceName, setWorkPlaceName] = useState(''); 
+  const [radioOption, setRadioOption] = useState<string>(''); 
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     const workPlace = localStorage.getItem('workPlace'); 
@@ -98,7 +98,7 @@ export default function Entry() {
         <div className="flex flex-row justify-center items-right gap-2 bg-whitebox p-4 rounded-md">
         <label
         className={`px-4 py-2 rounded-lg cursor-pointer text-center text-white font-semibold transition ${
-          radioOption === '1' ? 'bg-blue-500' : 'bg-gray-300'
+          radioOption === '1' ? 'bg-prim' : 'bg-gray-300'
         }`}
       >
         <input
@@ -114,7 +114,7 @@ export default function Entry() {
 
       <label
         className={`px-4 py-2 rounded-lg cursor-pointer text-center text-white font-semibold transition ${
-          radioOption === '2' ? 'bg-blue-500' : 'bg-gray-300'
+          radioOption === '2' ? 'bg-prim' : 'bg-gray-300'
         }`}
       >
         <input
@@ -130,7 +130,7 @@ export default function Entry() {
 
       <label
         className={`px-4 py-2 rounded-lg cursor-pointer text-center text-white font-semibold transition ${
-          radioOption === '3' ? 'bg-blue-500' : 'bg-red-100'
+          radioOption === '3' ? 'bg-prim' : 'bg-red-100'
         }`}
       >
         <input
@@ -168,26 +168,26 @@ export default function Entry() {
                   <CommandEmpty>مکانی یافت نشد</CommandEmpty>
                   <CommandGroup>
                     {Array.isArray(comboBoxData) && comboBoxData.length > 0 ? (
-                      comboBoxData.map((framework: Framework) => (
+                      comboBoxData.map((workPlaceitem: workPlaceStruct) => (
                         <CommandItem
-                          key={framework.value}
-                          value={framework.value}
+                          key={workPlaceitem.value}
+                          value={workPlaceitem.value}
                           onSelect={(currentValue) => {
                             setValue(currentValue === value ? "" : currentValue);
                             setOpen(false);
                           }}
                         >
-                          {framework.label}
+                          {workPlaceitem.label}
                           <CheckIcon
                             className={cn(
                               "ml-auto h-4 w-4",
-                              value === framework.value ? "opacity-100" : "opacity-0"
+                              value === workPlaceitem.value ? "opacity-100" : "opacity-0"
                             )}
                           />
                         </CommandItem>
                       ))
                     ) : (
-                      <div>مکانی یافت نشد</div> // Display a fallback if there's no data
+                      <></>
                     )}
                   </CommandGroup>
                 </CommandList>

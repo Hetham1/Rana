@@ -256,7 +256,7 @@ const QRScannerComponent: React.FC = () => {
       </div>
 
       <div className="bg-gray-200 w-full max-w-md h-64 relative">
-        <video ref={videoRef} className="absolute top-0 left-0 w-full h-full object-cover" />
+        <video ref={videoRef} className="absolute top-0 left-0 w-full h-full rounded-xl object-cover" />
         <canvas ref={canvasRef} className="hidden" />
       </div>
 

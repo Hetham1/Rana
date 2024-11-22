@@ -128,7 +128,7 @@ console.log(alert)
           console.log(response.data)
           
           setOkCount(prevCount => prevCount + 1);
-          // Show toast with the main message and alert description
+          
           toast.warning(response.data.data, {
             description: response.data.alert,
             action: {
@@ -237,7 +237,7 @@ console.log(alert)
       );
     }
   
-    return <p>هیچ جزئیاتی برای این UID موجود نیست.</p>;
+    return <p>هیچ جزئیاتی برای این شناسه موجود نیست.</p>;
   };
 
   return (
@@ -247,14 +247,14 @@ console.log(alert)
     <canvas ref={canvasRef} className="hidden" />
   </div>
 
-  <div className="w-full text-center p-4 bg-blue-200">
+  <div className="w-full text-center p-4 rounded-xl bg-blue-200">
     <h2 className="text-lg font-semibold">نتیجه اسکن:</h2>
     <p>{scanResult || 'بارکدی یافت نشد'}</p>
   </div>
 
-  <div className="flex flex-col space-x-4">
-    <p>✅ : {okCount}</p>
-    <p>❌ : {falseCount}</p>
+  <div className="flex flex-col space-x-4 gap-2">
+    <p className='text-2xl bg-green-200 rounded-xl p-4 w-full'>✅ : {okCount}</p>
+    <p className='text-2xl bg-red-200 rounded-xl p-4 w-full'>❌ : {falseCount}</p>
   </div>
 
   <AlertDialog>
