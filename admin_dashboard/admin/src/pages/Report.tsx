@@ -193,7 +193,9 @@ const fetchDefaultData = (uid: string) => {
       .then((response) => {
         if (response.data.success) {
           setData(response.data.data); 
-          
+          if (response.data.success && response.data.data.length === 0) {
+            toast.warning("داده‌ای برای نمایش وجود ندارد")
+          }
         } else {
           console.warn("No data returned from the adminreport API.");
         }

@@ -276,7 +276,7 @@ export function Home() {
                         <TableCell className="hidden xl:table-cell">
                           <Badge variant="outline">
                             {order.orderSituation === 'submitted' ? 'ثبت شده' : 
-                             order.orderSituation === 'exited' ? 'خارج شده' : order.orderSituation}
+                             order.orderSituation === 'exited' ? 'خارج شده' : order.orderSituation === 'gathered' ? 'جمع آوری شده' : order.orderSituation === 'Security Checked' ? 'توسط حراست تایید شده' : order.orderSituation}
                           </Badge>
                         </TableCell>
                         <TableCell className="hidden xl:table-cell">
@@ -506,7 +506,7 @@ export function Bars({ highDemandData }: { highDemandData: HighDemandChartItem[]
 
   const totalDesktop = React.useMemo(
     () => chartData.reduce((acc, curr) => acc + curr.count, 0),
-    []
+    [chartData]
   );
 
   return (
