@@ -1,1 +1,0 @@
-export const BASE_URL = "https://rana.xikode.lol:5000/api/v1";
