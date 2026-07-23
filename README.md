@@ -171,7 +171,7 @@ Issues and focused pull requests are welcome. Read [CONTRIBUTING.md](CONTRIBUTIN
 
 The original source code is licensed under the [GNU Affero General Public License v3.0 or later](LICENSE). If you distribute a modified version—or let users interact with a modified version over a network—the AGPL generally requires offering the corresponding source under the same license. The license does not require publication of a purely private fork that is neither conveyed nor provided as a modified network service.
 
-Copyright (C) 2026 Etemad Rana contributors. Bundled fonts and other third-party assets remain subject to their own included notices; see [NOTICE.md](NOTICE.md). This summary is informational, not legal advice.
+Copyright (C) 2026 Etemad Rana contributors. The interface uses the OFL-licensed Vazirmatn package; see [NOTICE.md](NOTICE.md). This summary is informational, not legal advice.
 
 ## Learning notes
 
