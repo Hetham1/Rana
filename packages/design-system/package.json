@@ -1,0 +1,14 @@
+{
+  "name": "@etemad-rana/design-system",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Shared theme, fonts, and brand assets for the Etemad Rana clients",
+  "license": "AGPL-3.0-or-later",
+  "exports": {
+    "./theme.css": "./theme.css",
+    "./assets/*": "./assets/*"
+  },
+  "dependencies": {
+    "@fontsource-variable/vazirmatn": "^5.3.0"
+  }
+}

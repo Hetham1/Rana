@@ -1,0 +1,28 @@
+{
+  "name": "etemad-rana-platform",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Persian RTL inventory, production, reporting, and dispatch platform",
+  "license": "AGPL-3.0-or-later",
+  "engines": {
+    "node": ">=20",
+    "npm": ">=10"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "services/*"
+  ],
+  "scripts": {
+    "dev:api": "npm run dev --workspace @etemad-rana/api",
+    "dev:admin": "npm run dev --workspace @etemad-rana/admin -- --port 5173",
+    "dev:handheld": "npm run dev --workspace @etemad-rana/handheld -- --port 5175",
+    "dev:security": "npm run dev --workspace @etemad-rana/security -- --port 5176",
+    "db:migrate": "npm run migrate --workspace @etemad-rana/api",
+    "db:seed": "npm run seed --workspace @etemad-rana/api",
+    "test": "npm run test --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "build": "npm run build --workspaces --if-present",
+    "check": "npm run check --workspace @etemad-rana/api && npm run test && npm run lint && npm run build"
+  }
+}
