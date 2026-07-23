@@ -1,9 +1,11 @@
 const { z } = require('zod');
 
+const developmentDatabaseUrl = 'postgresql://rana:rana@localhost:5432/rana';
+
 const environmentSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().int().min(1).max(65535).default(5000),
-  DATABASE_URL: z.string().min(1).default('postgresql://rana:rana@localhost:5432/rana'),
+  DATABASE_URL: z.string().min(1).default(developmentDatabaseUrl),
   DATABASE_SSL: z.enum(['true', 'false']).default('false'),
   JWT_SECRET: z.string().min(32).default('development-only-secret-change-before-production'),
   JWT_EXPIRES_IN: z.string().default('8h'),
@@ -25,6 +27,13 @@ if (
   && parsedEnvironment.data.JWT_SECRET.startsWith('development-only')
 ) {
   throw new Error('JWT_SECRET must be replaced in production');
+}
+
+if (
+  parsedEnvironment.data.NODE_ENV === 'production'
+  && parsedEnvironment.data.DATABASE_URL === developmentDatabaseUrl
+) {
+  throw new Error('DATABASE_URL must be explicitly configured in production');
 }
 
 const config = Object.freeze({
