@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState, type ReactNode } from "react";
-import { Activity, Boxes, ClipboardCheck, PackageCheck, RefreshCw, ShoppingCart, Warehouse } from "lucide-react";
+import { Activity, Boxes, ClipboardCheck, PackageCheck, ShoppingCart, Warehouse } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { toast } from "@/lib/toast";
@@ -18,12 +18,11 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [updatedAt, setUpdatedAt] = useState<Date | null>(null);
 
-  const loadAnalytics = useCallback(async (notify = false) => {
+  const loadAnalytics = useCallback(async () => {
     setLoading(true);
     try {
       setAnalytics(await fetchAnalytics());
       setUpdatedAt(new Date());
-      if (notify) toast.success("داشبورد با داده‌های جدید به‌روزرسانی شد");
     } catch (error) {
       toast.error(getApiErrorMessage(error, "دریافت اطلاعات داشبورد ناموفق بود"));
     } finally {
@@ -51,7 +50,7 @@ export default function DashboardPage() {
     <main className="w-full space-y-6 py-2" dir="rtl">
       <header className="flex flex-col gap-4 rounded-3xl border border-blue-100 bg-gradient-to-l from-blue-950 via-blue-800 to-cyan-700 p-6 text-white shadow-xl shadow-blue-950/10 sm:flex-row sm:items-end sm:justify-between">
         <div><div className="flex items-center gap-2 text-sm font-semibold text-cyan-100"><Activity className="h-4 w-4"/>مرکز عملیات زنده</div><h1 className="mt-2 text-2xl font-black sm:text-3xl">سلام، {localStorage.getItem("fullName") || "مدیر سامانه"}</h1><p className="mt-2 max-w-2xl text-sm leading-7 text-blue-100">سفارش، تولید، موجودی و درخواست‌ها مستقیماً از PostgreSQL در یک نمای مدیریتی یکپارچه شده‌اند.</p></div>
-        <div className="flex items-center gap-3"><div className="text-left text-xs text-blue-100"><span className="block">آخرین بروزرسانی</span><strong className="mt-1 block text-white">{updatedAt?.toLocaleTimeString("fa-IR", { hour: "2-digit", minute: "2-digit" }) || "—"}</strong></div><Button variant="secondary" className="rounded-xl bg-white text-blue-800 hover:bg-blue-50" onClick={() => void loadAnalytics(true)} disabled={loading}><RefreshCw className={`ml-2 h-4 w-4 ${loading ? "animate-spin" : ""}`}/>بروزرسانی</Button></div>
+        <div className="text-left text-xs text-blue-100"><span className="block">آخرین بروزرسانی</span><strong className="mt-1 block text-white">{updatedAt?.toLocaleTimeString("fa-IR", { hour: "2-digit", minute: "2-digit" }) || "—"}</strong></div>
       </header>
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
